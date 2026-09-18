@@ -1,6 +1,6 @@
 # PassAí
 
-[Breve descrição: um app que conecta motoristas e passageiros que compartilham trajetos e horários semelhantes (ex.: Casa ↔ UTFPR).] 
+O PassAí é uma plataforma de caronas colaborativas desenvolvida para conectar estudantes e servidores da UTFPR que compartilham trajetos e horários semelhantes. A solução busca oferecer uma alternativa mais prática, econômica e segura para os deslocamentos da comunidade acadêmica, permitindo cadastrar rotas recorrentes, encontrar caronas compatíveis e realizar reservas antecipadamente. O projeto também conta com recursos voltados à segurança dos usuários, como o Modo **Elas por Elas**, destinado à viagens exclusivas entre mulheres, e a validação de embarque por código PIN.
 
 ## Autores
 
