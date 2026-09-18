@@ -61,7 +61,7 @@
 > O status percorre `Draft` → `Ready` → `Live`: toda story nasce `Draft` —
 > **só você promove a `Ready`** — e vira `Live` quando o PR dela é mesclado.
 
-### US01 — Cadastro e Autenticação de Usuário · `Must Have` · `M` · Status: `Draft`
+### US01 — Cadastro e Autenticação de Usuário · `Must Have` · `M` · Status: `Ready`
 
 **Como** Visitante,  
 **eu quero** me cadastrar informando meus dados pessoais (nome completo, e-mail, senha, telefone e gênero) e realizar login na plataforma,  
@@ -80,15 +80,15 @@
 
 ---
 
-### US02 — Gerenciamento de Veículos do Motorista · `Must Have` · `M` · Status: `Draft`
+### US02 — Gerenciamento de Veículos do Motorista · `Must Have` · `M` · Status: `Ready`
 
-**Como** Passageiro autenticado,  
+**Como** Usuário autenticado,  
 **eu quero** cadastrar, listar, editar e remover meus veículos (informando marca/modelo, cor e placa),  
 **para que** eu possa me habilitar como Motorista e vincular meu veículo às ofertas de carona na plataforma.
 
 **Critérios de aceite:**
 
-- [ ] **Dado** que sou um Passageiro autenticado na tela "Meus Veículos", **quando** clico em "Adicionar Veículo", preencho marca/modelo, cor e placa válida e confirmo, **então** o veículo é salvo com sucesso, passa a ser exibido na lista e meu perfil fica apto a ofertar caronas.
+- [ ] **Dado** que sou um Usuário autenticado na tela "Meus Veículos", **quando** clico em "Adicionar Veículo", preencho marca/modelo, cor e placa válida e confirmo, **então** o veículo é salvo com sucesso, passa a ser exibido na lista e meu perfil fica apto a ofertar caronas.
 - [ ] **Dado** que possuo um ou mais veículos salvos, **quando** acesso a aba "Meus Veículos", **então** o sistema exibe a lista completa de veículos com marca/modelo, cor e placa.
 - [ ] **Dado** que estou na lista de veículos cadastrados, **quando** altero os dados de um veículo e salvo, **então** os dados são atualizados no banco de dados e refletidos imediatamente na listagem.
 - [ ] **Dado** que seleciono remover um veículo que não possui caronas agendadas ou em andamento, **quando** confirmo a exclusão, **então** o veículo é removido permanentemente da minha lista.
@@ -122,7 +122,7 @@
 
 ---
 
-### US04 — Busca e Visualização de Caronas Disponíveis · `Must Have` · `M` · Status: `Draft`
+### US04 — Busca e Visualização de Caronas Disponíveis · `Must Have` · `M` · Status: `Ready`
 
 **Como** Passageiro autenticado,  
 **eu quero** pesquisar caronas por origem, destino ou campus da UTFPR, filtrando por data, horário e pelo Modo Elas por Elas,  
@@ -134,7 +134,7 @@
 - [ ] **Dado** que sou uma Passageira do sexo feminino, **quando** ativo o filtro "Modo Elas por Elas", **então** a listagem exibe exclusivamente caronas publicadas por motoristas mulheres que habilitaram essa modalidade.
 - [ ] **Dado** que estou visualizando os resultados da busca, **quando** clico em uma das caronas listadas, **então** o sistema exibe a tela de detalhes com rota prevista, histórico de avaliações do motorista e ponto de encontro.
 - [ ] **Dado** que realizo pesquisa para data ou rota sem ofertas ativas, **quando** o sistema processa a busca, **então** é exibido um estado vazio amigável ("Nenhuma carona encontrada para esta rota/data") com atalho para cadastrar o trajeto em Rotas Salvas.
-- [ ] **Dado** que sou um usuário do gênero masculino ou que não informou gênero, **quando** acesso a tela de busca, **então** o filtro "Modo Elas por Elas" não é exibido e as caronas restritas a essa modalidade são omitidas automaticamente dos resultados.
+- [ ] **Dado** que sou um usuário do gênero masculino, **quando** acesso a tela de busca, **então** o filtro "Modo Elas por Elas" não é exibido e as caronas restritas a essa modalidade são omitidas automaticamente dos resultados.
 - [ ] **Dado** que estou na busca, **quando** tento acionar a pesquisa sem informar ao menos uma origem, um destino ou a data, **então** o sistema destaca os campos necessários e solicita o preenchimento de ao menos um critério.
 
 **Regras relacionadas:** RN08, RN10, RN11
