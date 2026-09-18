@@ -141,7 +141,7 @@
 
 ---
 
-### US05 — Solicitação, Confirmação e Validação de Embarque via PIN · `Must Have` · `M` · Status: `Draft`
+### US05 — Solicitação, Confirmação e Validação de Embarque via PIN · `Must Have` · `M` · Status: `Ready`
 
 **Como** Passageiro autenticado,  
 **eu quero** solicitar uma vaga em uma carona aberta, acompanhar o aceite do motorista, obter o PIN de confirmação de embarque e validar meu início de viagem,  
@@ -161,7 +161,7 @@
 
 ---
 
-### US06 — Gerenciamento de Rotas Salvas com Autopreenchimento via CEP e Sugestões de Match · `Must Have` · `M` · Status: `Draft`
+### US06 — Gerenciamento de Rotas Salvas com Autopreenchimento via CEP e Sugestões de Match · `Must Have` · `M` · Status: `Ready`
 
 **Como** Usuário autenticado (Passageiro ou Motorista),  
 **eu quero** cadastrar minhas rotas frequentes utilizando o CEP para preenchimento automático do endereço e visualizar sugestões de caronas compatíveis,  
@@ -203,11 +203,11 @@
 
 | ID | Regra |
 | :-- | :---- |
-| **RN01** | **Dados Cadastrais Obrigatórios:** Nome completo, e-mail válido, senha com no mínimo 8 caracteres, telefone e gênero são de preenchimento obrigatório no cadastro. |
+| **RN01** | **Dados Cadastrais Obrigatórios:** Nome completo, e-mail válido, senha com no mínimo 8 caracteres, telefone são de preenchimento obrigatório no cadastro. |
 | **RN02** | **Unicidade de E-mail:** Não é permitido o cadastro de contas duplicadas utilizando o mesmo endereço de e-mail. |
 | **RN03** | **Segurança de Credenciais:** Mensagens de erro no login devem ser opacas ("E-mail ou senha inválidos"), sem indicar qual campo específico divergiu. |
 | **RN04** | **Habilitação de Motorista:** A publicação de caronas exige ao menos um veículo cadastrado com marca/modelo, cor e placa em formato válido (Mercosul ou padrão antigo). |
-| **RN05** | **Integridade de Veículo:** Não é permitida a exclusão ou alteração de placa de veículo vinculado a caronas ativas ("Aberta" ou "Em Andamento"). |
+| **RN05** | **Integridade de Veículo:** Não é permitida a exclusão ou alteração de placa de veículo vinculado a caronas ativas ("Aberta" ou "Em Andamento"). 
 | **RN06** | **Temporalidade da Carona:** A data e o horário de partida da carona devem ser estritamente futuros no momento da criação. |
 | **RN07** | **Capacidade de Vagas:** Toda oferta de carona deve disponibilizar no mínimo 1 e no máximo 6 vagas para passageiros. |
 | **RN08** | **Modo Elas por Elas:** A ativação, visualização e reserva em caronas da modalidade "Modo Elas por Elas" são restritas exclusivamente a usuárias com gênero feminino cadastrado. |
@@ -220,7 +220,7 @@
 | **RN15** | **Estorno de Vagas:** O cancelamento de reserva pelo passageiro antes do horário de partida estorna automaticamente +1 vaga disponível na carona e notifica o motorista. |
 | **RN16** | **Formato do CEP:** O CEP informado para autopreenchimento de endereço de rotas salvas deve conter exatamente 8 dígitos numéricos. |
 | **RN17** | **Resiliência de API Externa:** Falha ou indisponibilidade da API do ViaCEP não impede o fluxo de cadastro de rota, liberando a digitação manual dos campos de endereço. |
-| **RN18** | **Obrigatoriedade de Nota:** A avaliação pós-viagem exige a seleção de 1 a 5 estrelas; o campo de comentário é opcional. |
+| **RN18** | **Configuração de Nota:** A avaliação pós-viagem é configurável, permitindo que motorista e passageiro escolham atribuir ou não nota de 1 a 5 estrelas ao outro perfil, e comentários facultativos. |
 | **RN19** | **Unicidade e Momento de Avaliação:** Cada participante pode avaliar a contraparte apenas uma vez por viagem e estritamente após o status da carona ser "Concluída". |
 | **RN20** | **Atualização da Reputação:** A nota média de avaliação do perfil é recalculada e atualizada automaticamente a cada nova avaliação concluída. |
 
@@ -235,7 +235,7 @@
 - **Rastreamento de rota em tempo real via GPS contínuo (estilo Uber/Waze):** A validação de encontro e início é garantida de forma segura e pontual pelo Ponto de Encontro e Código PIN de 4 dígitos, sem sobrecarga de bateria e telemetria contínua.
 - **Chat interno em tempo real via WebSockets:** A comunicação direta entre as partes é liberada pós-aceite mútuo através de dados de contato (telefone/WhatsApp), simplificando a arquitetura sem perda de valor.
 - **Integração com sistemas acadêmicos institucionais da UTFPR (SSO/Portal do Aluno):** A autenticação é autônoma via plataforma, evitando bloqueios por dependência de APIs restritas da universidade.
-- **Algoritmos de roteirização geográfica curva a curva:** A correspondência de trajetos baseia-se em bairros, cidades e pontos de interesse (campi da UTFPR) cruzados com horários de saída.
+- **Algoritmos de roteirização geográfica curva a curva:** A correspondência de trajetos baseia-se em bairros, cidades e pontos de interesse (campus da UTFPR) cruzados com horários de saída.
 
 ---
 
