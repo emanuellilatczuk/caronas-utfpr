@@ -14,7 +14,7 @@
 
 **O problema:** Estudantes e servidores (professores e colaboradores) da UTFPR enfrentam inflexibilidade de horários, linhas lotadas e longas esperas no transporte público local, somados ao alto custo de combustível para deslocamentos individuais diários. Soma-se a isso a insegurança no trajeto a pé até os pontos de ônibus em horários desfavoráveis (especialmente no período noturno), gerando receio e acentuada vulnerabilidade para o público feminino.
 
-**A solução:** Uma plataforma de caronas colaborativas que conecta motoristas e passageiros da comunidade acadêmica e externa que compartilham trajetos e horários semelhantes (ex.: Casa ↔ UTFPR). O aplicativo permite o salvamento de rotas recorrentes com sugestões de trajetos compatíveis (dispensando a busca manual diária), mantém confirmação e aceite mútuo entre as partes, e introduz camadas reforçadas de segurança, destacando-se o Modo Elas por Elas (viagens exclusivas entre mulheres) e validação de embarque presencial via código PIN.
+**A solução:** Uma plataforma de caronas colaborativas que conecta motoristas e passageiros da comunidade acadêmica que compartilham trajetos e horários semelhantes (ex.: Casa ↔ UTFPR). O aplicativo permite o salvamento de rotas recorrentes com sugestões de trajetos compatíveis (dispensando a busca manual diária), mantém confirmação e aceite mútuo entre as partes, e introduz camadas reforçadas de segurança, destacando-se o Modo Elas por Elas (viagens exclusivas entre mulheres) e validação de embarque presencial via código PIN.
 
 **Como saberemos que deu certo:** Esvaziamento visível e mensurável dos pontos de ônibus nos horários críticos da noite (saída das 22h30), com a redução da aglomeração de alunas, alunos e servidoras expostos na rua à espera de linhas escassas ou atrasadas. Os usuários deixam o campus já com o deslocamento combinado antecipadamente via Rotas Salvas, realizando o embarque em pontos de encontro seguros dentro ou no entorno imediato da universidade.
 
@@ -100,25 +100,25 @@
 
 ---
 
-### US03 — Publicação e Gerenciamento de Ofertas de Carona · `Must Have` · `M` · Status: `Draft`
+### US03 — Publicação e Gerenciamento de Ofertas de Carona · `Must Have` · `M` · Status: `Ready`
 
 **Como** Motorista autenticado,  
-**eu quero** criar, listar e cancelar ofertas de carona informando origem, destino, ponto de encontro, data, horário, número de vagas disponíveis, veículo e a opção do Modo Elas por Elas,  
-**para que** passageiros com rotas compatíveis possam visualizar e solicitar um assento no meu veículo.
+**eu quero** criar, listar, gerenciar solicitações e cancelar ofertas de carona informando origem, destino, pontos de encontro, data, horário, vagas disponíveis e a opção do Modo Elas por Elas,  
+**para que** eu possa disponibilizar assentos gratuitos para passageiros com rotas compatíveis na comunidade acadêmica.
 
 **Critérios de aceite:**
 
-- [ ] **Dado** que sou um Motorista autenticado com veículo cadastrado, **quando** preencho o formulário com origem, destino, ponto de encontro, data/hora futura, vagas (1 a 6) e seleciono um veículo válido, **então** a carona é criada com status "Aberta", listada em "Minhas Ofertas" e exibida nas buscas.
+- [ ] **Dado** que sou um Motorista autenticado com veículo cadastrado, **quando** preencho o formulário com origem, destino, ponto de encontro, data/hora futura, vagas (1 a 6) e seleciono um veículo válido, **então** a carona é criada com status "Aberta", listada em "Minhas Ofertas" e disponibilizada nas buscas.
+- [ ] **Dado** que estou preenchendo o formulário de publicação de caronas, **quando** visualizo as opções de criação, **então** o sistema não exibe nenhum campo para inserção de valores, tarifas ou formas de pagamento, exibindo o aviso "Carona Colaborativa 100% Gratuita — O PassAí não realiza intermediação financeira" para confirmar a publicação.
 - [ ] **Dado** que sou uma Motorista do sexo feminino cadastrando uma carona, **quando** marco a opção "Modo Elas por Elas", **então** a carona é criada com restrição ativa e fica visível e reservável exclusivamente para passageiras do sexo feminino.
 - [ ] **Dado** que possuo caronas criadas, **quando** acesso a aba "Minhas Ofertas", **então** o sistema exibe minhas caronas organizadas por status (Abertas, Em Andamento, Concluídas e Canceladas), detalhando os passageiros confirmados.
-- [ ] **Dado** que criei uma carona sem solicitações ou reservas confirmadas, **quando** seleciono a opção "Cancelar Carona", **então** o status muda para "Cancelada" e a carona deixa de aparecer nas buscas.
-- [ ] **Dado** que possuo carona agendada com passageiros confirmados, **quando** confirmo o cancelamento após o aviso de impacto, **então** o status muda para "Cancelada" e uma notificação automática é enviada a todos os passageiros afetados.
+- [ ] **Dado** que criei uma carona sem solicitações ou reservas confirmadas, **quando** seleciono a opção "Cancelar Carona", **então** o status muda imediatamente para "Cancelada" e a carona deixa de aparecer nas buscas.
+- [ ] **Dado** que possuo carona agendada com passageiros confirmados, **quando** confirmo o cancelamento após o aviso de impacto do sistema, **então** o status muda para "Cancelada" e uma notificação automática é enviada a todos os passageiros afetados.
 - [ ] **Dado** que tento publicar carona com data ou horário anterior ao momento atual, **quando** submeto o formulário, **então** o sistema bloqueia o envio com a mensagem "A data e o horário da carona devem ser futuros".
 - [ ] **Dado** que tento publicar carona informando 0 vagas ou mais de 6 vagas, **quando** tento submeter, **então** o sistema exibe "O número de vagas deve ser de no mínimo 1 e no máximo 6".
-- [ ] **Dado** que sou um Motorista do sexo masculino, **quando** tento marcar a opção "Modo Elas por Elas", **então** o sistema desabilita o campo e exibe "O Modo Elas por Elas é exclusivo para motoristas e passageiras do sexo feminino".
 - [ ] **Dado** que tento criar carona sem selecionar um veículo da lista, **quando** tento publicar, **então** o sistema bloqueia o envio exigindo a seleção de um veículo cadastrado.
 
-**Regras relacionadas:** RN06, RN07, RN08, RN09
+**Regras relacionadas:** RN04, RN06, RN07, RN08, RN09, RN21
 
 ---
 
@@ -220,9 +220,10 @@
 | **RN15** | **Estorno de Vagas:** O cancelamento de reserva pelo passageiro antes do horário de partida estorna automaticamente +1 vaga disponível na carona e notifica o motorista. |
 | **RN16** | **Formato do CEP:** O CEP informado para autopreenchimento de endereço de rotas salvas deve conter exatamente 8 dígitos numéricos. |
 | **RN17** | **Resiliência de API Externa:** Falha ou indisponibilidade da API do ViaCEP não impede o fluxo de cadastro de rota, liberando a digitação manual dos campos de endereço. |
-| **RN18** | **Configuração de Nota:** A avaliação pós-viagem é configurável, permitindo que motorista e passageiro escolham atribuir ou não nota de 1 a 5 estrelas ao outro perfil, e comentários facultativos. |
+| **RN18** | **Avaliação Opcional:** O preenchimento da avaliação entre motoristas e passageiros pós-viagem não é obrigatório para navegação no app. No entanto, ao optar por submeter uma avaliação, é obrigatória a seleção de uma nota de 1 a 5 estrelas, sendo o comentário de texto facultativo. |
 | **RN19** | **Unicidade e Momento de Avaliação:** Cada participante pode avaliar a contraparte apenas uma vez por viagem e estritamente após o status da carona ser "Concluída". |
 | **RN20** | **Atualização da Reputação:** A nota média de avaliação do perfil é recalculada e atualizada automaticamente a cada nova avaliação concluída. |
+| **RN21** | **Gratuidade do Serviço:** É vedada qualquer funcionalidade de estipulação de preços, cobrança de passagens ou intermediador financeiro no aplicativo. Qualquer contribuição financeira eventual entre os ocupantes ocorre por deliberação privada e externa à plataforma, sem qualquer responsabilidade ou controle por parte do sistema. |
 
 ---
 
