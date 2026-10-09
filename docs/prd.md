@@ -1,8 +1,8 @@
 # 📄 Product Requirements Document (PRD)
 
 **Projeto:** PassAí  
-**Versão:** 1.0.0  
-**Última atualização:** 2026-09-14  
+**Versão:** 1.1.0  
+**Última atualização:** 2026-10-09  
 
 > 🤖 **Este documento é a fonte da verdade sobre o QUE o produto faz.** Regra de
 > negócio que não estiver aqui não existe — nem para a equipe, nem para a IA.
@@ -156,8 +156,10 @@
 - [ ] **Dado** que o Motorista está na validação presencial, **quando** digita um PIN divergente do gerado para aquele passageiro, **então** o sistema exibe "PIN inválido. Verifique o código com o passageiro" e impede o início da viagem.
 - [ ] **Dado** que possuo reserva confirmada com PIN gerado, **quando** cancelo a reserva antes do horário de saída, **então** minha reserva transita para "Cancelada", a vaga do veículo é automaticamente incrementada (+1 vaga) e o Motorista é notificado.
 - [ ] **Dado** que visualizo uma carona com apenas 1 vaga restante, **quando** envio a solicitação mas outro usuário concluiu a confirmação no mesmo instante, **então** o sistema bloqueia a ação com a mensagem "Esta carona não possui mais vagas disponíveis".
+- [ ] **Dado** que enviei uma solicitação de carona que está pendente de resposta do Motorista, **quando** decido desistir da espera, **então** o sistema permite cancelar a solicitação com 1 clique a qualquer momento antes do aceite, liberando-me imediatamente para buscar ou solicitar outra vaga.
+- [ ] **Dado** que uma solicitação de carona foi enviada, **quando** o prazo dinâmico de resposta proporcional expira sem manifestação do Motorista (24h para viagens em >48h; 6h para viagens entre 24h e 48h; 1h para viagens em <12h; 15min para viagens em <2h), **então** o sistema expira automaticamente a solicitação ("Expirada"), notifica o Passageiro e o libera para novas solicitações.
 
-**Regras relacionadas:** RN12, RN13, RN14, RN15
+**Regras relacionadas:** RN12, RN13, RN14, RN15, RN22
 
 ---
 
@@ -224,6 +226,7 @@
 | **RN19** | **Unicidade e Momento de Avaliação:** Cada participante pode avaliar a contraparte apenas uma vez por viagem e estritamente após o status da carona ser "Concluída". |
 | **RN20** | **Atualização da Reputação:** A nota média de avaliação do perfil é recalculada e atualizada automaticamente a cada nova avaliação concluída. |
 | **RN21** | **Gratuidade do Serviço:** É vedada qualquer funcionalidade de estipulação de preços, cobrança de passagens ou intermediador financeiro no aplicativo. Qualquer contribuição financeira eventual entre os ocupantes ocorre por deliberação privada e externa à plataforma, sem qualquer responsabilidade ou controle por parte do sistema. |
+| **RN22** | **Prazo Dinâmico de Resposta e Expiração:** Solicitações de carona possuem tempo limite para resposta pelo motorista proporcional à proximidade da partida: carona em >48h (limite de 24h); entre 24h e 48h (limite de 6h); em <12h (limite de 1h); e em <2h (limite de 15min). O motorista é notificado com o tempo restante para resposta. Caso o prazo expire sem aceite ou recusa, a solicitação caduca automaticamente ("Expirada"), notificando o passageiro e desimpedindo-o. O passageiro tem a garantia de cancelamento livre da solicitação pendente a qualquer momento antes do aceite com 1 clique. |
 
 ---
 
@@ -257,3 +260,4 @@
 | Data | Versão | O que mudou |
 | :--- | :----- | :---------- |
 | 2026-09-14 | 1.0.0 | Versão inicial completa produzida via `/utf-prd` |
+| 2026-10-09 | 1.1.0 | Registro das decisões visuais e regras do `/utf-design`: RN22 (Prazo Dinâmico e Expiração) e critérios de abandono na US05 |
