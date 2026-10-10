@@ -10,7 +10,7 @@ O PassAí é uma plataforma de caronas colaborativas desenvolvida para conectar 
 ## Documentação Técnica
 
 - [PRD](docs/prd.md) · [Architecture/SSD](docs/architecture.md) · [Checklist](docs/checklist.md)
-- **Protótipo (Stitch/Figma):** [link público]
+- **Protótipo (Stitch):** [Link do Protótipo no Stitch](https://stitch.google.com/preview/4331246840233990078?node-id=750e48e00d42490b9fc2ed021f95294b)
 
 ## Modelagem de Dados (Diagrama ER)
 
@@ -21,7 +21,7 @@ erDiagram
 ## Stack
 
 - **Frontend:** Angular [versão]
-- **Framework CSS:** [Tailwind, PrimeNG, …]
+- **Framework CSS:** Tailwind CSS
 - **Dados:** json-server (MVP/E2) → [Supabase, PocketBase, …] (E3)
 - **Bibliotecas:** [lista]
 
