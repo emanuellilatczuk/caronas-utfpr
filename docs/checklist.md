@@ -51,8 +51,8 @@
 
 ## RA1 — Design e Experiência do Usuário (UI/UX) com IA
 
-- [ ] **ID1:** Desenvolver protótipos navegáveis (ex: gerados via Stitch e refinados no Figma) que demonstram compreensão das diretrizes de usabilidade, com link público disponibilizado no repositório.
-- [ ] **ID2:** Projetar interfaces responsivas com a abordagem Mobile-First, garantindo que o layout se adapte perfeitamente a diferentes resoluções (celulares, tablets e desktops).
+- [x] **ID1:** Desenvolver protótipos navegáveis (ex: gerados via Stitch e refinados no Figma) que demonstram compreensão das diretrizes de usabilidade, com link público disponibilizado no repositório.
+- [x] **ID2:** Projetar interfaces responsivas com a abordagem Mobile-First, garantindo que o layout se adapte perfeitamente a diferentes resoluções (celulares, tablets e desktops).
 - [ ] **ID3:** Projetar a experiência de aplicativo nativo (PWA), configurando o manifest.webmanifest (ícones, cores de tema, splash screen e modo de exibição standalone) e prevendo o comportamento visual da interface em estados offline.
 
 ## RA2 — Componentização e UI Declarativa Moderna
@@ -94,15 +94,15 @@
 
 ## RA7 — Engenharia de Software, Versionamento e DevOps
 
-- [ ] **ID26:** Criar e gerenciar um repositório no GitHub utilizando a estrutura ágil do Gitflow (branches main e develop).
+- [x] **ID26:** Criar e gerenciar um repositório no GitHub utilizando a estrutura ágil do Gitflow (branches main e develop).
 - [ ] **ID27:** Colaborar ativamente realizando integrações via Pull Requests e resolução de conflitos.
 - [ ] **ID28:** Planejar, executar o processo de build moderno e realizar o deploy automatizado da aplicação em ambiente de produção (ex: Render, Vercel).
 
 ## RA8 — Engenharia de Software Assistida por IA (SDD e Orquestração)
 
-- [ ] **ID29 — Escopo e Gestão Ágil:** Utilizar IA Generativa para a ideação e redação de User Stories. Cadastrar e gerenciar essas histórias como Issues em um Kanban no GitHub Projects.
-- [ ] **ID30 — Fundações (PRD):** Apoiar-se na IA para estruturar o Documento de Requisitos do Produto (prd.md).
-- [ ] **ID31 — Especificação Técnica:** A partir do PRD, instruir a IA a gerar um documento de especificação rigoroso (ssd.md — aqui, `docs/architecture.md`), detalhando explicitamente a arquitetura dos componentes Standalone e Services antes da geração do código fonte.
+- [x] **ID29 — Escopo e Gestão Ágil:** Utilizar IA Generativa para a ideação e redação de User Stories. Cadastrar e gerenciar essas histórias como Issues em um Kanban no GitHub Projects.
+- [x] **ID30 — Fundações (PRD):** Apoiar-se na IA para estruturar o Documento de Requisitos do Produto (prd.md).
+- [x] **ID31 — Especificação Técnica:** A partir do PRD, instruir a IA a gerar um documento de especificação rigoroso (ssd.md — aqui, `docs/architecture.md`), detalhando explicitamente a arquitetura dos componentes Standalone e Services antes da geração do código fonte.
 - [ ] **ID32 — Orquestração (MCP e Skills):** Configurar a IDE (ex: Antigravity) ativando Servidores MCP (Model Context Protocol, ex: Figma, Supabase) e utilizando Skills de Angular 20+ para que o Agente gere o código com o contexto exato do projeto.
 - [ ] **ID33 — Validação e Testes (TDD):** Atuar como revisor técnico da IA. Orientar o agente a gerar testes unitários (.spec.ts) focados nas regras de negócio para validar rigorosamente a implementação gerada.
 

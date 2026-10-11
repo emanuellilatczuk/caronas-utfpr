@@ -4,35 +4,28 @@ O PassAí é uma plataforma de caronas colaborativas desenvolvida para conectar 
 
 ## Autores
 
-- Emanuelli Latczuk - emanuellilatczuk 
-- Leonardo Correa Padilha - leonardocpadilha 
+- Emanuelli Fiuza Latczuk - [emanuellilatczu](https://github.com/emanuellilatczuk)
+- Leonardo Correa Padilha - [leonardocpadilha](https://github.com/leonardocpadilha)
 
 ## Documentação Técnica
 
 - [PRD](docs/prd.md) · [Architecture/SSD](docs/architecture.md) · [Checklist](docs/checklist.md)
-- **Protótipo (Stitch):** [Link do Protótipo no Stitch](https://stitch.google.com/preview/4331246840233990078?node-id=750e48e00d42490b9fc2ed021f95294b)
-
-## Modelagem de Dados (Diagrama ER)
-
-```mermaid
-erDiagram
-```
+- **Protótipo (Stitch):** [Link do Protótipo no Stitch](https://stitch.google.com/preview/7057279136565611126?node-id=069440b5e4e9464a9fedad673abb25bf)
 
 ## Stack
 
-- **Frontend:** Angular [versão]
+- **Frontend:** Angular
 - **Framework CSS:** Tailwind CSS
-- **Dados:** json-server (MVP/E2) → [Supabase, PocketBase, …] (E3)
-- **Bibliotecas:** [lista]
+- **Dados:** json-server (MVP/E2) → Supabase
 
 ## Em produção
 
-- **Aplicação:** [URL no Vercel/Render]
+A partir da entrega 2.
 
 ## Instruções de Execução
 
-[Passos para configurar e rodar localmente — gerado/refinado no `/utf-setup`.]
+A partir da entrega 2.
 
 ## Telas da Aplicação
 
-[Imagens de algumas telas.]
+A partir da entrega 2.
