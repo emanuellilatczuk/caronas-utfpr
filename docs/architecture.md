@@ -197,7 +197,6 @@ erDiagram
         uuid id PK
         string name
         string email UK
-        string phone
         string gender
         string role
         string avatar_url
@@ -288,7 +287,7 @@ erDiagram
 | `rides` | `/rides/new` (ofertar carona) | `authGuard`, `driverGuard` | `RideService` | US03 |
 | `rides` | `/rides/:id` (detalhes da carona) | `authGuard` | `RideService`, `RideRequestService` | US04, US05 |
 | `vehicles` | `/vehicles` (gestão de veículos) | `authGuard` | `VehicleService` | US02 |
-| `saved-routes` | `/saved-routes` (rotas favoritas) | `authGuard` | `SavedRouteService` | US06 |
+| `saved-routes` | `/saved-routes` (rotas salvas) | `authGuard` | `SavedRouteService` | US06 |
 | `profile` | `/profile` (dados do usuário) | `authGuard` | `UserService` | US01 |
 
 ---

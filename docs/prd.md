@@ -30,7 +30,7 @@
 | **Motorista** | Usuário autenticado que possui veículo cadastrado e disponibiliza assentos livres em um determinado trajeto. | **Passageiro** (que apenas busca e ocupa vaga) ou visitante sem veículo. |
 | **Passageiro** | Usuário autenticado que busca ou solicita assento em uma carona para se deslocar. | **Motorista** (que conduz o veículo e oferta a carona). |
 | **Rota Salva** | Cadastro estático da preferência habitual de deslocamento (ex.: Casa ↔ UTFPR às 22h30), utilizado para alimentar o motor de sugestões do app. | **Carona (Viagem)**: a rota salva não gera uma viagem ativa nem garante reserva; é apenas uma agenda de interesse para matches. |
-| **Carona** | Instância concreta de um deslocamento em data e horário específicos, com quantidade definida de vagas oferecidas pelo Motorista e status próprio (Aberta, Em Andamento, Concluída, Cancelada). | **Rota Salva**: a carona é o evento real com hora marcada, vagas contadas e status formal de execução. |
+| **Carona** | Instância concreta de um deslocamento em data e horário específicos, com quantidade definida de vagas oferecidas pelo Motorista e status próprio (Aberta, Concluída, Cancelada). | **Rota Salva**: a carona é o evento real com hora marcada, vagas contadas e status formal de execução. |
 | **Solicitação de Carona** | Intenção expressa por um Passageiro de ocupar uma vaga em uma Carona específica disponibilizada por um Motorista. | **Confirmação/Reserva Garantida**: a solicitação é um estado pendente que depende de aceite explícito para se tornar reserva efetiva. |
 | **Modo Elas por Elas** | Filtro de segurança aplicável a ofertas e solicitações que restringe a visibilidade e o aceite de caronas exclusivamente a usuárias do sexo feminino (motoristas e passageiras). | **Bloqueio Permanente de Perfil**: é uma modalidade de viagem configurável, permitindo que a usuária filtre suas viagens de forma restrita quando desejar. |
 | **Código PIN de Confirmação** | Código numérico temporário de 4 dígitos gerado no celular do Passageiro e informado presencialmente ao Motorista no embarque para validar e iniciar formalmente a viagem. | **Senha da Conta**: é um token temporário de uso único (OTP), exclusivo para aquela viagem específica. |
@@ -46,7 +46,7 @@
 | Ator | Quem é | Pode | Não pode |
 | :--- | :----- | :--- | :------- |
 | **Visitante** | Usuário não autenticado que acessa a landing page ou tela de boas-vindas. | • Visualizar telas de apresentação, boas-vindas e login.<br>• Criar conta e solicitar cadastro.<br>• Consultar Termos de Uso e Política de Privacidade. | • Visualizar rotas, pontos de encontro, horários ou dados de usuários.<br>• Buscar caronas ou criar ofertas.<br>• Acessar qualquer rota interna protegida ou endpoint privado. |
-| **Passageiro** | Usuário autenticado e ativo na comunidade do PassAí. | • Criar, listar, editar e excluir suas Rotas Salvas.<br>• Receber e visualizar sugestões de caronas compatíveis.<br>• Enviar solicitações de carona e negociar Pontos de Encontro.<br>• Ativar o Modo Elas por Elas (se perfil feminino elegível).<br>• Visualizar o Código PIN de Confirmação da viagem em seu app.<br>• Avaliar motoristas e relatar incidentes ou denúncias. | • Publicar ou ofertar caronas sem veículo cadastrado e válido.<br>• Visualizar contatos e endereço exato do motorista antes do aceite mútuo.<br>• Acessar ou interagir com caronas do Modo Elas por Elas se não for do sexo feminino.<br>• Alterar o status da viagem no app para "Em Andamento" ou "Finalizada". |
+| **Passageiro** | Usuário autenticado e ativo na comunidade do PassAí. | • Criar, listar, editar e excluir suas Rotas Salvas.<br>• Receber e visualizar sugestões de caronas compatíveis.<br>• Enviar solicitações de carona e negociar Pontos de Encontro.<br>• Ativar o Modo Elas por Elas (se perfil feminino elegível).<br>• Visualizar o Código PIN de Confirmação da viagem em seu app.<br>• Avaliar motoristas e relatar incidentes ou denúncias. | • Publicar ou ofertar caronas sem veículo cadastrado e válido.<br>• Visualizar contatos e endereço exato do motorista antes do aceite mútuo.<br>• Acessar ou interagir com caronas do Modo Elas por Elas se não for do sexo feminino.<br>• Alterar o status da viagem no app para "Concluída" ou "Cancelada". |
 | **Motorista** | Usuário autenticado com veículo cadastrado (mantém também todas as permissões de passageiro). | • Todas as ações permitidas ao Passageiro.<br>• Cadastrar, listar, editar e remover seus veículos.<br>• Publicar ofertas de carona (avulsas ou vinculadas às Rotas Salvas).<br>• Aceitar ou recusar solicitações de reserva feitas por passageiros.<br>• Inserir o PIN do passageiro no embarque para iniciar a viagem.<br>• Finalizar a carona e avaliar os passageiros ao término. | • Publicar caronas sem selecionar veículo válido.<br>• Alterar rota principal ou horário após ter reservas aceitas e confirmadas.<br>• Iniciar a viagem no aplicativo sem validar o PIN de 4 dígitos do passageiro.<br>• Visualizar perfis e caronas do Modo Elas por Elas se for do sexo masculino. |
 | **Administrador** | Gestor da plataforma, suporte, moderação e auditoria de segurança. | • Validar e gerenciar cadastros de veículos e motoristas.<br>• Visualizar relatórios de denúncias, alertas e chamados de suporte.<br>• Suspender ou banir usuários que descumprirem os Termos de Uso.<br>• Monitorar métricas gerais e indicadores de desempenho do sistema. | • Ofertar ou solicitar caronas utilizando a conta administrativa.<br>• Alterar históricos de viagens e notas sem registro formal de auditoria.<br>• Visualizar senhas ou dados sensíveis criptografados dos usuários. |
 
@@ -83,18 +83,18 @@
 ### US02 — Gerenciamento de Veículos do Motorista · `Must Have` · `M` · Status: `Ready`
 
 **Como** Usuário autenticado,  
-**eu quero** cadastrar, listar, editar e remover meus veículos (informando marca/modelo, cor e placa),  
+**eu quero** cadastrar, listar, editar e remover meus veículos (informando marca e modelo, cor, placa e vagas disponíveis),  
 **para que** eu possa me habilitar como Motorista e vincular meu veículo às ofertas de carona na plataforma.
 
 **Critérios de aceite:**
 
-- [ ] **Dado** que sou um Usuário autenticado na tela "Meus Veículos", **quando** clico em "Adicionar Veículo", preencho marca/modelo, cor e placa válida e confirmo, **então** o veículo é salvo com sucesso, passa a ser exibido na lista e meu perfil fica apto a ofertar caronas.
-- [ ] **Dado** que possuo um ou mais veículos salvos, **quando** acesso a aba "Meus Veículos", **então** o sistema exibe a lista completa de veículos com marca/modelo, cor e placa.
+- [ ] **Dado** que sou um Usuário autenticado na tela "Perfil", **quando** clico em "Cadastrar Veículo", preencho marca e modelo, cor, placa válida, vagas disponíveis e confirmo, **então** o veículo é salvo com sucesso, passa a ser exibido na lista e meu perfil fica apto a ofertar caronas.
+- [ ] **Dado** que possuo um ou mais veículos salvos, **quando** acesso a aba "Meus Veículos", **então** o sistema exibe a lista completa de veículos com marca e modelo, cor, placa e vagas disponíveis.
 - [ ] **Dado** que estou na lista de veículos cadastrados, **quando** altero os dados de um veículo e salvo, **então** os dados são atualizados no banco de dados e refletidos imediatamente na listagem.
-- [ ] **Dado** que seleciono remover um veículo que não possui caronas agendadas ou em andamento, **quando** confirmo a exclusão, **então** o veículo é removido permanentemente da minha lista.
+- [ ] **Dado** que seleciono remover um veículo que não possui caronas agendadas ou abertas, **quando** confirmo a exclusão, **então** o veículo é removido permanentemente da minha lista.
 - [ ] **Dado** que estou no cadastro de veículo, **quando** insiro uma placa fora dos padrões válidos (padrão antigo ou Mercosul), **então** o sistema bloqueia o envio e exibe a mensagem "Formato de placa inválido".
 - [ ] **Dado** que estou cadastrando ou editando um veículo, **quando** tento salvar omitindo campos obrigatórios, **então** o sistema impede o salvamento e destaca os campos não preenchidos.
-- [ ] **Dado** que o veículo está vinculado a carona agendada ou em andamento, **quando** tento excluí-lo ou alterar sua placa, **então** o sistema bloqueia a ação com a mensagem "Não é possível alterar ou remover este veículo pois ele possui caronas agendadas. Cancele as caronas vinculadas antes de prosseguir".
+- [ ] **Dado** que o veículo está vinculado a carona agendada ou aberta, **quando** tento excluí-lo ou alterar sua placa, **então** o sistema bloqueia a ação com a mensagem "Não é possível alterar ou remover este veículo pois ele possui caronas agendadas. Cancele as caronas vinculadas antes de prosseguir".
 
 **Regras relacionadas:** RN04, RN05
 
@@ -108,10 +108,11 @@
 
 **Critérios de aceite:**
 
-- [ ] **Dado** que sou um Motorista autenticado com veículo cadastrado, **quando** preencho o formulário com origem, destino, ponto de encontro, data/hora futura, vagas (1 a 6) e seleciono um veículo válido, **então** a carona é criada com status "Aberta", listada em "Minhas Ofertas" e disponibilizada nas buscas.
-- [ ] **Dado** que estou preenchendo o formulário de publicação de caronas, **quando** visualizo as opções de criação, **então** o sistema não exibe nenhum campo para inserção de valores, tarifas ou formas de pagamento, exibindo o aviso "Carona Colaborativa 100% Gratuita — O PassAí não realiza intermediação financeira" para confirmar a publicação.
+- [ ] **Dado** que sou um Motorista autenticado com veículo cadastrado, **quando** preencho o formulário com origem, destino, ponto de encontro, data e hora futuras, vagas disponíveis (1 a 6) e seleciono um veículo válido, **então** a carona é criada com status "Aberta", listada na tela "Caronas" na tab "Como motorista" e disponibilizada nas buscas.
+- [ ] **Dado** que estou preenchendo o formulário de publicação de caronas, **quando** visualizo as opções de criação, **então** o sistema não exibe nenhum campo para inserção de valores, tarifas ou formas de pagamento para confirmar a publicação.
 - [ ] **Dado** que sou uma Motorista do sexo feminino cadastrando uma carona, **quando** marco a opção "Modo Elas por Elas", **então** a carona é criada com restrição ativa e fica visível e reservável exclusivamente para passageiras do sexo feminino.
-- [ ] **Dado** que possuo caronas criadas, **quando** acesso a aba "Minhas Ofertas", **então** o sistema exibe minhas caronas organizadas por status (Abertas, Em Andamento, Concluídas e Canceladas), detalhando os passageiros confirmados.
+- [ ] **Dado** que possuo caronas criadas, **quando** acesso a tela "Caronas" na tab "Como motorista", **então** o sistema exibe minhas caronas organizadas por status (Aberta, Concluídas, Canceladas) detalhando informações pertinentes a cada carona por seu status.
+- [ ] **Dado** que possuo caronas finalizadas ou canceladas, **quando** acesso o "Histórico de Caronas", **então** o sistema exibe a lista de caronas com status "Concluída" ou "Cancelada".
 - [ ] **Dado** que criei uma carona sem solicitações ou reservas confirmadas, **quando** seleciono a opção "Cancelar Carona", **então** o status muda imediatamente para "Cancelada" e a carona deixa de aparecer nas buscas.
 - [ ] **Dado** que possuo carona agendada com passageiros confirmados, **quando** confirmo o cancelamento após o aviso de impacto do sistema, **então** o status muda para "Cancelada" e uma notificação automática é enviada a todos os passageiros afetados.
 - [ ] **Dado** que tento publicar carona com data ou horário anterior ao momento atual, **quando** submeto o formulário, **então** o sistema bloqueia o envio com a mensagem "A data e o horário da carona devem ser futuros".
@@ -125,14 +126,13 @@
 ### US04 — Busca e Visualização de Caronas Disponíveis · `Must Have` · `M` · Status: `Ready`
 
 **Como** Passageiro autenticado,  
-**eu quero** pesquisar caronas por origem, destino ou campus da UTFPR, filtrando por data, horário e pelo Modo Elas por Elas,  
+**eu quero** pesquisar caronas por origem e destino, filtrando por data, horário e pelo Modo Elas por Elas,  
 **para que** eu possa visualizar os trajetos disponíveis, a quantidade de vagas e as avaliações do Motorista antes de solicitar uma vaga.
 
 **Critérios de aceite:**
 
-- [ ] **Dado** que sou um Passageiro na tela de busca, **quando** informo ponto de origem ou destino e seleciono a data, **então** o sistema lista as caronas abertas correspondentes, exibindo: foto/nome do motorista, nota de avaliação, modelo do veículo, horário de saída, ponto de encontro e total de vagas restantes.
+- [ ] **Dado** que sou um Passageiro na tela de busca, **quando** informo ponto de origem e destino e seleciono a data e horário **então** o sistema lista as caronas abertas correspondentes, exibindo: foto/nome do motorista, nota de avaliação, modelo do veículo e cor, horário de saída, ponto de encontro e total de vagas restantes.
 - [ ] **Dado** que sou uma Passageira do sexo feminino, **quando** ativo o filtro "Modo Elas por Elas", **então** a listagem exibe exclusivamente caronas publicadas por motoristas mulheres que habilitaram essa modalidade.
-- [ ] **Dado** que estou visualizando os resultados da busca, **quando** clico em uma das caronas listadas, **então** o sistema exibe a tela de detalhes com rota prevista, histórico de avaliações do motorista e ponto de encontro.
 - [ ] **Dado** que realizo pesquisa para data ou rota sem ofertas ativas, **quando** o sistema processa a busca, **então** é exibido um estado vazio amigável ("Nenhuma carona encontrada para esta rota/data") com atalho para cadastrar o trajeto em Rotas Salvas.
 - [ ] **Dado** que sou um usuário do gênero masculino, **quando** acesso a tela de busca, **então** o filtro "Modo Elas por Elas" não é exibido e as caronas restritas a essa modalidade são omitidas automaticamente dos resultados.
 - [ ] **Dado** que estou na busca, **quando** tento acionar a pesquisa sem informar ao menos uma origem, um destino ou a data, **então** o sistema destaca os campos necessários e solicita o preenchimento de ao menos um critério.
@@ -150,8 +150,8 @@
 **Critérios de aceite:**
 
 - [ ] **Dado** que sou um Passageiro em uma carona com vagas disponíveis, **quando** envio uma solicitação informando o ponto de encontro desejado e o Motorista a aceita, **então** a reserva muda para "Confirmada", as vagas disponíveis diminuem em 1 e um PIN exclusivo de 4 dígitos é gerado no meu aplicativo.
-- [ ] **Dado** que minha reserva está confirmada e encontro o Motorista no local combinado, **quando** informo meu PIN de 4 dígitos e o Motorista o digita no app dele, **então** o sistema valida o código, confirma o embarque presencial e transita a viagem para "Em Andamento".
-- [ ] **Dado** que a carona está "Em Andamento" e o veículo atinge o destino final, **quando** o Motorista aciona "Finalizar Carona", **então** a viagem transita para "Concluída" e a interface libera a tela de avaliação mútua para ambos.
+- [ ] **Dado** que minha reserva está confirmada e encontro o Motorista no local combinado, **quando** informo meu PIN de 4 dígitos e o Motorista o digita no app dele, **então** o sistema valida o código e confirma o embarque presencial.
+- [ ] **Dado** que a carona está "Aberta" e o veículo atinge o destino final, **quando** o Motorista aciona "Finalizar Carona", **então** a viagem transita para "Concluída" e a interface libera a tela de avaliação mútua para ambos.
 - [ ] **Dado** que enviei uma solicitação de carona, **quando** o Motorista recusa o pedido, **então** o status muda para "Recusada", a vaga permanece disponível para outros usuários e recebo uma notificação de não confirmação.
 - [ ] **Dado** que o Motorista está na validação presencial, **quando** digita um PIN divergente do gerado para aquele passageiro, **então** o sistema exibe "PIN inválido. Verifique o código com o passageiro" e impede o início da viagem.
 - [ ] **Dado** que possuo reserva confirmada com PIN gerado, **quando** cancelo a reserva antes do horário de saída, **então** minha reserva transita para "Cancelada", a vaga do veículo é automaticamente incrementada (+1 vaga) e o Motorista é notificado.
@@ -192,10 +192,10 @@
 
 - [ ] **Dado** que participei de uma carona que transitou para "Concluída", **quando** o sistema exibe a tela de avaliação pós-viagem, seleciono uma nota de 1 a 5 estrelas, digito um comentário opcional e envio, **então** a avaliação é registrada, vinculada à viagem e meu status de avaliação para essa carona passa a ser "Concluído".
 - [ ] **Dado** que recebi uma nova avaliação de 1 a 5 estrelas, **quando** ela é registrada no banco de dados, **então** o sistema recalcula e atualiza automaticamente a nota média exibida publicamente no meu perfil.
-- [ ] **Dado** que estou na aba "Histórico de Viagens", **quando** navego pela tela, **então** o sistema exibe a lista cronológica de todas as caronas das quais participei (como motorista ou passageiro), indicando data, horário, contraparte, status ("Concluída" ou "Cancelada") e nota atribuída/recebida.
+- [ ] **Dado** que estou na aba "Caronas", **quando** navego pela tela, **então** o sistema exibe a lista cronológica de todas as caronas das quais participei (como motorista ou passageiro), indicando data, horário, contraparte, status ("Concluída" ou "Cancelada").
 - [ ] **Dado** que estou na avaliação pós-viagem, **quando** tento confirmar o envio sem ter selecionado ao menos 1 estrela, **então** o sistema bloqueia o envio com "Por favor, selecione uma nota de 1 a 5 estrelas para prosseguir".
 - [ ] **Dado** que já submeti avaliação para uma carona concluída, **quando** tento acessar novamente o formulário daquela mesma viagem, **então** o sistema exibe "Você já avaliou esta carona" e oculta o formulário.
-- [ ] **Dado** que participei de carona com status "Aberta", "Em Andamento" ou "Cancelada", **quando** tento avaliar a viagem, **então** a ação é bloqueada com "Avaliações só podem ser realizadas após a conclusão formal da carona".
+- [ ] **Dado** que participei de carona com status "Aberta", **quando** tento avaliar a viagem, **então** a ação é bloqueada com "Avaliações só podem ser realizadas após a conclusão formal da carona".
 
 **Regras relacionadas:** RN18, RN19, RN20
 
@@ -205,20 +205,20 @@
 
 | ID | Regra |
 | :-- | :---- |
-| **RN01** | **Dados Cadastrais Obrigatórios:** Nome completo, e-mail válido, senha com no mínimo 8 caracteres, telefone são de preenchimento obrigatório no cadastro. |
+| **RN01** | **Dados Cadastrais Obrigatórios:** Nome completo, e-mail institucional válido, senha com no mínimo 8 caracteres e gênero são de preenchimento obrigatório no cadastro. |
 | **RN02** | **Unicidade de E-mail:** Não é permitido o cadastro de contas duplicadas utilizando o mesmo endereço de e-mail. |
 | **RN03** | **Segurança de Credenciais:** Mensagens de erro no login devem ser opacas ("E-mail ou senha inválidos"), sem indicar qual campo específico divergiu. |
-| **RN04** | **Habilitação de Motorista:** A publicação de caronas exige ao menos um veículo cadastrado com marca/modelo, cor e placa em formato válido (Mercosul ou padrão antigo). |
-| **RN05** | **Integridade de Veículo:** Não é permitida a exclusão ou alteração de placa de veículo vinculado a caronas ativas ("Aberta" ou "Em Andamento"). 
+| **RN04** | **Habilitação de Motorista:** A publicação de caronas exige ao menos um veículo cadastrado com marca e modelo, cor, placa em formato válido (Mercosul ou padrão antigo) e vagas disponíveis. |
+| **RN05** | **Integridade de Veículo:** Não é permitida a exclusão ou alteração de placa de veículo vinculado a caronas ativas. 
 | **RN06** | **Temporalidade da Carona:** A data e o horário de partida da carona devem ser estritamente futuros no momento da criação. |
 | **RN07** | **Capacidade de Vagas:** Toda oferta de carona deve disponibilizar no mínimo 1 e no máximo 6 vagas para passageiros. |
 | **RN08** | **Modo Elas por Elas:** A ativação, visualização e reserva em caronas da modalidade "Modo Elas por Elas" são restritas exclusivamente a usuárias com gênero feminino cadastrado. |
 | **RN09** | **Notificação por Cancelamento:** O cancelamento de carona com reservas confirmadas altera o status para "Cancelada" e dispara notificação automática a todos os passageiros afetados. |
-| **RN10** | **Parâmetros Mínimos de Busca:** A consulta por caronas exige o preenchimento de ao menos um critério de filtro (origem, destino ou data). |
+| **RN10** | **Parâmetros Mínimos de Busca:** A consulta por caronas exige o preenchimento de todos os critérios de filtro. |
 | **RN11** | **Privacidade Pré-Reserva:** Dados de contato direto e endereço exato de partida só são revelados após a confirmação mútua da reserva. |
 | **RN12** | **Controle de Vagas:** Cada reserva confirmada decrementa 1 vaga disponível da carona; atingindo 0 vagas, novas solicitações são bloqueadas. |
 | **RN13** | **Código PIN de Segurança:** Toda reserva confirmada gera um código PIN numérico temporário de 4 dígitos de uso único, visível apenas no app do passageiro. |
-| **RN14** | **Validação de Embarque:** O início formal da viagem pelo motorista ("Em Andamento") exige a digitação e validação presencial do PIN de 4 dígitos do passageiro. |
+| **RN14** | **Validação de Embarque:** O início formal da viagem pelo motorista exige a digitação e validação presencial do PIN de 4 dígitos do passageiro. |
 | **RN15** | **Estorno de Vagas:** O cancelamento de reserva pelo passageiro antes do horário de partida estorna automaticamente +1 vaga disponível na carona e notifica o motorista. |
 | **RN16** | **Formato do CEP:** O CEP informado para autopreenchimento de endereço de rotas salvas deve conter exatamente 8 dígitos numéricos. |
 | **RN17** | **Resiliência de API Externa:** Falha ou indisponibilidade da API do ViaCEP não impede o fluxo de cadastro de rota, liberando a digitação manual dos campos de endereço. |
