@@ -1,8 +1,8 @@
 # 🛠️ Architecture / SSD
 
 **Projeto:** PassAí — Caronas Universitárias UTFPR  
-**Versão:** 1.0.0  
-**Última atualização:** 2026-10-10  
+**Versão:** 1.1.0  
+**Última atualização:** 2026-10-29  
 
 > 🤖 **O `prd.md` responde _o quê_ o produto faz. Este responde _onde as coisas moram e como se chamam_.** Detalhe de tela — contrato específico de um formulário, máquina de estados interna de uma tela — **não** se decide aqui: isso é trabalho da spec de cada história.  
 > (No texto oficial da disciplina este documento é o `ssd.md` — ID31.)  
@@ -21,7 +21,7 @@
 | Agentes (subagentes) | `.agents/agents/` (cascas em `.claude/`, `.cursor/`, `.opencode/`) | Implementador, revisores de código e conformidade, auditor final e tutor |
 | Ficha da disciplina | `docs/checklist.md` | Regras do projeto, Indicadores de Desempenho (IDs) e entregas |
 | Tokens & PWA | `docs/design-tokens.md` | Paleta de cores, tipografia, breakpoints e identidade PWA (IDs 2, 3, 5) |
-| Protótipo Stitch | [Protótipo no Stitch](https://stitch.google.com/preview/4331246840233990078?node-id=750e48e00d42490b9fc2ed021f95294b) | Telas, jornadas, componentes e hierarquia visual (ID1) |
+| Protótipo Stitch | [Protótipo no Stitch](https://stitch.google.com/preview/7057279136565611126?node-id=069440b5e4e9464a9fedad673abb25bf) | Telas, jornadas, componentes e hierarquia visual (ID1) |
 | Servidores MCP | Context7, GitHub MCP, Supabase MCP | Contexto de documentação atualizada, automação de issues/PRs e BaaS (ID32) |
 
 ---
@@ -73,6 +73,8 @@
 - **Integração com API Pública (ID20):** Service dedicado para consulta assíncrona GET à API pública do **ViaCEP** (`https://viacep.com.br/ws/{cep}/json/`) para preenchimento ágil de endereços e pontos de encontro.
 - **Ponte Assíncrono ↔ Reativo (ID25):** Uso das funções `toSignal()` e `toObservable()` do `@angular/core/rxjs-interop` para converter fluxos RxJS em Signals consumíveis nos templates de forma limpa e síncrona.
 - **Formulários Reativos (ID24):** Utilização estrita de `ReactiveFormsModule` e `NonNullableFormBuilder`, validações síncronas/assíncronas com mensagens de erro claras sob os inputs, e botão de submit desabilitado via `[disabled]="form.invalid"`.
+- **Notificações (RN09, RN15, RN22):** Toda notificação é um registro da entidade `notifications`, criado somente pelo `NotificationService` (`core/services/`) quando um Service de domínio executa o evento correspondente (ex.: ao cancelar uma carona, o `RideService` pede a notificação dos passageiros afetados). A central de notificações e o contador do cabeçalho leem um Signal desse service. Não há push, e-mail ou SMS (Fora de Escopo no PRD).
+- **Expiração de solicitações (RN22):** `ride_requests.expires_at` é calculado na criação da solicitação, a partir do tempo que falta para `rides.departure_time`, conforme as faixas da RN22 (os valores moram só no PRD). Como o json-server não tem agendador, no MVP o `RideRequestService` marca como `expired` (e notifica o passageiro) toda solicitação `pending` com `expires_at` vencido, no momento em que as solicitações são lidas. Na Entrega 3 essa verificação passa para uma rotina agendada no Supabase, sem mudar a interface pública do Service.
 
 ---
 
@@ -96,7 +98,10 @@
     │   │   │       ├── auth/
     │   │   │       ├── rides/
     │   │   │       ├── vehicles/
-    │   │   │       └── saved-routes/
+    │   │   │       ├── saved-routes/
+    |   |   |       ├── profile/
+    │   │   │       ├── reviews/  
+    │   │   │       └── notifications/
     │   │   ├── environments/   # Configurações de ambiente (desenvolvimento / produção)
     │   │   └── manifest.webmanifest
     │   └── package.json
@@ -137,7 +142,7 @@ A organização segue a divisão em três camadas modulares:
 
 1. **`core/`**: Serviços singleton de infraestrutura, autenticação e dados (`core/services/`), guards de rota funcionais (`core/guards/`), interceptors HTTP funcionais (`core/interceptors/`) e interfaces/tipos globais (`core/models/`).
 2. **`shared/`**: Componentes de interface reutilizáveis (botões estilizados, campos de input, badges de status, modais genéricos), pipes customizados (formatação de placa, data/hora amigável) e layouts comuns.
-3. **`features/`**: Módulos de domínio organizados por caso de uso (`auth`, `rides`, `vehicles`, `saved-routes`). Cada feature contém suas páginas e subcomponentes específicos.
+3. **`features/`**: Módulos de domínio organizados por caso de uso (`auth`, `rides`, `vehicles`, `saved-routes`, `profile`, `reviews`, `notifications`). Cada feature contém suas páginas e subcomponentes específicos.
 
 **Regras estritas de dependência:**
 - `features/` podem importar artefatos de `core/` e de `shared/`.
@@ -156,7 +161,7 @@ A navegação adota a API funcional moderna do Angular (IDs 16, 17, 18, 19):
 - **Functional Route Guards (ID19):**
   - `authGuard`: Bloqueia rotas protegidas para usuários não autenticados, redirecionando para `/login`.
   - `guestGuard`: Impede que usuários já autenticados acessem telas de login ou cadastro, redirecionando para `/home`.
-  - `driverGuard`: Garante que apenas usuários com ao menos um veículo cadastrado e ativo publiquem ofertas de carona.
+  - `driverGuard`: Garante que apenas usuários com ao menos um veículo cadastrado (consultado via `VehicleService`) publiquem ofertas de carona. Ser Motorista é uma condição derivada do veículo, não um papel salvo no usuário.
 - **Lazy Loading:** Todas as rotas de features utilizam `loadComponent: () => import(...)` ou `loadChildren: () => import(...)` para carregar o bundle sob demanda.
 
 ---
@@ -169,18 +174,26 @@ A navegação adota a API funcional moderna do Angular (IDs 16, 17, 18, 19):
 
 | Termo PRD (PT-BR) | Entidade / Tabela (EN) | Atributos Principais |
 | :---------------- | :--------------------- | :------------------- |
-| **Usuário** (Motorista / Passageiro) | `users` | `id` (PK, uuid), `name`, `email` (UK), `phone`, `gender` ('female' \| 'male' \| 'other'), `avatar_url`, `role` ('passenger' \| 'driver' \| 'admin'), `created_at` |
-| **Veículo** | `vehicles` | `id` (PK, uuid), `user_id` (FK), `brand_model`, `color`, `plate` (UK), `created_at` |
+| **Usuário** (Motorista / Passageiro) | `users` | `id` (PK, uuid), `name`, `email` (UK), `phone`, `gender` ('female' \| 'male' \| 'other'), `avatar_url`, `created_at` |
+| **Veículo** | `vehicles` | `id` (PK, uuid), `user_id` (FK), `brand_model`, `color`, `plate` (UK), `seats` (int ≥ 1), `created_at` |
 | **Rota Salva** | `saved_routes` | `id` (PK, uuid), `user_id` (FK), `origin`, `destination`, `preferred_time`, `days_of_week` (string[]), `women_only` (boolean), `created_at` |
 | **Carona (Viagem)** | `rides` | `id` (PK, uuid), `driver_id` (FK), `vehicle_id` (FK), `origin`, `destination`, `departure_time`, `total_seats`, `available_seats`, `meeting_point`, `women_only` (boolean), `status` ('open' \| 'in_progress' \| 'completed' \| 'cancelled'), `created_at` |
-| **Solicitação de Carona** | `ride_requests` | `id` (PK, uuid), `ride_id` (FK), `passenger_id` (FK), `status` ('pending' \| 'accepted' \| 'rejected' \| 'cancelled'), `meeting_point_requested`, `pin_code` (char 4), `created_at`, `validated_at` |
+| **Solicitação de Carona** | `ride_requests` | `id` (PK, uuid), `ride_id` (FK), `passenger_id` (FK), `status` ('pending' \| 'accepted' \| 'rejected' \| 'cancelled' \| 'expired'), `meeting_point_requested`, `pin_code` (char 4), `expires_at`, `created_at`, `validated_at` |
 | **Avaliação** | `reviews` | `id` (PK, uuid), `ride_id` (FK), `reviewer_id` (FK), `reviewed_id` (FK), `rating` (int 1-5), `comment`, `created_at` |
+| **Notificação** | `notifications` | `id` (PK, uuid), `user_id` (FK, destinatário), `ride_id` (FK), `type` ('request_received' \| 'request_rejected' \| 'request_expired' \| 'booking_cancelled' \| 'ride_cancelled'), `message`, `read_at`, `created_at` |
+
+**Decisões de modelagem desta tabela:**
+
+- **Motorista não é uma coluna.** Segue o PRD: Motorista é o usuário que possui veículo cadastrado. Por isso `users` não tem `role`, e o `driverGuard` consulta os veículos via `VehicleService`. Não existe papel salvo para dessincronizar do veículo.
+- **Nomes de status.** O PRD e o código usam o mesmo conceito com nomes diferentes: Pendente = `pending`, Confirmada = `accepted`, Recusada = `rejected`, Cancelada = `cancelled`, Expirada = `expired`. A interface mostra o termo do PRD; o código usa o termo em inglês.
+- **Vagas.** `vehicles.seats` é a capacidade de passageiros do veículo (US02). `rides.total_seats` é o que o motorista oferta em cada carona (1 a 6, RN07), pré-preenchido com `vehicles.seats`. `rides.available_seats` é o que sobra após as reservas confirmadas (RN12).
+- **Nota média (RN20) é calculada, não guardada.** É a média de `reviews.rating` onde `reviewed_id` é o usuário, derivada pelo service a cada leitura. `users` não tem coluna de nota, então não há dado duplicado para atualizar à mão.
 
 ---
 
 ### 📊 5.2. Diagrama ER (Mermaid)
 
-> Este diagrama representa o modelo relacional normalizado do banco de dados (BaaS/PostgreSQL e espelhado no `db.json`). Este mesmo bloco é renderizado no `README.md` como exige a ficha da disciplina.
+> Este diagrama representa o modelo relacional normalizado do banco de dados (BaaS/PostgreSQL e espelhado no `db.json`).
 
 ```mermaid
 erDiagram
@@ -192,13 +205,14 @@ erDiagram
     VEHICLES ||--o{ RIDES : "utilizado em"
     RIDES ||--o{ RIDE_REQUESTS : "possui solicitacoes"
     RIDES ||--o{ REVIEWS : "gera avaliacoes"
+    USERS ||--o{ NOTIFICATIONS : "recebe"
+    RIDES ||--o{ NOTIFICATIONS : "origina"
 
     USERS {
         uuid id PK
         string name
         string email UK
         string gender
-        string role
         string avatar_url
         timestamp created_at
     }
@@ -209,6 +223,7 @@ erDiagram
         string brand_model
         string color
         string plate UK
+        int seats
         timestamp created_at
     }
 
@@ -245,6 +260,7 @@ erDiagram
         string status
         string meeting_point_requested
         string pin_code
+        timestamp expires_at
         timestamp created_at
         timestamp validated_at
     }
@@ -256,6 +272,16 @@ erDiagram
         uuid reviewed_id FK
         int rating
         string comment
+        timestamp created_at
+    }
+
+    NOTIFICATIONS {
+        uuid id PK
+        uuid user_id FK
+        uuid ride_id FK
+        string type
+        string message
+        timestamp read_at
         timestamp created_at
     }
 ```
@@ -286,9 +312,16 @@ erDiagram
 | `rides` | `/home` (busca e feed de caronas) | `authGuard` | `RideService` | US03, US04 |
 | `rides` | `/rides/new` (ofertar carona) | `authGuard`, `driverGuard` | `RideService` | US03 |
 | `rides` | `/rides/:id` (detalhes da carona) | `authGuard` | `RideService`, `RideRequestService` | US04, US05 |
+| `rides` | `/rides` (aba Caronas: "Como passageiro" e "Como motorista", por status) | `authGuard` | `RideService`, `RideRequestService` | US03, US05 |
+| `rides` | `/history` (histórico de caronas concluídas e canceladas) | `authGuard` | `RideService` | US03, US07 |
+| `rides` | `/rides/:id/boarding` (embarque: passageiro vê o PIN; motorista digita o PIN) | `authGuard` | `RideRequestService` | US05 |
+| `reviews` | `/rides/:id/review` (avaliação pós-viagem) | `authGuard` | `ReviewService` | US07 |
+| `notifications` | `/notifications` (central de notificações) | `authGuard` | `NotificationService` | RN09, RN15, RN22 |
 | `vehicles` | `/vehicles` (gestão de veículos) | `authGuard` | `VehicleService` | US02 |
 | `saved-routes` | `/saved-routes` (rotas salvas) | `authGuard` | `SavedRouteService` | US06 |
-| `profile` | `/profile` (dados do usuário) | `authGuard` | `UserService` | US01 |
+| `profile` | `/profile` (dados do usuário, nota média e menu) | `authGuard` | `UserService`, `ReviewService` | US01, US07 |
+
+> `/history` e `/rides/:id/review` pertencem à US07 (`Draft`): as rotas ficam reservadas aqui e as telas serão especificadas quando a história virar `Ready`.
 
 ---
 
@@ -297,6 +330,7 @@ erDiagram
 | Data | Versão | O que mudou |
 | :--- | :----- | :---------- |
 | 2026-10-10 | 1.0.0 | Versão inicial gerada via `/utf-architecture` cobrindo stack Angular 20+, Zoneless, Tailwind CSS, json-server / Supabase, modelos ER em Mermaid, testes e mapa de rotas. |
+| 2026-10-29 | 1.1.0 | Revisão cruzada da Entrega 1: `vehicles.seats`; `ride_requests.expires_at` e status `expired`; entidade `notifications` e regra de expiração; `role` removido de `users` (Motorista derivado do veículo); nota média calculada; features `profile`, `reviews` e `notifications`; novas rotas (Caronas, histórico, embarque, avaliação, notificações). |
 
 ---
 

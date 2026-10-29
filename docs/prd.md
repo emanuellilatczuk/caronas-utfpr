@@ -1,8 +1,8 @@
 # 📄 Product Requirements Document (PRD)
 
 **Projeto:** PassAí  
-**Versão:** 1.1.0  
-**Última atualização:** 2026-10-09  
+**Versão:** 1.2.0  
+**Última atualização:** 2026-10-29  
 
 > 🤖 **Este documento é a fonte da verdade sobre o QUE o produto faz.** Regra de
 > negócio que não estiver aqui não existe — nem para a equipe, nem para a IA.
@@ -35,6 +35,7 @@
 | **Modo Elas por Elas** | Filtro de segurança aplicável a ofertas e solicitações que restringe a visibilidade e o aceite de caronas exclusivamente a usuárias do sexo feminino (motoristas e passageiras). | **Bloqueio Permanente de Perfil**: é uma modalidade de viagem configurável, permitindo que a usuária filtre suas viagens de forma restrita quando desejar. |
 | **Código PIN de Confirmação** | Código numérico temporário de 4 dígitos gerado no celular do Passageiro e informado presencialmente ao Motorista no embarque para validar e iniciar formalmente a viagem. | **Senha da Conta**: é um token temporário de uso único (OTP), exclusivo para aquela viagem específica. |
 | **Ponto de Encontro** | Ponto de referência acordado no trajeto (proposto pelo motorista ou solicitado pelo passageiro na solicitação) para embarque/desembarque seguro e conveniente. | **Destino final**: é apenas uma parada intermediária de embarque combinada entre as partes. |
+| **Notificação** | Aviso exibido dentro do aplicativo sobre um evento de carona ou solicitação: solicitação recebida (com o tempo restante para responder), solicitação recusada, solicitação expirada, reserva cancelada pelo passageiro e carona cancelada pelo motorista. | **Push, e-mail ou SMS**: no semestre a notificação existe apenas dentro do app (ver Fora de Escopo). |
 
 ---
 
@@ -46,7 +47,7 @@
 | Ator | Quem é | Pode | Não pode |
 | :--- | :----- | :--- | :------- |
 | **Visitante** | Usuário não autenticado que acessa a landing page ou tela de boas-vindas. | • Visualizar telas de apresentação, boas-vindas e login.<br>• Criar conta e solicitar cadastro.<br>• Consultar Termos de Uso e Política de Privacidade. | • Visualizar rotas, pontos de encontro, horários ou dados de usuários.<br>• Buscar caronas ou criar ofertas.<br>• Acessar qualquer rota interna protegida ou endpoint privado. |
-| **Passageiro** | Usuário autenticado e ativo na comunidade do PassAí. | • Criar, listar, editar e excluir suas Rotas Salvas.<br>• Receber e visualizar sugestões de caronas compatíveis.<br>• Enviar solicitações de carona e negociar Pontos de Encontro.<br>• Ativar o Modo Elas por Elas (se perfil feminino elegível).<br>• Visualizar o Código PIN de Confirmação da viagem em seu app.<br>• Avaliar motoristas e relatar incidentes ou denúncias. | • Publicar ou ofertar caronas sem veículo cadastrado e válido.<br>• Visualizar contatos e endereço exato do motorista antes do aceite mútuo.<br>• Acessar ou interagir com caronas do Modo Elas por Elas se não for do sexo feminino.<br>• Alterar o status da viagem no app para "Concluída" ou "Cancelada". |
+| **Passageiro** | Usuário autenticado e ativo na comunidade do PassAí. | • Criar, listar, editar e excluir suas Rotas Salvas.<br>• Receber e visualizar sugestões de caronas compatíveis.<br>• Enviar solicitações de carona e negociar Pontos de Encontro.<br>• Ativar o Modo Elas por Elas (se perfil feminino elegível).<br>• Visualizar o Código PIN de Confirmação da viagem em seu app.<br>• Avaliar motoristas | • Publicar ou ofertar caronas sem veículo cadastrado e válido.<br>• Visualizar contatos e endereço exato do motorista antes do aceite mútuo.<br>• Acessar ou interagir com caronas do Modo Elas por Elas se não for do sexo feminino.<br>• Alterar o status da viagem no app para "Concluída" ou "Cancelada". |
 | **Motorista** | Usuário autenticado com veículo cadastrado (mantém também todas as permissões de passageiro). | • Todas as ações permitidas ao Passageiro.<br>• Cadastrar, listar, editar e remover seus veículos.<br>• Publicar ofertas de carona (avulsas ou vinculadas às Rotas Salvas).<br>• Aceitar ou recusar solicitações de reserva feitas por passageiros.<br>• Inserir o PIN do passageiro no embarque para iniciar a viagem.<br>• Finalizar a carona e avaliar os passageiros ao término. | • Publicar caronas sem selecionar veículo válido.<br>• Alterar rota principal ou horário após ter reservas aceitas e confirmadas.<br>• Iniciar a viagem no aplicativo sem validar o PIN de 4 dígitos do passageiro.<br>• Visualizar perfis e caronas do Modo Elas por Elas se for do sexo masculino. |
 | **Administrador** | Gestor da plataforma, suporte, moderação e auditoria de segurança. | • Validar e gerenciar cadastros de veículos e motoristas.<br>• Visualizar relatórios de denúncias, alertas e chamados de suporte.<br>• Suspender ou banir usuários que descumprirem os Termos de Uso.<br>• Monitorar métricas gerais e indicadores de desempenho do sistema. | • Ofertar ou solicitar caronas utilizando a conta administrativa.<br>• Alterar históricos de viagens e notas sem registro formal de auditoria.<br>• Visualizar senhas ou dados sensíveis criptografados dos usuários. |
 
@@ -64,7 +65,7 @@
 ### US01 — Cadastro e Autenticação de Usuário · `Must Have` · `M` · Status: `Ready`
 
 **Como** Visitante,  
-**eu quero** me cadastrar informando meus dados pessoais (nome completo, e-mail, senha, telefone e gênero) e realizar login na plataforma,  
+**eu quero** me cadastrar informando meus dados pessoais (nome completo, e-mail, senha e gênero) e realizar login na plataforma,  
 **para que** eu possa acessar o PassAí de forma identificada e utilizar os recursos de busca, oferta e reserva de caronas com segurança.
 
 **Critérios de aceite:**
@@ -135,7 +136,7 @@
 - [ ] **Dado** que sou uma Passageira do sexo feminino, **quando** ativo o filtro "Modo Elas por Elas", **então** a listagem exibe exclusivamente caronas publicadas por motoristas mulheres que habilitaram essa modalidade.
 - [ ] **Dado** que realizo pesquisa para data ou rota sem ofertas ativas, **quando** o sistema processa a busca, **então** é exibido um estado vazio amigável ("Nenhuma carona encontrada para esta rota/data") com atalho para cadastrar o trajeto em Rotas Salvas.
 - [ ] **Dado** que sou um usuário do gênero masculino, **quando** acesso a tela de busca, **então** o filtro "Modo Elas por Elas" não é exibido e as caronas restritas a essa modalidade são omitidas automaticamente dos resultados.
-- [ ] **Dado** que estou na busca, **quando** tento acionar a pesquisa sem informar ao menos uma origem, um destino ou a data, **então** o sistema destaca os campos necessários e solicita o preenchimento de ao menos um critério.
+- [ ] **Dado** que estou na busca, **quando** tento acionar a pesquisa sem informar ao menos uma origem, um destino ou a data, **então** o sistema destaca os campos necessários e solicita o preenchimento de todos os critérios.
 
 **Regras relacionadas:** RN08, RN10, RN11
 
@@ -209,7 +210,7 @@
 | **RN02** | **Unicidade de E-mail:** Não é permitido o cadastro de contas duplicadas utilizando o mesmo endereço de e-mail. |
 | **RN03** | **Segurança de Credenciais:** Mensagens de erro no login devem ser opacas ("E-mail ou senha inválidos"), sem indicar qual campo específico divergiu. |
 | **RN04** | **Habilitação de Motorista:** A publicação de caronas exige ao menos um veículo cadastrado com marca e modelo, cor, placa em formato válido (Mercosul ou padrão antigo) e vagas disponíveis. |
-| **RN05** | **Integridade de Veículo:** Não é permitida a exclusão ou alteração de placa de veículo vinculado a caronas ativas. 
+| **RN05** | **Integridade de Veículo:** Não é permitida a exclusão ou alteração de placa de veículo vinculado a caronas ativas. |
 | **RN06** | **Temporalidade da Carona:** A data e o horário de partida da carona devem ser estritamente futuros no momento da criação. |
 | **RN07** | **Capacidade de Vagas:** Toda oferta de carona deve disponibilizar no mínimo 1 e no máximo 6 vagas para passageiros. |
 | **RN08** | **Modo Elas por Elas:** A ativação, visualização e reserva em caronas da modalidade "Modo Elas por Elas" são restritas exclusivamente a usuárias com gênero feminino cadastrado. |
@@ -240,6 +241,8 @@
 - **Chat interno em tempo real via WebSockets:** A comunicação direta entre as partes é liberada pós-aceite mútuo através de dados de contato (telefone/WhatsApp), simplificando a arquitetura sem perda de valor.
 - **Integração com sistemas acadêmicos institucionais da UTFPR (SSO/Portal do Aluno):** A autenticação é autônoma via plataforma, evitando bloqueios por dependência de APIs restritas da universidade.
 - **Algoritmos de roteirização geográfica curva a curva:** A correspondência de trajetos baseia-se em bairros, cidades e pontos de interesse (campus da UTFPR) cruzados com horários de saída.
+- **Denúncias, moderação e painel administrativo (ator Administrador):** O semestre foca na jornada de carona entre Passageiro e Motorista. Relato de incidentes, validação de cadastros, suspensão de usuários e relatórios exigiriam histórias, telas e entidades próprias, que não cabem no escopo comprometido.
+- **Notificações push, e-mail ou SMS:** As notificações previstas nas RN09, RN15 e RN22 aparecem apenas dentro do app, o que dispensa serviço de mensageria e mantém a arquitetura simples.
 
 ---
 
@@ -261,3 +264,4 @@
 | :--- | :----- | :---------- |
 | 2026-09-14 | 1.0.0 | Versão inicial completa produzida via `/utf-prd` |
 | 2026-10-09 | 1.1.0 | Registro das decisões visuais e regras do `/utf-design`: RN22 (Prazo Dinâmico e Expiração) e critérios de abandono na US05 |
+| 2026-10-29 | 1.2.0 | Revisão cruzada da Entrega 1: termo Notificação adicionado ao glossário; ator Administrador e permissão de denúncias removidos e movidos para Fora de Escopo; notificações push, e-mail e SMS adicionadas ao Fora de Escopo |

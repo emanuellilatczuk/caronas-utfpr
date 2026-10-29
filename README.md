@@ -4,7 +4,7 @@ O PassAí é uma plataforma de caronas colaborativas desenvolvida para conectar 
 
 ## Autores
 
-- Emanuelli Fiuza Latczuk - [emanuellilatczu](https://github.com/emanuellilatczuk)
+- Emanuelli Fiuza Latczuk - [emanuellilatczuk](https://github.com/emanuellilatczuk)
 - Leonardo Correa Padilha - [leonardocpadilha](https://github.com/leonardocpadilha)
 
 ## Documentação Técnica
