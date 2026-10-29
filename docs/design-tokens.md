@@ -1,8 +1,8 @@
 # 🎨 Tokens de Design
 
 **Projeto:** PassAí  
-**Versão:** 1.0.0  
-**Última atualização:** 2026-10-09  
+**Versão:** 1.0.1  
+**Última atualização:** 2026-10-29  
 **Framework CSS:** Tailwind CSS (ID5)  
 
 > 🤖 **Este documento existe para a IA parar de inventar um botão diferente a cada tela.**
@@ -18,6 +18,8 @@ Nome semântico, nunca `azul-2` — a cor muda, o papel dela não.
 | Token | Valor | Onde se usa |
 | :--- | :--- | :--- |
 | `primaria` | `#4D389B` | Ação principal / destaque da marca / botões principais |
+| `primaria-hover` | `#3D2C7B` | Estado hover da `primaria` |
+| `texto-inverso` | `#FFFFFF` | Texto e ícones sobre fundo `primaria` |
 | `superficie` | `#FFFFFF` | Fundo de cards, modais, painéis e diálogos |
 | `texto` | `#132436` | Texto principal, títulos e elementos de alto contraste |
 | `texto-suave` | `rgba(19, 36, 54, 0.70)` (`#132436` 70%) | Legendas, rótulos de apoio e textos secundários |
@@ -67,9 +69,9 @@ Padrão para o botão de ação principal (cor primária com cantos `rounded-xl`
 
 | Estado | Aparência |
 | :--- | :--- |
-| **normal** | Fundo `#4D389B`, texto `#FFFFFF`, cantos arredondados `rounded-xl` (12px), Outfit 14px SemiBold |
-| **hover** | Fundo escurecido para `#3D2C7B`, cursor do tipo `pointer` com transição suave |
-| **foco (teclado)** | Anel de acessibilidade com `outline-none ring-2 ring-[#4D389B] ring-offset-2` |
+| **normal** | Fundo `primaria`, texto `texto-inverso`, cantos arredondados `rounded-xl` (12px), Outfit 14px SemiBold |
+| **hover** | Fundo `primaria-hover`, cursor do tipo `pointer` com transição suave |
+| **foco (teclado)** | Anel de acessibilidade com `outline-none ring-2 ring-primaria ring-offset-2` |
 | **desabilitado** | Opacidade reduzida a 50%, cursor bloqueado (`not-allowed`), sem efeito hover |
 | **carregando** | Spinner circular girando no centro do botão, texto omitido e clique desabilitado |
 
@@ -97,8 +99,8 @@ Os valores abaixo alimentam o `manifest.webmanifest` no `/utf-setup` (ID3).
 | :--- | :--- |
 | Nome do app (`name`) | `PassAí — Caronas Universitárias UTFPR` |
 | Nome curto (`short_name`) | `PassAí` |
-| Cor de tema (`theme_color`) | `#4D389B` |
-| Cor de fundo da splash (`background_color`) | `#4D389B` |
+| Cor de tema (`theme_color`) | `#4D389B` (valor de `primaria`) |
+| Cor de fundo da splash (`background_color`) | `#4D389B` (valor de `primaria`) |
 | Elemento visual de abertura | Logo do PassAí centralizado em destaque |
 | Ícones | `assets/icons/icon-512x512.png` (com variantes 192x192 e maskable) |
 | Modo de exibição (`display`) | `standalone` |
@@ -109,5 +111,6 @@ Os valores abaixo alimentam o `manifest.webmanifest` no `/utf-setup` (ID3).
 ## Protótipo
 
 - **Ferramenta:** Stitch (Google)
-- **Link:** [Protótipo no Stitch](https://stitch.google.com/preview/4331246840233990078?node-id=750e48e00d42490b9fc2ed021f95294b)
-- **Jornadas cobertas:** Autenticação, busca e filtragem de caronas (incluindo Modo Elas por Elas), solicitação de reserva com ponto de encontro, geração e conferência de PIN no embarque presencial, e Rotas Salvas.
+- **Link:** [Protótipo no Stitch](https://stitch.google.com/preview/7057279136565611126?node-id=069440b5e4e9464a9fedad673abb25bf)
+- **Jornadas cobertas:** Autenticação, cadastro de veículos, publicação de carona, busca e filtragem de caronas (incluindo Modo Elas por Elas), solicitação de reserva, geração e conferência de PIN no embarque presencial, e Rotas Salvas.
+- **Ainda sem tela no protótipo:** avaliação pós-viagem (US07, `Draft`).
