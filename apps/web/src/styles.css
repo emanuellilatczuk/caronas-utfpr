@@ -1,0 +1,58 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-primary: #4d389b;
+  --color-primary-hover: #3d2c7b;
+  --color-text-inverse: #ffffff;
+  --color-surface: #ffffff;
+  --color-text: #132436;
+  --color-text-soft: rgba(19, 36, 54, 0.7);
+  --color-danger: #dc2626;
+  --color-success: #28a745;
+  --color-disabled: rgba(19, 36, 54, 0.6);
+  --color-background: rgba(242, 236, 236, 0.6);
+  --color-inactive-icons: rgba(19, 36, 54, 0.6);
+
+  --spacing: 0.25rem;
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+
+  --font-display: Outfit;
+  --font-heading: Outfit;
+  --font-subhead: Poppins;
+  --font-body: Poppins;
+  --font-caption: Poppins;
+  --font-label: Poppins;
+  --font-button-primary: Outfit;
+  --font-nav-active: Poppins;
+  --font-nav-inactive: Poppins;
+
+  --text-display: 24px;
+  --text-display--font-weight: 700;
+  --text-heading: 15px;
+  --text-heading--font-weight: 700;
+  --text-subhead: 13px;
+  --text-subhead--font-weight: 500;
+  --text-body: 13px;
+  --text-body--font-weight: 500;
+  --text-caption: 11px;
+  --text-caption--font-weight: 400;
+  --text-label: 10px;
+  --text-label--font-weight: 600;
+  --text-button-primary: 14px;
+  --text-button-primary--font-weight: 600;
+  --text-nav-active: 11px;
+  --text-nav-active--font-weight: 700;
+  --text-nav-inactive: 11px;
+  --text-nav-inactive--font-weight: 500;
+
+  --radius-xl: 12px;
+
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+}
