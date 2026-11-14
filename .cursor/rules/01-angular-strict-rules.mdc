@@ -1,0 +1,8 @@
+---
+description: Regras de Angular do front-end deste projeto.
+globs: apps/web/src/**/*
+alwaysApply: false
+---
+
+Leia `.agents/rules/01-angular-strict-rules.md` e obedeça-o integralmente.
+Ele é a lei do front-end deste repositório; este arquivo é só a casca do Cursor.
