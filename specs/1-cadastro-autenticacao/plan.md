@@ -21,7 +21,7 @@
     - `apps/web/src/app/core/validators/auth.validators.ts`
     - `apps/api/db.json`
 
-- [ ] **Tarefa 2 — AuthService (Registro, Login, Sessão em localStorage e Tratamento de Erros)**
+- [x] **Tarefa 2 — AuthService (Registro, Login, Sessão em localStorage e Tratamento de Erros)**
   - Cobre: CA1, CA2, CA3, CA6, CA9
   - Teste primeiro: `apps/web/src/app/core/services/auth.service.spec.ts` cobrindo registro de usuário com sucesso, erro ao tentar registrar e-mail duplicado, login com credenciais válidas e inválidas, restauração de sessão a partir do `localStorage`, logout e tratamento de indisponibilidade da API (status 0 e 5xx).
   - Arquivos previstos:
