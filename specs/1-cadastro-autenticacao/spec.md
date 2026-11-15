@@ -1,6 +1,6 @@
 ---
 issue: 1
-status: rascunho   # rascunho | aprovada
+status: aprovada
 ---
 
 # US01 — Cadastro e Autenticação de Usuário
