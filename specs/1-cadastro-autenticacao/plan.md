@@ -35,7 +35,7 @@
     - `apps/web/src/app/core/guards/auth.guard.spec.ts`
     - `apps/web/src/app/core/guards/auth.guard.ts`
 
-- [ ] **Tarefa 4 — Tela de Cadastro (RegisterComponent) com Formulário Reativo e Feedback Visual**
+- [x] **Tarefa 4 — Tela de Cadastro (RegisterComponent) com Formulário Reativo e Feedback Visual**
   - Cobre: CA1, CA3, CA4, CA5, CA9, CA10
   - Teste primeiro: `apps/web/src/app/features/auth/pages/register/register.component.spec.ts` provando botão desabilitado em formulário inválido, mensagens de erro sob campos inválidos (e-mail, senha < 8, confirmação divergente), mensagem de e-mail em uso, tratamento de erro com servidor indisponível mantendo campos preenchidos e formulário limpo na inicialização.
   - Arquivos previstos:
