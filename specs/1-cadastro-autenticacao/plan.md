@@ -12,7 +12,7 @@
 
 ## Tarefas
 
-- [ ] **Tarefa 1 — Modelos de Usuário, Validadores Customizados e Estrutura Inicial do Mock**
+- [x] **Tarefa 1 — Modelos de Usuário, Validadores Customizados e Estrutura Inicial do Mock**
   - Cobre: CA4, CA5
   - Teste primeiro: `apps/web/src/app/core/validators/auth.validators.spec.ts` provando rejeição de e-mails não institucionais (`utfprEmailValidator`) e divergência entre senha e confirmação (`passwordMatchValidator`).
   - Arquivos previstos:
