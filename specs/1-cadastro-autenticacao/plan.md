@@ -51,7 +51,7 @@
     - `apps/web/src/app/features/auth/pages/login/login.component.ts`
     - `apps/web/src/app/features/auth/pages/login/login.component.html`
 
-- [ ] **Tarefa 6 — Integração de Rotas, Componente Home e Navegação Integrada**
+- [x] **Tarefa 6 — Integração de Rotas, Componente Home e Navegação Integrada**
   - Cobre: CA1, CA2, CA7, CA8
   - Teste primeiro: `apps/web/src/app/app.routes.spec.ts` provando a configuração e proteção das rotas `/login`, `/register` e `/home` integradas com os guards e componentes.
   - Arquivos previstos:
