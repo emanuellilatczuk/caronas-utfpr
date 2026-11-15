@@ -28,7 +28,7 @@
     - `apps/web/src/app/core/services/auth.service.spec.ts`
     - `apps/web/src/app/core/services/auth.service.ts`
 
-- [ ] **Tarefa 3 — Functional Route Guards (authGuard e guestGuard) com returnUrl**
+- [x] **Tarefa 3 — Functional Route Guards (authGuard e guestGuard) com returnUrl**
   - Cobre: CA7, CA8
   - Teste primeiro: `apps/web/src/app/core/guards/auth.guard.spec.ts` testando bloqueio de rotas por `authGuard` redirecionando para `/login?returnUrl=...`, liberação para usuário autenticado, e redirecionamento de usuários já logados por `guestGuard` para `/home`.
   - Arquivos previstos:
