@@ -43,7 +43,7 @@
     - `apps/web/src/app/features/auth/pages/register/register.component.ts`
     - `apps/web/src/app/features/auth/pages/register/register.component.html`
 
-- [ ] **Tarefa 5 — Tela de Login (LoginComponent) com Redirecionamento e Tratamento de Erro Opaco**
+- [x] **Tarefa 5 — Tela de Login (LoginComponent) com Redirecionamento e Tratamento de Erro Opaco**
   - Cobre: CA2, CA6, CA9
   - Teste primeiro: `apps/web/src/app/features/auth/pages/login/login.component.spec.ts` provando autenticação com sucesso e navegação para `/home` ou `returnUrl`, exibição de mensagem opaca "E-mail ou senha inválidos" em falhas de autenticação, e exibição de alerta de indisponibilidade de servidor em caso de erro de conexão.
   - Arquivos previstos:
