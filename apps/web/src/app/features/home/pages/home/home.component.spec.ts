@@ -2,18 +2,54 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
 import { signal } from '@angular/core';
+import { vi } from 'vitest';
 import { AuthService } from '../../../../core/services/auth.service';
+import { Ride } from '../../../../core/models/ride.model';
+import { RideService } from '../../../../core/services/ride.service';
 import { HomeComponent } from './home.component';
 
 describe('HomeComponent - formulário de busca', () => {
   let component: HomeComponent;
   let fixture: ComponentFixture<HomeComponent>;
+  let rideServiceSpy: { searchRides: ReturnType<typeof vi.fn> };
+
+  const eligibleRide: Ride = {
+    id: 'ride-1',
+    driver_id: 'driver-1',
+    vehicle_id: 'vehicle-1',
+    origin: 'UTFPR',
+    destination: 'Centro',
+    departure_time: '2030-05-12T14:30:00',
+    total_seats: 4,
+    available_seats: 2,
+    meeting_point: 'Portão principal',
+    women_only: false,
+    status: 'open',
+    created_at: '2030-05-01T10:00:00',
+    driver: {
+      id: 'driver-1',
+      name: 'Marina Oliveira',
+      gender: 'female',
+      avatar_url: 'https://example.test/marina.jpg',
+      average_rating: 4.8,
+    },
+    vehicle: {
+      id: 'vehicle-1',
+      brand_model: 'Toyota Corolla',
+      color: 'Prata',
+    },
+  };
 
   beforeEach(async () => {
+    rideServiceSpy = {
+      searchRides: vi.fn().mockResolvedValue([eligibleRide]),
+    };
+
     await TestBed.configureTestingModule({
       imports: [HomeComponent],
       providers: [
         provideRouter([]),
+        { provide: RideService, useValue: rideServiceSpy },
         {
           provide: AuthService,
           useValue: {
@@ -112,5 +148,65 @@ describe('HomeComponent - formulário de busca', () => {
     expect(date.nativeElement.getAttribute('aria-invalid')).toBe('true');
     expect(time.nativeElement.getAttribute('aria-describedby')).toBe('error-time');
     expect(time.nativeElement.getAttribute('aria-invalid')).toBe('true');
+  });
+
+  it('deve buscar com os critérios válidos e exibir os dados da carona elegível', async () => {
+    component.searchForm.setValue({
+      origin: ' UTFPR ',
+      destination: ' Centro ',
+      date: '2030-05-12',
+      time: '14:00',
+    });
+
+    await component.onSearch();
+    fixture.detectChanges();
+
+    expect(rideServiceSpy.searchRides).toHaveBeenCalledWith({
+      origin: ' UTFPR ',
+      destination: ' Centro ',
+      date: '2030-05-12',
+      time: '14:00',
+      passengerGender: 'female',
+      womenOnly: false,
+    });
+    expect(
+      fixture.debugElement.query(By.css('[data-testid="ride-driver-photo"]')).nativeElement.src,
+    ).toBe('https://example.test/marina.jpg');
+    expect(
+      fixture.debugElement.query(By.css('[data-testid="ride-driver-name"]')).nativeElement
+        .textContent,
+    ).toContain('Marina Oliveira');
+    expect(
+      fixture.debugElement.query(By.css('[data-testid="ride-rating"]')).nativeElement.textContent,
+    ).toContain('4.8');
+    expect(
+      fixture.debugElement.query(By.css('[data-testid="ride-vehicle"]')).nativeElement.textContent,
+    ).toContain('Toyota Corolla');
+    expect(
+      fixture.debugElement.query(By.css('[data-testid="ride-vehicle"]')).nativeElement.textContent,
+    ).toContain('Prata');
+    expect(
+      fixture.debugElement.query(By.css('[data-testid="ride-departure"]')).nativeElement
+        .textContent,
+    ).toContain('14:30');
+    expect(
+      fixture.debugElement.query(By.css('[data-testid="ride-seats"]')).nativeElement.textContent,
+    ).toContain('2');
+  });
+
+  it('deve representar lista vazia sem exibi-la como erro', async () => {
+    rideServiceSpy.searchRides.mockResolvedValue([]);
+    component.searchForm.setValue({
+      origin: 'UTFPR',
+      destination: 'Centro',
+      date: '2030-05-12',
+      time: '14:00',
+    });
+
+    await component.onSearch();
+    fixture.detectChanges();
+
+    expect(fixture.debugElement.query(By.css('[data-testid="search-empty"]'))).toBeTruthy();
+    expect(fixture.debugElement.query(By.css('[data-testid="search-error"]'))).toBeNull();
   });
 });

@@ -22,7 +22,7 @@
   - Teste primeiro: testar no componente que origem, destino, data e horario sao obrigatorios; campos nao exibem erro antes da interacao; `blur` invalido mostra mensagem em portugues; formulario invalido desabilita o botao de busca.
   - Arquivos previstos: `apps/web/src/app/features/home/pages/home/home.component.ts`, `apps/web/src/app/features/home/pages/home/home.component.html`, `apps/web/src/app/features/home/pages/home/home.component.spec.ts`
 
-- [ ] **Tarefa 3 - Montar a listagem dos resultados elegiveis**
+- [x] **Tarefa 3 - Montar a listagem dos resultados elegiveis**
   - Cobre: CA1
   - Teste primeiro: testar no componente que o resultado exibe foto/nome do Motorista, nota de avaliacao, modelo e cor do veiculo, horario de saida e vagas restantes; testar que uma lista vazia nao e confundida com erro.
   - Arquivos previstos: `apps/web/src/app/features/home/pages/home/home.component.ts`, `apps/web/src/app/features/home/pages/home/home.component.html`, `apps/web/src/app/features/home/pages/home/home.component.spec.ts`

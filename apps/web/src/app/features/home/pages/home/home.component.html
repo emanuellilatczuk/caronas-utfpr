@@ -222,5 +222,90 @@
         </div>
       </div>
     </div>
+
+    @if (searchState() === 'loading') {
+      <p data-testid="search-loading" role="status" class="text-sm text-texto-suave">
+        Buscando caronas...
+      </p>
+    }
+
+    @if (searchState() === 'error') {
+      <p data-testid="search-error" role="alert" class="text-sm text-perigo">
+        {{ searchError() }}
+      </p>
+    }
+
+    @if (searchState() === 'empty') {
+      <p data-testid="search-empty" role="status" class="text-sm text-texto-suave">
+        Nenhuma carona disponível para os critérios informados.
+      </p>
+    }
+
+    @if (searchState() === 'results') {
+      <section aria-label="Resultados da busca" class="space-y-4">
+        <h2 class="text-lg font-semibold font-display text-texto">Caronas disponíveis</h2>
+        @for (ride of searchResults(); track ride.id) {
+          <article
+            data-testid="ride-result"
+            class="bg-superficie p-5 rounded-2xl shadow-sm border border-black/5 flex flex-col sm:flex-row gap-4"
+          >
+            @if (ride.driver?.avatar_url; as avatarUrl) {
+              <img
+                data-testid="ride-driver-photo"
+                [src]="avatarUrl"
+                [alt]="'Foto de ' + (ride.driver?.name ?? 'Motorista')"
+                class="w-14 h-14 rounded-full object-cover"
+              />
+            } @else {
+              <div
+                aria-hidden="true"
+                class="w-14 h-14 rounded-full bg-primaria/10 text-primaria flex items-center justify-center font-semibold"
+              >
+                {{ ride.driver?.name?.slice(0, 1) ?? 'M' }}
+              </div>
+            }
+
+            <div class="flex-1 space-y-2">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <h3 data-testid="ride-driver-name" class="font-semibold text-texto">
+                  {{ ride.driver?.name ?? 'Motorista' }}
+                </h3>
+                <span data-testid="ride-rating" class="text-sm text-texto-suave">
+                  @if (ride.driver?.average_rating !== undefined) {
+                    ★ {{ ride.driver?.average_rating }}
+                  } @else {
+                    Sem avaliações
+                  }
+                </span>
+              </div>
+
+              <p data-testid="ride-vehicle" class="text-sm text-texto-suave">
+                {{ ride.vehicle?.brand_model ?? 'Veículo indisponível' }}
+                @if (ride.vehicle?.color) {
+                  · {{ ride.vehicle?.color }}
+                }
+              </p>
+
+              <div class="flex flex-wrap gap-x-5 gap-y-2 text-sm text-texto">
+                <span>
+                  Saída:
+                  <time data-testid="ride-departure" [attr.datetime]="ride.departure_time">
+                    {{ ride.departure_time | date: 'HH:mm' }}
+                  </time>
+                </span>
+                <span data-testid="ride-seats">
+                  {{ ride.available_seats }}
+                  @if (ride.available_seats === 1) {
+                    vaga restante
+                  } @else {
+                    vagas restantes
+                  }
+                </span>
+              </div>
+            </div>
+          </article>
+        }
+      </section>
+    }
   </main>
 </div>
