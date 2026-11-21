@@ -1,58 +1,47 @@
 @import 'tailwindcss';
 
 @theme {
+  --color-primaria: #4d389b;
   --color-primary: #4d389b;
+  --color-primaria-hover: #3d2c7b;
   --color-primary-hover: #3d2c7b;
+  --color-texto-inverso: #ffffff;
   --color-text-inverse: #ffffff;
+  --color-superficie: #ffffff;
   --color-surface: #ffffff;
+  --color-texto: #132436;
   --color-text: #132436;
+  --color-texto-suave: rgba(19, 36, 54, 0.7);
   --color-text-soft: rgba(19, 36, 54, 0.7);
+  --color-perigo: #dc2626;
   --color-danger: #dc2626;
+  --color-sucesso: #28a745;
   --color-success: #28a745;
+  --color-desabilitado: rgba(19, 36, 54, 0.6);
   --color-disabled: rgba(19, 36, 54, 0.6);
-  --color-background: rgba(242, 236, 236, 0.6);
+  --color-fundo: #f2ecec;
+  --color-background: #f2ecec;
+  --color-icones-inativos: rgba(19, 36, 54, 0.6);
   --color-inactive-icons: rgba(19, 36, 54, 0.6);
 
-  --spacing: 0.25rem;
-  --spacing-xs: 0.25rem;
-  --spacing-sm: 0.5rem;
-  --spacing-md: 1rem;
-  --spacing-lg: 1.5rem;
-  --spacing-xl: 2rem;
-
-  --font-display: Outfit;
-  --font-heading: Outfit;
-  --font-subhead: Poppins;
-  --font-body: Poppins;
-  --font-caption: Poppins;
-  --font-label: Poppins;
-  --font-button-primary: Outfit;
-  --font-nav-active: Poppins;
-  --font-nav-inactive: Poppins;
-
-  --text-display: 24px;
-  --text-display--font-weight: 700;
-  --text-heading: 15px;
-  --text-heading--font-weight: 700;
-  --text-subhead: 13px;
-  --text-subhead--font-weight: 500;
-  --text-body: 13px;
-  --text-body--font-weight: 500;
-  --text-caption: 11px;
-  --text-caption--font-weight: 400;
-  --text-label: 10px;
-  --text-label--font-weight: 600;
-  --text-button-primary: 14px;
-  --text-button-primary--font-weight: 600;
-  --text-nav-active: 11px;
-  --text-nav-active--font-weight: 700;
-  --text-nav-inactive: 11px;
-  --text-nav-inactive--font-weight: 500;
+  --font-display: 'Outfit', sans-serif;
+  --font-heading: 'Outfit', sans-serif;
+  --font-subhead: 'Poppins', sans-serif;
+  --font-body: 'Poppins', sans-serif;
+  --font-caption: 'Poppins', sans-serif;
+  --font-label: 'Poppins', sans-serif;
+  --font-button-primary: 'Outfit', sans-serif;
+  --font-nav-active: 'Poppins', sans-serif;
+  --font-nav-inactive: 'Poppins', sans-serif;
 
   --radius-xl: 12px;
+}
 
-  --breakpoint-sm: 640px;
-  --breakpoint-md: 768px;
-  --breakpoint-lg: 1024px;
-  --breakpoint-xl: 1280px;
+body {
+  font-family: var(--font-body);
+  color: var(--color-texto);
+  background-color: var(--color-primaria);
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
 }
