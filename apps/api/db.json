@@ -60,5 +60,45 @@
       "status": "open",
       "created_at": "2026-11-20T12:00:00.000Z"
     }
+  ],
+  "vehicles": [
+    {
+      "id": "vehicle-ana",
+      "user_id": "driver-female",
+      "brand_model": "Toyota Corolla",
+      "color": "Prata",
+      "plate": "ABC1D23",
+      "seats": 4,
+      "created_at": "2026-10-01T12:00:00.000Z"
+    },
+    {
+      "id": "vehicle-joao",
+      "user_id": "driver-male",
+      "brand_model": "Honda Civic",
+      "color": "Preto",
+      "plate": "XYZ9A87",
+      "seats": 4,
+      "created_at": "2026-10-02T12:00:00.000Z"
+    }
+  ],
+  "reviews": [
+    {
+      "id": "review-ana-1",
+      "ride_id": "ride-available",
+      "reviewer_id": "driver-male",
+      "reviewed_id": "driver-female",
+      "rating": 5,
+      "comment": "Viagem tranquila",
+      "created_at": "2026-11-10T12:00:00.000Z"
+    },
+    {
+      "id": "review-ana-2",
+      "ride_id": "ride-women-only",
+      "reviewer_id": "driver-male",
+      "reviewed_id": "driver-female",
+      "rating": 4,
+      "comment": "Boa experiência",
+      "created_at": "2026-11-11T12:00:00.000Z"
+    }
   ]
 }

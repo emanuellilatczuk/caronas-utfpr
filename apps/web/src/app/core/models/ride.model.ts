@@ -7,6 +7,23 @@ export interface RideDriver {
   name: string;
   gender: Gender;
   avatar_url?: string;
+  average_rating?: number;
+}
+
+export interface RideVehicle {
+  id: string;
+  brand_model: string;
+  color: string;
+}
+
+export interface RideReview {
+  id: string;
+  ride_id: string;
+  reviewer_id: string;
+  reviewed_id: string;
+  rating: number;
+  comment?: string;
+  created_at: string;
 }
 
 export interface Ride {
@@ -23,6 +40,7 @@ export interface Ride {
   status: RideStatus;
   created_at: string;
   driver?: RideDriver;
+  vehicle?: RideVehicle;
 }
 
 export interface RideSearchCriteria {

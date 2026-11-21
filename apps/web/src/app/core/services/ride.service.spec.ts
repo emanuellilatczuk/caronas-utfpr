@@ -1,8 +1,9 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { environment } from '../../../environments/environment';
 import { Gender } from '../models/user.model';
-import { Ride, RideSearchCriteria } from '../models/ride.model';
+import { Ride, RideReview, RideSearchCriteria, RideVehicle } from '../models/ride.model';
 import { RideService } from './ride.service';
 
 describe('RideService', () => {
@@ -48,10 +49,31 @@ describe('RideService', () => {
     criteria: RideSearchCriteria,
     rides: Ride[],
     users = [driver('driver-female', 'female')],
+    vehicles: RideVehicle[] = [{ id: 'vehicle-1', brand_model: 'Toyota Corolla', color: 'Prata' }],
+    reviews: RideReview[] = [
+      {
+        id: 'review-1',
+        ride_id: 'ride-reviewed-1',
+        reviewer_id: 'passenger-1',
+        reviewed_id: 'driver-female',
+        rating: 4,
+        created_at: '2099-01-01T00:00:00.000Z',
+      },
+      {
+        id: 'review-2',
+        ride_id: 'ride-reviewed-2',
+        reviewer_id: 'passenger-2',
+        reviewed_id: 'driver-female',
+        rating: 5,
+        created_at: '2099-01-02T00:00:00.000Z',
+      },
+    ],
   ): Promise<Ride[]> {
     const result = service.searchRides(criteria);
-    httpTesting.expectOne('http://localhost:3000/rides').flush(rides);
-    httpTesting.expectOne('http://localhost:3000/users').flush(users);
+    httpTesting.expectOne(`${environment.apiUrl}/rides`).flush(rides);
+    httpTesting.expectOne(`${environment.apiUrl}/users`).flush(users);
+    httpTesting.expectOne(`${environment.apiUrl}/vehicles`).flush(vehicles);
+    httpTesting.expectOne(`${environment.apiUrl}/reviews`).flush(reviews);
     return result;
   }
 
@@ -148,5 +170,14 @@ describe('RideService', () => {
     );
 
     expect(results.map(({ id }) => id)).toEqual(['eligible']);
+  });
+
+  it('inclui veículo e avaliação média do motorista nos resultados', async () => {
+    const results = await search(criteria(), [ride('with-details')]);
+
+    expect(results[0]).toMatchObject({
+      driver: { average_rating: 4.5 },
+      vehicle: { brand_model: 'Toyota Corolla', color: 'Prata' },
+    });
   });
 });

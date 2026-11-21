@@ -11,7 +11,7 @@
 
 ## Tarefas
 
-- [ ] **Tarefa 1 - Criar o modelo e o filtro de caronas**
+- [x] **Tarefa 1 - Criar o modelo e o filtro de caronas**
   - Cobre: CA1 e CA4
   - Teste primeiro: testar no `RideService` normalizacao de origem/destino com maiusculas, acentos, `trim()`, espacos extras e correspondencia parcial; data exata; horario igual ou posterior; exclusao de partidas passadas e de caronas sem vaga; exclusao de caronas `women_only` para masculino e `other`.
   - Arquivos previstos: `apps/web/src/app/core/models/ride.model.ts`, `apps/web/src/app/core/services/ride.service.ts`, `apps/web/src/app/core/services/ride.service.spec.ts`, `apps/api/db.json`

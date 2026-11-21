@@ -3,7 +3,13 @@ import { inject, Injectable } from '@angular/core';
 import { firstValueFrom, forkJoin } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Gender, User } from '../models/user.model';
-import { Ride, RideDriver, RideSearchCriteria } from '../models/ride.model';
+import {
+  Ride,
+  RideDriver,
+  RideReview,
+  RideSearchCriteria,
+  RideVehicle,
+} from '../models/ride.model';
 
 @Injectable({
   providedIn: 'root',
@@ -13,29 +19,50 @@ export class RideService {
   private readonly apiUrl = environment.apiUrl;
 
   async searchRides(criteria: RideSearchCriteria): Promise<Ride[]> {
-    const { rides, users } = await firstValueFrom(
+    const { rides, users, vehicles, reviews } = await firstValueFrom(
       forkJoin({
         rides: this.http.get<Ride[]>(`${this.apiUrl}/rides`),
         users: this.http.get<User[]>(`${this.apiUrl}/users`),
+        vehicles: this.http.get<RideVehicle[]>(`${this.apiUrl}/vehicles`),
+        reviews: this.http.get<RideReview[]>(`${this.apiUrl}/reviews`),
       }),
     );
+    const ratingsByDriver = new Map<string, number[]>();
+    reviews.forEach(({ reviewed_id, rating }) => {
+      const ratings = ratingsByDriver.get(reviewed_id) ?? [];
+      ratings.push(rating);
+      ratingsByDriver.set(reviewed_id, ratings);
+    });
     const drivers = new Map<string, RideDriver>(
-      users.map((user) => [
-        user.id,
-        {
-          id: user.id,
-          name: user.name,
-          gender: user.gender,
-          avatar_url: user.avatar_url,
-        },
-      ]),
+      users.map((user) => {
+        const ratings = ratingsByDriver.get(user.id) ?? [];
+        return [
+          user.id,
+          {
+            id: user.id,
+            name: user.name,
+            gender: user.gender,
+            avatar_url: user.avatar_url,
+            ...(ratings.length > 0
+              ? {
+                  average_rating: ratings.reduce((sum, rating) => sum + rating, 0) / ratings.length,
+                }
+              : {}),
+          },
+        ];
+      }),
     );
+    const vehicleById = new Map(vehicles.map((vehicle) => [vehicle.id, vehicle]));
 
     const origin = normalizeText(criteria.origin);
     const destination = normalizeText(criteria.destination);
 
     return rides
-      .map((ride) => ({ ...ride, driver: drivers.get(ride.driver_id) }))
+      .map((ride) => ({
+        ...ride,
+        driver: drivers.get(ride.driver_id),
+        vehicle: vehicleById.get(ride.vehicle_id),
+      }))
       .filter((ride) => {
         const departure = new Date(ride.departure_time);
         const driver = ride.driver;
