@@ -27,7 +27,7 @@
   - Teste primeiro: testar no componente que o resultado exibe foto/nome do Motorista, nota de avaliacao, modelo e cor do veiculo, horario de saida e vagas restantes; testar que uma lista vazia nao e confundida com erro.
   - Arquivos previstos: `apps/web/src/app/features/home/pages/home/home.component.ts`, `apps/web/src/app/features/home/pages/home/home.component.html`, `apps/web/src/app/features/home/pages/home/home.component.spec.ts`
 
-- [ ] **Tarefa 4 - Implementar o filtro Modo Elas por Elas**
+- [x] **Tarefa 4 - Implementar o filtro Modo Elas por Elas**
   - Cobre: CA2 e CA4
   - Teste primeiro: testar no componente e no Service que o filtro aparece apenas para genero feminino, ativa somente caronas exclusivas publicadas por Motoristas mulheres e fica ausente para masculino e `other`.
   - Arquivos previstos: `apps/web/src/app/features/home/pages/home/home.component.ts`, `apps/web/src/app/features/home/pages/home/home.component.html`, `apps/web/src/app/features/home/pages/home/home.component.spec.ts`, `apps/web/src/app/core/services/ride.service.ts`

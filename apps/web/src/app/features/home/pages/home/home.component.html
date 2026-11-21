@@ -193,6 +193,22 @@
             </div>
           </div>
 
+          @if (canSeeWomenOnlyFilter()) {
+            <label
+              class="flex items-center gap-2 text-sm text-texto cursor-pointer"
+              for="women-only-filter"
+            >
+              <input
+                id="women-only-filter"
+                data-testid="women-only-filter"
+                type="checkbox"
+                formControlName="womenOnly"
+                class="h-4 w-4 rounded border border-desabilitado accent-primaria focus:ring-2 focus:ring-primaria"
+              />
+              <span>Modo Elas por Elas</span>
+            </label>
+          }
+
           <button
             type="submit"
             [disabled]="searchForm.invalid"

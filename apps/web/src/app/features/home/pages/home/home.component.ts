@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import {
   AbstractControl,
   NonNullableFormBuilder,
@@ -32,6 +32,7 @@ export class HomeComponent {
   private readonly router = inject(Router);
 
   readonly currentUser = this.authService.currentUser;
+  readonly canSeeWomenOnlyFilter = computed(() => this.currentUser()?.gender === 'female');
   readonly searchState = signal<'not-searched' | 'loading' | 'results' | 'empty' | 'error'>(
     'not-searched',
   );
@@ -43,6 +44,7 @@ export class HomeComponent {
     destination: ['', [Validators.required, trimRequiredValidator]],
     date: ['', [Validators.required]],
     time: ['', [Validators.required]],
+    womenOnly: this.fb.control(false),
   });
 
   async onSearch(): Promise<void> {
@@ -69,7 +71,7 @@ export class HomeComponent {
         date,
         time,
         passengerGender: user.gender,
-        womenOnly: false,
+        womenOnly: this.canSeeWomenOnlyFilter() && this.searchForm.controls.womenOnly.value,
       });
       this.searchResults.set(rides);
       this.searchState.set(rides.length > 0 ? 'results' : 'empty');

@@ -5,6 +5,7 @@ import { signal } from '@angular/core';
 import { vi } from 'vitest';
 import { AuthService } from '../../../../core/services/auth.service';
 import { Ride } from '../../../../core/models/ride.model';
+import { User } from '../../../../core/models/user.model';
 import { RideService } from '../../../../core/services/ride.service';
 import { HomeComponent } from './home.component';
 
@@ -12,6 +13,7 @@ describe('HomeComponent - formulário de busca', () => {
   let component: HomeComponent;
   let fixture: ComponentFixture<HomeComponent>;
   let rideServiceSpy: { searchRides: ReturnType<typeof vi.fn> };
+  let authUser: ReturnType<typeof signal<User | null>>;
 
   const eligibleRide: Ride = {
     id: 'ride-1',
@@ -44,6 +46,13 @@ describe('HomeComponent - formulário de busca', () => {
     rideServiceSpy = {
       searchRides: vi.fn().mockResolvedValue([eligibleRide]),
     };
+    authUser = signal<User | null>({
+      id: 'user-1',
+      name: 'Estudante Teste',
+      email: 'estudante@alunos.utfpr.edu.br',
+      gender: 'female',
+      created_at: new Date().toISOString(),
+    });
 
     await TestBed.configureTestingModule({
       imports: [HomeComponent],
@@ -53,13 +62,7 @@ describe('HomeComponent - formulário de busca', () => {
         {
           provide: AuthService,
           useValue: {
-            currentUser: signal({
-              id: 'user-1',
-              name: 'Estudante Teste',
-              email: 'estudante@alunos.utfpr.edu.br',
-              gender: 'female',
-              created_at: new Date().toISOString(),
-            }),
+            currentUser: authUser,
             logout: () => undefined,
           },
         },
@@ -150,12 +153,79 @@ describe('HomeComponent - formulário de busca', () => {
     expect(time.nativeElement.getAttribute('aria-invalid')).toBe('true');
   });
 
+  it('deve exibir o filtro Modo Elas por Elas para passageira com gênero feminino', () => {
+    expect(fixture.debugElement.query(By.css('[data-testid="women-only-filter"]'))).toBeTruthy();
+  });
+
+  it('deve enviar o valor ativado do filtro na busca da passageira', async () => {
+    component.searchForm.setValue({
+      origin: 'UTFPR',
+      destination: 'Centro',
+      date: '2030-05-12',
+      time: '14:00',
+      womenOnly: false,
+    });
+    const filter = fixture.debugElement.query(By.css('[data-testid="women-only-filter"]'))
+      .nativeElement as HTMLInputElement;
+    filter.checked = true;
+    filter.dispatchEvent(new Event('change'));
+    fixture.detectChanges();
+
+    expect(component.searchForm.controls.womenOnly.value).toBe(true);
+
+    await component.onSearch();
+
+    expect(rideServiceSpy.searchRides).toHaveBeenCalledWith({
+      origin: 'UTFPR',
+      destination: 'Centro',
+      date: '2030-05-12',
+      time: '14:00',
+      passengerGender: 'female',
+      womenOnly: true,
+    });
+  });
+
+  it.each(['male', 'other'] as const)(
+    'deve ocultar o filtro e forçá-lo desativado para gênero %s',
+    async (gender) => {
+      authUser.set({
+        id: 'user-1',
+        name: 'Estudante Teste',
+        email: 'estudante@alunos.utfpr.edu.br',
+        gender,
+        created_at: new Date().toISOString(),
+      });
+      fixture.detectChanges();
+
+      expect(fixture.debugElement.query(By.css('[data-testid="women-only-filter"]'))).toBeNull();
+
+      component.searchForm.setValue({
+        origin: 'UTFPR',
+        destination: 'Centro',
+        date: '2030-05-12',
+        time: '14:00',
+        womenOnly: true,
+      });
+      await component.onSearch();
+
+      expect(rideServiceSpy.searchRides).toHaveBeenCalledWith({
+        origin: 'UTFPR',
+        destination: 'Centro',
+        date: '2030-05-12',
+        time: '14:00',
+        passengerGender: gender,
+        womenOnly: false,
+      });
+    },
+  );
+
   it('deve buscar com os critérios válidos e exibir os dados da carona elegível', async () => {
     component.searchForm.setValue({
       origin: ' UTFPR ',
       destination: ' Centro ',
       date: '2030-05-12',
       time: '14:00',
+      womenOnly: false,
     });
 
     await component.onSearch();
@@ -201,6 +271,7 @@ describe('HomeComponent - formulário de busca', () => {
       destination: 'Centro',
       date: '2030-05-12',
       time: '14:00',
+      womenOnly: false,
     });
 
     await component.onSearch();
