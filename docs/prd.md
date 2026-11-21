@@ -70,12 +70,12 @@
 
 **Critérios de aceite:**
 
-- [ ] **Dado** que sou um Visitante na tela de cadastro, **quando** preencho o formulário com dados válidos, e-mail não cadastrado e envio, **então** o sistema cria minha conta, autentica-me e me redireciona para a tela inicial.
-- [ ] **Dado** que sou um Usuário cadastrado na tela de login, **quando** insiro meu e-mail e senha corretos e clico em "Entrar", **então** o sistema valida minhas credenciais e concede acesso às funcionalidades internas do aplicativo.
-- [ ] **Dado** que estou na tela de cadastro, **quando** informo um e-mail já registrado, **então** o sistema exibe "Este e-mail já está em uso" e mantém os campos preenchidos (exceto a senha) para correção.
-- [ ] **Dado** que estou preenchendo o cadastro, **quando** omito campos obrigatórios ou uso formato inválido, **então** o envio é bloqueado com destaque visual e mensagens de erro específicas em cada campo.
-- [ ] **Dado** que estou no cadastro, **quando** insiro senha com menos de 8 caracteres, **então** o sistema bloqueia o envio e indica "A senha deve ter pelo menos 8 caracteres".
-- [ ] **Dado** que estou na tela de login, **quando** insiro e-mail ou senha incorretos, **então** o sistema exibe "E-mail ou senha inválidos" sem especificar qual campo falhou, preservando a segurança.
+- [x] **Dado** que sou um Visitante na tela de cadastro, **quando** preencho o formulário com dados válidos, e-mail não cadastrado e envio, **então** o sistema cria minha conta, autentica-me e me redireciona para a tela inicial.
+- [x] **Dado** que sou um Usuário cadastrado na tela de login, **quando** insiro meu e-mail e senha corretos e clico em "Entrar", **então** o sistema valida minhas credenciais e concede acesso às funcionalidades internas do aplicativo.
+- [x] **Dado** que estou na tela de cadastro, **quando** informo um e-mail já registrado, **então** o sistema exibe "Este e-mail já está em uso" e mantém os campos preenchidos (exceto a senha) para correção.
+- [x] **Dado** que estou preenchendo o cadastro, **quando** omito campos obrigatórios ou uso formato inválido, **então** o envio é bloqueado com destaque visual e mensagens de erro específicas em cada campo.
+- [x] **Dado** que estou no cadastro, **quando** insiro senha com menos de 8 caracteres, **então** o sistema bloqueia o envio e indica "A senha deve ter pelo menos 8 caracteres".
+- [x] **Dado** que estou na tela de login, **quando** insiro e-mail ou senha incorretos, **então** o sistema exibe "E-mail ou senha inválidos" sem especificar qual campo falhou, preservando a segurança.
 
 **Regras relacionadas:** RN01, RN02, RN03
 
