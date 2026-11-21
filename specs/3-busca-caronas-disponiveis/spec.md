@@ -1,6 +1,6 @@
 ---
 issue: 3
-status: rascunho
+status: aprovada
 ---
 
 # US04 — Busca e Visualização de Caronas Disponíveis
