@@ -4,7 +4,9 @@
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
       <div class="flex items-center gap-2">
         <span class="text-2xl font-bold font-display text-primaria tracking-tight">PassAí</span>
-        <span class="text-xs px-2 py-0.5 rounded-full bg-primaria/10 text-primaria font-semibold">UTFPR</span>
+        <span class="text-xs px-2 py-0.5 rounded-full bg-primaria/10 text-primaria font-semibold"
+          >UTFPR</span
+        >
       </div>
 
       <div class="flex items-center gap-4">
@@ -39,7 +41,9 @@
             <span class="px-2.5 py-1 rounded-full bg-fundo text-texto border border-black/5">
               📧 {{ currentUser()?.email }}
             </span>
-            <span class="px-2.5 py-1 rounded-full bg-fundo text-texto border border-black/5 capitalize">
+            <span
+              class="px-2.5 py-1 rounded-full bg-fundo text-texto border border-black/5 capitalize"
+            >
               👤 {{ currentUser()?.gender }}
             </span>
           </div>
@@ -47,26 +51,165 @@
       </div>
     </div>
 
-    <!-- Quick Action Cards (Próximas Histórias / Features) -->
+    <!-- Search and Quick Action -->
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-      <div class="bg-superficie p-6 rounded-2xl shadow-sm border border-black/5 flex flex-col justify-between">
-        <div>
-          <div class="w-10 h-10 rounded-xl bg-primaria/10 text-primaria flex items-center justify-center font-bold text-lg mb-3">
-            🚗
+      <div class="bg-superficie p-6 rounded-2xl shadow-sm border border-black/5">
+        <div
+          class="w-10 h-10 rounded-xl bg-primaria/10 text-primaria flex items-center justify-center font-bold text-lg mb-3"
+        >
+          🚗
+        </div>
+        <h2 class="text-base font-semibold font-display text-texto mb-4">Procurar Carona</h2>
+
+        <form [formGroup]="searchForm" (ngSubmit)="onSearch()" novalidate class="space-y-3">
+          <div>
+            <label for="origin" class="block text-xs font-bold text-texto mb-1.5">Origem</label>
+            <input
+              id="origin"
+              data-testid="origin"
+              type="text"
+              formControlName="origin"
+              placeholder="Ex.: UTFPR Campus"
+              [attr.aria-invalid]="
+                searchForm.controls.origin.touched && searchForm.controls.origin.invalid
+                  ? true
+                  : null
+              "
+              [attr.aria-describedby]="
+                searchForm.controls.origin.touched && searchForm.controls.origin.invalid
+                  ? 'error-origin'
+                  : null
+              "
+              class="w-full px-3.5 py-3 rounded-xl bg-fundo border-0 text-texto placeholder:text-desabilitado focus:outline-none focus:ring-2 focus:ring-primaria text-sm"
+            />
+            @if (
+              searchForm.controls.origin.touched && searchForm.controls.origin.hasError('required')
+            ) {
+              <p
+                id="error-origin"
+                data-testid="error-origin"
+                class="mt-1.5 text-xs text-perigo font-medium"
+              >
+                Origem é obrigatória.
+              </p>
+            }
           </div>
-          <h2 class="text-base font-semibold font-display text-texto">Procurar Carona</h2>
-          <p class="text-xs text-texto-suave mt-1">
-            Encontre colegas com trajetos compatíveis com o seu campus.
-          </p>
-        </div>
-        <div class="mt-4">
-          <span class="text-xs font-semibold text-desabilitado">Em breve na próxima etapa</span>
-        </div>
+
+          <div>
+            <label for="destination" class="block text-xs font-bold text-texto mb-1.5"
+              >Destino</label
+            >
+            <input
+              id="destination"
+              data-testid="destination"
+              type="text"
+              formControlName="destination"
+              placeholder="Ex.: Centro"
+              [attr.aria-invalid]="
+                searchForm.controls.destination.touched && searchForm.controls.destination.invalid
+                  ? true
+                  : null
+              "
+              [attr.aria-describedby]="
+                searchForm.controls.destination.touched && searchForm.controls.destination.invalid
+                  ? 'error-destination'
+                  : null
+              "
+              class="w-full px-3.5 py-3 rounded-xl bg-fundo border-0 text-texto placeholder:text-desabilitado focus:outline-none focus:ring-2 focus:ring-primaria text-sm"
+            />
+            @if (
+              searchForm.controls.destination.touched &&
+              searchForm.controls.destination.hasError('required')
+            ) {
+              <p
+                id="error-destination"
+                data-testid="error-destination"
+                class="mt-1.5 text-xs text-perigo font-medium"
+              >
+                Destino é obrigatório.
+              </p>
+            }
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label for="date" class="block text-xs font-bold text-texto mb-1.5">Data</label>
+              <input
+                id="date"
+                data-testid="date"
+                type="date"
+                formControlName="date"
+                [attr.aria-invalid]="
+                  searchForm.controls.date.touched && searchForm.controls.date.invalid ? true : null
+                "
+                [attr.aria-describedby]="
+                  searchForm.controls.date.touched && searchForm.controls.date.invalid
+                    ? 'error-date'
+                    : null
+                "
+                class="w-full px-3.5 py-3 rounded-xl bg-fundo border-0 text-texto focus:outline-none focus:ring-2 focus:ring-primaria text-sm"
+              />
+              @if (
+                searchForm.controls.date.touched && searchForm.controls.date.hasError('required')
+              ) {
+                <p
+                  id="error-date"
+                  data-testid="error-date"
+                  class="mt-1.5 text-xs text-perigo font-medium"
+                >
+                  Data é obrigatória.
+                </p>
+              }
+            </div>
+
+            <div>
+              <label for="time" class="block text-xs font-bold text-texto mb-1.5">Horário</label>
+              <input
+                id="time"
+                data-testid="time"
+                type="time"
+                formControlName="time"
+                [attr.aria-invalid]="
+                  searchForm.controls.time.touched && searchForm.controls.time.invalid ? true : null
+                "
+                [attr.aria-describedby]="
+                  searchForm.controls.time.touched && searchForm.controls.time.invalid
+                    ? 'error-time'
+                    : null
+                "
+                class="w-full px-3.5 py-3 rounded-xl bg-fundo border-0 text-texto focus:outline-none focus:ring-2 focus:ring-primaria text-sm"
+              />
+              @if (
+                searchForm.controls.time.touched && searchForm.controls.time.hasError('required')
+              ) {
+                <p
+                  id="error-time"
+                  data-testid="error-time"
+                  class="mt-1.5 text-xs text-perigo font-medium"
+                >
+                  Horário é obrigatório.
+                </p>
+              }
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            [disabled]="searchForm.invalid"
+            class="w-full py-3 px-4 rounded-xl bg-primaria text-texto-inverso font-semibold text-sm shadow-md shadow-primaria/25 hover:bg-primaria-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primaria disabled:opacity-50 disabled:cursor-not-allowed transition"
+          >
+            Buscar
+          </button>
+        </form>
       </div>
 
-      <div class="bg-superficie p-6 rounded-2xl shadow-sm border border-black/5 flex flex-col justify-between">
+      <div
+        class="bg-superficie p-6 rounded-2xl shadow-sm border border-black/5 flex flex-col justify-between"
+      >
         <div>
-          <div class="w-10 h-10 rounded-xl bg-primaria/10 text-primaria flex items-center justify-center font-bold text-lg mb-3">
+          <div
+            class="w-10 h-10 rounded-xl bg-primaria/10 text-primaria flex items-center justify-center font-bold text-lg mb-3"
+          >
             📍
           </div>
           <h2 class="text-base font-semibold font-display text-texto">Oferecer Carona</h2>

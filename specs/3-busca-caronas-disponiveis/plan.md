@@ -17,7 +17,7 @@
   - Arquivos previstos: `apps/web/src/app/core/models/ride.model.ts`, `apps/web/src/app/core/services/ride.service.ts`, `apps/web/src/app/core/services/ride.service.spec.ts`, `apps/api/db.json`
   - Configuracao de API: obter a URL base da API a partir de `environment.apiUrl` (`apps/web/src/environments/environment.ts` / `environment.development.ts`) tanto no `RideService` quanto no `ride.service.spec.ts`, sem `'http://localhost:3000'` hardcoded.
 
-- [ ] **Tarefa 2 - Implementar e validar o formulario de busca**
+- [x] **Tarefa 2 - Implementar e validar o formulario de busca**
   - Cobre: CA5
   - Teste primeiro: testar no componente que origem, destino, data e horario sao obrigatorios; campos nao exibem erro antes da interacao; `blur` invalido mostra mensagem em portugues; formulario invalido desabilita o botao de busca.
   - Arquivos previstos: `apps/web/src/app/features/home/pages/home/home.component.ts`, `apps/web/src/app/features/home/pages/home/home.component.html`, `apps/web/src/app/features/home/pages/home/home.component.spec.ts`
