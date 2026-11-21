@@ -15,6 +15,7 @@
   - Cobre: CA1 e CA4
   - Teste primeiro: testar no `RideService` normalizacao de origem/destino com maiusculas, acentos, `trim()`, espacos extras e correspondencia parcial; data exata; horario igual ou posterior; exclusao de partidas passadas e de caronas sem vaga; exclusao de caronas `women_only` para masculino e `other`.
   - Arquivos previstos: `apps/web/src/app/core/models/ride.model.ts`, `apps/web/src/app/core/services/ride.service.ts`, `apps/web/src/app/core/services/ride.service.spec.ts`, `apps/api/db.json`
+  - Configuracao de API: obter a URL base da API a partir de `environment.apiUrl` (`apps/web/src/environments/environment.ts` / `environment.development.ts`) tanto no `RideService` quanto no `ride.service.spec.ts`, sem `'http://localhost:3000'` hardcoded.
 
 - [ ] **Tarefa 2 - Implementar e validar o formulario de busca**
   - Cobre: CA5
