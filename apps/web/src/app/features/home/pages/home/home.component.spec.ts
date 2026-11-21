@@ -1,8 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
-import { provideRouter } from '@angular/router';
+import { Router, provideRouter } from '@angular/router';
 import { signal } from '@angular/core';
 import { vi } from 'vitest';
+import { routes } from '../../../../app.routes';
 import { AuthService } from '../../../../core/services/auth.service';
 import { Ride } from '../../../../core/models/ride.model';
 import { User } from '../../../../core/models/user.model';
@@ -57,7 +58,7 @@ describe('HomeComponent - formulário de busca', () => {
     await TestBed.configureTestingModule({
       imports: [HomeComponent],
       providers: [
-        provideRouter([]),
+        provideRouter(routes),
         { provide: RideService, useValue: rideServiceSpy },
         {
           provide: AuthService,
@@ -279,5 +280,45 @@ describe('HomeComponent - formulário de busca', () => {
 
     expect(fixture.debugElement.query(By.css('[data-testid="search-empty"]'))).toBeTruthy();
     expect(fixture.debugElement.query(By.css('[data-testid="search-error"]'))).toBeNull();
+  });
+
+  it('deve oferecer navegar para cadastrar trajeto sugerido sem persistir a rota', async () => {
+    rideServiceSpy.searchRides.mockResolvedValue([]);
+    component.searchForm.setValue({
+      origin: 'UTFPR Campus',
+      destination: 'Centro',
+      date: '2030-05-12',
+      time: '14:00',
+      womenOnly: false,
+    });
+
+    await component.onSearch();
+    fixture.detectChanges();
+
+    const emptyMessage = fixture.debugElement.query(By.css('[data-testid="search-empty"]'));
+    const shortcut = fixture.debugElement.query(By.css('[data-testid="saved-route-shortcut"]'));
+    const router = TestBed.inject(Router);
+    const navigateSpy = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+    const savedRouteRegistration = router.config.find(
+      (route) => route.path === 'saved-routes/new',
+    );
+
+    expect(emptyMessage.nativeElement.textContent.trim()).toBe(
+      'Nenhuma carona encontrada para esta rota/data',
+    );
+    expect(shortcut.nativeElement.textContent.trim()).toBe('Cadastrar trajeto em Rotas Salvas');
+    expect(savedRouteRegistration?.redirectTo).toBe('/home');
+
+    shortcut.nativeElement.click();
+
+    expect(navigateSpy).toHaveBeenCalledWith(['/saved-routes/new'], {
+      queryParams: {
+        origin: 'UTFPR Campus',
+        destination: 'Centro',
+        date: '2030-05-12',
+        time: '14:00',
+      },
+    });
+    expect(rideServiceSpy.searchRides).toHaveBeenCalledTimes(1);
   });
 });

@@ -32,6 +32,11 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'saved-routes/new',
+    pathMatch: 'full',
+    redirectTo: '/home',
+  },
+  {
     path: '**',
     redirectTo: 'home',
   },

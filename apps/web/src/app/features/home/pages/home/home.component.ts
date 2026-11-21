@@ -82,6 +82,13 @@ export class HomeComponent {
     }
   }
 
+  navigateToSavedRouteRegistration(): void {
+    const { origin, destination, date, time } = this.searchForm.getRawValue();
+    void this.router.navigate(['/saved-routes/new'], {
+      queryParams: { origin, destination, date, time },
+    });
+  }
+
   logout(): void {
     this.authService.logout();
     this.router.navigateByUrl('/login');

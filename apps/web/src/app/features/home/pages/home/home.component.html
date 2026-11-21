@@ -253,8 +253,16 @@
 
     @if (searchState() === 'empty') {
       <p data-testid="search-empty" role="status" class="text-sm text-texto-suave">
-        Nenhuma carona disponível para os critérios informados.
+        Nenhuma carona encontrada para esta rota/data
       </p>
+      <button
+        type="button"
+        data-testid="saved-route-shortcut"
+        (click)="navigateToSavedRouteRegistration()"
+        class="text-sm font-semibold text-primaria hover:underline cursor-pointer"
+      >
+        Cadastrar trajeto em Rotas Salvas
+      </button>
     }
 
     @if (searchState() === 'results') {
