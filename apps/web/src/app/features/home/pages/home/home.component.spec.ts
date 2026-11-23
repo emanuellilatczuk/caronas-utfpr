@@ -1,0 +1,463 @@
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
+import { Router, provideRouter } from '@angular/router';
+import { signal } from '@angular/core';
+import { vi } from 'vitest';
+import { routes } from '../../../../app.routes';
+import { AuthService } from '../../../../core/services/auth.service';
+import { Ride } from '../../../../core/models/ride.model';
+import { User } from '../../../../core/models/user.model';
+import { RideService } from '../../../../core/services/ride.service';
+import { HomeComponent } from './home.component';
+
+describe('HomeComponent - formulário de busca', () => {
+  let component: HomeComponent;
+  let fixture: ComponentFixture<HomeComponent>;
+  let rideServiceSpy: { searchRides: ReturnType<typeof vi.fn> };
+  let authUser: ReturnType<typeof signal<User | null>>;
+
+  const eligibleRide: Ride = {
+    id: 'ride-1',
+    driver_id: 'driver-1',
+    vehicle_id: 'vehicle-1',
+    origin: 'UTFPR',
+    destination: 'Centro',
+    departure_time: '2030-05-12T14:30:00',
+    total_seats: 4,
+    available_seats: 2,
+    meeting_point: 'Portão principal',
+    women_only: false,
+    status: 'open',
+    created_at: '2030-05-01T10:00:00',
+    driver: {
+      id: 'driver-1',
+      name: 'Marina Oliveira',
+      gender: 'female',
+      avatar_url: 'https://example.test/marina.jpg',
+      average_rating: 4.8,
+    },
+    vehicle: {
+      id: 'vehicle-1',
+      brand_model: 'Toyota Corolla',
+      color: 'Prata',
+    },
+  };
+
+  beforeEach(async () => {
+    rideServiceSpy = {
+      searchRides: vi.fn().mockResolvedValue([eligibleRide]),
+    };
+    authUser = signal<User | null>({
+      id: 'user-1',
+      name: 'Estudante Teste',
+      email: 'estudante@alunos.utfpr.edu.br',
+      gender: 'female',
+      created_at: new Date().toISOString(),
+    });
+
+    await TestBed.configureTestingModule({
+      imports: [HomeComponent],
+      providers: [
+        provideRouter(routes),
+        { provide: RideService, useValue: rideServiceSpy },
+        {
+          provide: AuthService,
+          useValue: {
+            currentUser: authUser,
+            logout: () => undefined,
+          },
+        },
+      ],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(HomeComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('deve exigir origem, destino, data e horário', () => {
+    expect(component.searchForm.controls.origin.hasError('required')).toBe(true);
+    expect(component.searchForm.controls.destination.hasError('required')).toBe(true);
+    expect(component.searchForm.controls.date.hasError('required')).toBe(true);
+    expect(component.searchForm.controls.time.hasError('required')).toBe(true);
+  });
+
+  it('deve invalidar origem e destino compostos apenas por espaços', () => {
+    component.searchForm.controls.origin.setValue('   ');
+    component.searchForm.controls.destination.setValue('\t  ');
+
+    expect(component.searchForm.controls.origin.invalid).toBe(true);
+    expect(component.searchForm.controls.origin.hasError('required')).toBe(true);
+    expect(component.searchForm.controls.destination.invalid).toBe(true);
+    expect(component.searchForm.controls.destination.hasError('required')).toBe(true);
+  });
+
+  it('não deve exibir erros antes da interação', () => {
+    const errors = fixture.debugElement.queryAll(By.css('[data-testid^="error-"]'));
+    expect(errors.length).toBe(0);
+  });
+
+  it('deve renderizar o logo oficial com atributos acessíveis e visíveis no DOM', () => {
+    const logo = fixture.debugElement.query(By.css('[data-testid="brand-logo"]'))
+      .nativeElement as HTMLImageElement;
+
+    expect(document.body.contains(logo)).toBe(true);
+    expect(logo.getAttribute('src')).toBe('/assets/logo.png');
+    expect(logo.getAttribute('alt')).toBe('PassAí');
+    expect(logo.hasAttribute('hidden')).toBe(false);
+    expect(logo.getAttribute('aria-hidden')).not.toBe('true');
+    expect(logo.classList.contains('hidden')).toBe(false);
+    expect(logo.classList.contains('invisible')).toBe(false);
+    expect(logo.classList.contains('opacity-0')).toBe(false);
+    expect(getComputedStyle(logo).display).not.toBe('none');
+    expect(getComputedStyle(logo).visibility).not.toBe('hidden');
+  });
+
+  it('deve aplicar identidade de marca, tokens e layout responsivo mobile-first', () => {
+    const hero = fixture.debugElement.query(By.css('[data-testid="home-hero"]')).nativeElement;
+    const searchCard = fixture.debugElement.query(
+      By.css('[data-testid="search-card"]'),
+    ).nativeElement;
+    const searchForm = fixture.debugElement.query(
+      By.css('[data-testid="search-form"]'),
+    ).nativeElement;
+    const heroTitle = fixture.debugElement.query(
+      By.css('[data-testid="home-hero"] h1'),
+    ).nativeElement;
+    const searchTitle = fixture.debugElement.query(By.css('#search-title')).nativeElement;
+    const originLabel = fixture.debugElement.query(By.css('label[for="origin"]')).nativeElement;
+    const originInput = fixture.debugElement.query(By.css('[data-testid="origin"]')).nativeElement;
+    const searchButton = fixture.debugElement.query(
+      By.css('[data-testid="search-form"] button[type="submit"]'),
+    ).nativeElement;
+    const heroClasses = hero.classList as DOMTokenList;
+    const searchCardClasses = searchCard.classList as DOMTokenList;
+    const searchFormClasses = searchForm.classList as DOMTokenList;
+
+    expect(heroClasses.contains('bg-primaria')).toBe(true);
+    expect(heroClasses.contains('text-texto-inverso')).toBe(true);
+    expect(searchCardClasses.contains('bg-superficie')).toBe(true);
+    expect(searchCardClasses.contains('rounded-xl')).toBe(true);
+    expect(searchCardClasses.contains('p-4')).toBe(true);
+    expect(searchFormClasses.contains('grid-cols-1')).toBe(true);
+    expect(searchFormClasses.contains('md:grid-cols-2')).toBe(true);
+    expect(searchFormClasses.contains('gap-4')).toBe(true);
+    expect(heroTitle.classList.contains('font-display')).toBe(true);
+    expect(heroTitle.classList.contains('text-2xl')).toBe(true);
+    expect(searchTitle.classList.contains('font-heading')).toBe(true);
+    expect(searchTitle.classList.contains('text-[15px]')).toBe(true);
+    expect(originLabel.classList.contains('font-label')).toBe(true);
+    expect(originLabel.classList.contains('text-[10px]')).toBe(true);
+    expect(originInput.classList.contains('font-body')).toBe(true);
+    expect(originInput.classList.contains('text-[13px]')).toBe(true);
+    expect(searchButton.classList.contains('font-button-primary')).toBe(true);
+    expect(searchButton.classList.contains('text-sm')).toBe(true);
+  });
+
+  it('deve remover ações e badges genéricos da tela de busca', () => {
+    const content = fixture.nativeElement.textContent as string;
+
+    expect(content).not.toContain('Oferecer Carona');
+    expect(content).not.toContain('Em breve na próxima etapa');
+    expect(content).not.toContain('UTFPR');
+  });
+
+  it('deve manter a tela no estado not-searched sem exibir outros estados', () => {
+    expect(component.searchState()).toBe('not-searched');
+    expect(fixture.debugElement.query(By.css('[data-testid="search-loading"]'))).toBeNull();
+    expect(fixture.debugElement.query(By.css('[data-testid="search-empty"]'))).toBeNull();
+    expect(fixture.debugElement.query(By.css('[data-testid="search-error"]'))).toBeNull();
+    expect(fixture.debugElement.query(By.css('[data-testid="ride-result"]'))).toBeNull();
+  });
+
+  it('deve renderizar apenas loading enquanto a busca está pendente e resultados após concluir', async () => {
+    let resolveSearch!: (rides: Ride[]) => void;
+    rideServiceSpy.searchRides.mockImplementation(
+      () =>
+        new Promise<Ride[]>((resolve) => {
+          resolveSearch = resolve;
+        }),
+    );
+    component.searchForm.setValue({
+      origin: 'UTFPR',
+      destination: 'Centro',
+      date: '2030-05-12',
+      time: '14:00',
+      womenOnly: false,
+    });
+
+    const search = component.onSearch();
+    fixture.detectChanges();
+
+    expect(fixture.debugElement.query(By.css('[data-testid="search-loading"]'))).toBeTruthy();
+    expect(fixture.debugElement.query(By.css('[data-testid="search-empty"]'))).toBeNull();
+    expect(fixture.debugElement.query(By.css('[data-testid="search-error"]'))).toBeNull();
+    expect(fixture.debugElement.query(By.css('[data-testid="ride-result"]'))).toBeNull();
+
+    resolveSearch([eligibleRide]);
+    await search;
+    fixture.detectChanges();
+
+    expect(fixture.debugElement.query(By.css('[data-testid="search-loading"]'))).toBeNull();
+    expect(fixture.debugElement.query(By.css('[data-testid="search-empty"]'))).toBeNull();
+    expect(fixture.debugElement.query(By.css('[data-testid="search-error"]'))).toBeNull();
+    expect(fixture.debugElement.query(By.css('[data-testid="ride-result"]'))).toBeTruthy();
+  });
+
+  it('deve exibir somente o estado de erro quando a busca falha', async () => {
+    rideServiceSpy.searchRides.mockRejectedValue(new Error('falha de busca'));
+    component.searchForm.setValue({
+      origin: 'UTFPR',
+      destination: 'Centro',
+      date: '2030-05-12',
+      time: '14:00',
+      womenOnly: false,
+    });
+
+    await component.onSearch();
+    fixture.detectChanges();
+
+    expect(fixture.debugElement.query(By.css('[data-testid="search-error"]'))).toBeTruthy();
+    expect(fixture.debugElement.query(By.css('[data-testid="search-loading"]'))).toBeNull();
+    expect(fixture.debugElement.query(By.css('[data-testid="search-empty"]'))).toBeNull();
+    expect(fixture.debugElement.query(By.css('[data-testid="ride-result"]'))).toBeNull();
+  });
+
+  it('deve exibir mensagens em português após blur inválido', () => {
+    const origin = fixture.debugElement.query(By.css('[data-testid="origin"]'));
+    const destination = fixture.debugElement.query(By.css('[data-testid="destination"]'));
+    const date = fixture.debugElement.query(By.css('[data-testid="date"]'));
+    const time = fixture.debugElement.query(By.css('[data-testid="time"]'));
+
+    origin.triggerEventHandler('blur', {});
+    destination.triggerEventHandler('blur', {});
+    date.triggerEventHandler('blur', {});
+    time.triggerEventHandler('blur', {});
+    fixture.detectChanges();
+
+    expect(
+      fixture.debugElement.query(By.css('[data-testid="error-origin"]')).nativeElement.textContent,
+    ).toContain('Origem é obrigatória');
+    expect(
+      fixture.debugElement.query(By.css('[data-testid="error-destination"]')).nativeElement
+        .textContent,
+    ).toContain('Destino é obrigatório');
+    expect(
+      fixture.debugElement.query(By.css('[data-testid="error-date"]')).nativeElement.textContent,
+    ).toContain('Data é obrigatória');
+    expect(
+      fixture.debugElement.query(By.css('[data-testid="error-time"]')).nativeElement.textContent,
+    ).toContain('Horário é obrigatório');
+  });
+
+  it('deve manter o botão de busca desabilitado enquanto o formulário estiver inválido', () => {
+    const button = fixture.debugElement.query(By.css('button[type="submit"]'))
+      .nativeElement as HTMLButtonElement;
+
+    expect(component.searchForm.invalid).toBe(true);
+    expect(button.disabled).toBe(true);
+  });
+
+  it('deve associar mensagens de erro aos respectivos campos após interação', () => {
+    const origin = fixture.debugElement.query(By.css('[data-testid="origin"]'));
+    const destination = fixture.debugElement.query(By.css('[data-testid="destination"]'));
+    const date = fixture.debugElement.query(By.css('[data-testid="date"]'));
+    const time = fixture.debugElement.query(By.css('[data-testid="time"]'));
+
+    origin.triggerEventHandler('blur', {});
+    destination.triggerEventHandler('blur', {});
+    date.triggerEventHandler('blur', {});
+    time.triggerEventHandler('blur', {});
+    fixture.detectChanges();
+
+    expect(origin.nativeElement.getAttribute('aria-describedby')).toBe('error-origin');
+    expect(origin.nativeElement.getAttribute('aria-invalid')).toBe('true');
+    expect(destination.nativeElement.getAttribute('aria-describedby')).toBe('error-destination');
+    expect(destination.nativeElement.getAttribute('aria-invalid')).toBe('true');
+    expect(date.nativeElement.getAttribute('aria-describedby')).toBe('error-date');
+    expect(date.nativeElement.getAttribute('aria-invalid')).toBe('true');
+    expect(time.nativeElement.getAttribute('aria-describedby')).toBe('error-time');
+    expect(time.nativeElement.getAttribute('aria-invalid')).toBe('true');
+  });
+
+  it('deve associar labels aos campos obrigatórios preservando os identificadores', () => {
+    for (const field of ['origin', 'destination', 'date', 'time']) {
+      const input = fixture.debugElement.query(By.css(`[data-testid="${field}"]`)).nativeElement;
+      const label = fixture.debugElement.query(By.css(`label[for="${field}"]`)).nativeElement;
+
+      expect(input.id).toBe(field);
+      expect(label.getAttribute('for')).toBe(field);
+    }
+  });
+
+  it('deve exibir o filtro Modo Elas por Elas para passageira com gênero feminino', () => {
+    expect(fixture.debugElement.query(By.css('[data-testid="women-only-filter"]'))).toBeTruthy();
+  });
+
+  it('deve enviar o valor ativado do filtro na busca da passageira', async () => {
+    component.searchForm.setValue({
+      origin: 'UTFPR',
+      destination: 'Centro',
+      date: '2030-05-12',
+      time: '14:00',
+      womenOnly: false,
+    });
+    const filter = fixture.debugElement.query(By.css('[data-testid="women-only-filter"]'))
+      .nativeElement as HTMLInputElement;
+    filter.checked = true;
+    filter.dispatchEvent(new Event('change'));
+    fixture.detectChanges();
+
+    expect(component.searchForm.controls.womenOnly.value).toBe(true);
+
+    await component.onSearch();
+
+    expect(rideServiceSpy.searchRides).toHaveBeenCalledWith({
+      origin: 'UTFPR',
+      destination: 'Centro',
+      date: '2030-05-12',
+      time: '14:00',
+      passengerGender: 'female',
+      womenOnly: true,
+    });
+  });
+
+  it.each(['male', 'other'] as const)(
+    'deve ocultar o filtro e forçá-lo desativado para gênero %s',
+    async (gender) => {
+      authUser.set({
+        id: 'user-1',
+        name: 'Estudante Teste',
+        email: 'estudante@alunos.utfpr.edu.br',
+        gender,
+        created_at: new Date().toISOString(),
+      });
+      fixture.detectChanges();
+
+      expect(fixture.debugElement.query(By.css('[data-testid="women-only-filter"]'))).toBeNull();
+
+      component.searchForm.setValue({
+        origin: 'UTFPR',
+        destination: 'Centro',
+        date: '2030-05-12',
+        time: '14:00',
+        womenOnly: true,
+      });
+      await component.onSearch();
+
+      expect(rideServiceSpy.searchRides).toHaveBeenCalledWith({
+        origin: 'UTFPR',
+        destination: 'Centro',
+        date: '2030-05-12',
+        time: '14:00',
+        passengerGender: gender,
+        womenOnly: false,
+      });
+    },
+  );
+
+  it('deve buscar com os critérios válidos e exibir os dados da carona elegível', async () => {
+    component.searchForm.setValue({
+      origin: ' UTFPR ',
+      destination: ' Centro ',
+      date: '2030-05-12',
+      time: '14:00',
+      womenOnly: false,
+    });
+
+    await component.onSearch();
+    fixture.detectChanges();
+
+    expect(rideServiceSpy.searchRides).toHaveBeenCalledWith({
+      origin: ' UTFPR ',
+      destination: ' Centro ',
+      date: '2030-05-12',
+      time: '14:00',
+      passengerGender: 'female',
+      womenOnly: false,
+    });
+    expect(
+      fixture.debugElement.query(By.css('[data-testid="ride-driver-photo"]')).nativeElement.src,
+    ).toBe('https://example.test/marina.jpg');
+    expect(
+      fixture.debugElement.query(By.css('[data-testid="ride-driver-name"]')).nativeElement
+        .textContent,
+    ).toContain('Marina Oliveira');
+    expect(
+      fixture.debugElement.query(By.css('[data-testid="ride-rating"]')).nativeElement.textContent,
+    ).toContain('4.8');
+    expect(
+      fixture.debugElement.query(By.css('[data-testid="ride-vehicle"]')).nativeElement.textContent,
+    ).toContain('Toyota Corolla');
+    expect(
+      fixture.debugElement.query(By.css('[data-testid="ride-vehicle"]')).nativeElement.textContent,
+    ).toContain('Prata');
+    expect(
+      fixture.debugElement.query(By.css('[data-testid="ride-departure"]')).nativeElement
+        .textContent,
+    ).toContain('14:30');
+    expect(
+      fixture.debugElement.query(By.css('[data-testid="ride-seats"]')).nativeElement.textContent,
+    ).toContain('2');
+    expect(fixture.debugElement.query(By.css('[data-testid="search-loading"]'))).toBeNull();
+    expect(fixture.debugElement.query(By.css('[data-testid="search-empty"]'))).toBeNull();
+    expect(fixture.debugElement.query(By.css('[data-testid="search-error"]'))).toBeNull();
+  });
+
+  it('deve representar lista vazia sem exibi-la como erro', async () => {
+    rideServiceSpy.searchRides.mockResolvedValue([]);
+    component.searchForm.setValue({
+      origin: 'UTFPR',
+      destination: 'Centro',
+      date: '2030-05-12',
+      time: '14:00',
+      womenOnly: false,
+    });
+
+    await component.onSearch();
+    fixture.detectChanges();
+
+    expect(fixture.debugElement.query(By.css('[data-testid="search-empty"]'))).toBeTruthy();
+    expect(fixture.debugElement.query(By.css('[data-testid="search-error"]'))).toBeNull();
+    expect(fixture.debugElement.query(By.css('[data-testid="search-loading"]'))).toBeNull();
+    expect(fixture.debugElement.query(By.css('[data-testid="ride-result"]'))).toBeNull();
+  });
+
+  it('deve oferecer navegar para cadastrar trajeto sugerido sem persistir a rota', async () => {
+    rideServiceSpy.searchRides.mockResolvedValue([]);
+    component.searchForm.setValue({
+      origin: 'UTFPR Campus',
+      destination: 'Centro',
+      date: '2030-05-12',
+      time: '14:00',
+      womenOnly: false,
+    });
+
+    await component.onSearch();
+    fixture.detectChanges();
+
+    const emptyMessage = fixture.debugElement.query(By.css('[data-testid="search-empty"]'));
+    const shortcut = fixture.debugElement.query(By.css('[data-testid="saved-route-shortcut"]'));
+    const router = TestBed.inject(Router);
+    const navigateSpy = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+    const savedRouteRegistration = router.config.find((route) => route.path === 'saved-routes/new');
+
+    expect(emptyMessage.nativeElement.textContent.trim()).toBe(
+      'Nenhuma carona encontrada para esta rota/data',
+    );
+    expect(shortcut.nativeElement.textContent.trim()).toBe('Cadastrar trajeto em Rotas Salvas');
+    expect(savedRouteRegistration?.redirectTo).toBe('/home');
+
+    shortcut.nativeElement.click();
+
+    expect(navigateSpy).toHaveBeenCalledWith(['/saved-routes/new'], {
+      queryParams: {
+        origin: 'UTFPR Campus',
+        destination: 'Centro',
+        date: '2030-05-12',
+        time: '14:00',
+      },
+    });
+    expect(rideServiceSpy.searchRides).toHaveBeenCalledTimes(1);
+  });
+});

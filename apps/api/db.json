@@ -1,3 +1,104 @@
 {
-  "users": []
+  "users": [
+    {
+      "id": "driver-female",
+      "name": "Ana Souza",
+      "email": "ana.souza@alunos.utfpr.edu.br",
+      "gender": "female",
+      "avatar_url": "https://example.com/ana.jpg",
+      "created_at": "2026-11-01T12:00:00.000Z"
+    },
+    {
+      "id": "driver-male",
+      "name": "João Lima",
+      "email": "joao.lima@alunos.utfpr.edu.br",
+      "gender": "male",
+      "avatar_url": "https://example.com/joao.jpg",
+      "created_at": "2026-11-01T12:00:00.000Z"
+    }
+  ],
+  "rides": [
+    {
+      "id": "ride-available",
+      "driver_id": "driver-female",
+      "vehicle_id": "vehicle-ana",
+      "origin": "UTFPR Centro",
+      "destination": "Jardim das Flores",
+      "departure_time": "2026-12-01T12:00:00.000Z",
+      "total_seats": 4,
+      "available_seats": 3,
+      "meeting_point": "Entrada principal",
+      "women_only": false,
+      "status": "open",
+      "created_at": "2026-11-20T12:00:00.000Z"
+    },
+    {
+      "id": "ride-women-only",
+      "driver_id": "driver-female",
+      "vehicle_id": "vehicle-ana",
+      "origin": "UTFPR Centro",
+      "destination": "Jardim das Flores",
+      "departure_time": "2026-12-01T13:00:00.000Z",
+      "total_seats": 3,
+      "available_seats": 2,
+      "meeting_point": "Entrada principal",
+      "women_only": true,
+      "status": "open",
+      "created_at": "2026-11-20T12:00:00.000Z"
+    },
+    {
+      "id": "ride-driver-male",
+      "driver_id": "driver-male",
+      "vehicle_id": "vehicle-joao",
+      "origin": "UTFPR Centro",
+      "destination": "Jardim das Flores",
+      "departure_time": "2026-12-01T14:00:00.000Z",
+      "total_seats": 4,
+      "available_seats": 3,
+      "meeting_point": "Entrada principal",
+      "women_only": false,
+      "status": "open",
+      "created_at": "2026-11-20T12:00:00.000Z"
+    }
+  ],
+  "vehicles": [
+    {
+      "id": "vehicle-ana",
+      "user_id": "driver-female",
+      "brand_model": "Toyota Corolla",
+      "color": "Prata",
+      "plate": "ABC1D23",
+      "seats": 4,
+      "created_at": "2026-10-01T12:00:00.000Z"
+    },
+    {
+      "id": "vehicle-joao",
+      "user_id": "driver-male",
+      "brand_model": "Honda Civic",
+      "color": "Preto",
+      "plate": "XYZ9A87",
+      "seats": 4,
+      "created_at": "2026-10-02T12:00:00.000Z"
+    }
+  ],
+  "reviews": [
+    {
+      "id": "review-ana-1",
+      "ride_id": "ride-available",
+      "reviewer_id": "driver-male",
+      "reviewed_id": "driver-female",
+      "rating": 5,
+      "comment": "Viagem tranquila",
+      "created_at": "2026-11-10T12:00:00.000Z"
+    },
+    {
+      "id": "review-ana-2",
+      "ride_id": "ride-women-only",
+      "reviewer_id": "driver-male",
+      "reviewed_id": "driver-female",
+      "rating": 4,
+      "comment": "Boa experiência",
+      "created_at": "2026-11-11T12:00:00.000Z"
+    }
+  ]
 }

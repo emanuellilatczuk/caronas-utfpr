@@ -1,83 +1,394 @@
-<div class="min-h-screen bg-fundo">
-  <!-- Top Navigation Bar -->
-  <header class="bg-superficie border-b border-black/5 sticky top-0 z-10">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-      <div class="flex items-center gap-2">
-        <span class="text-2xl font-bold font-display text-primaria tracking-tight">PassAí</span>
-        <span class="text-xs px-2 py-0.5 rounded-full bg-primaria/10 text-primaria font-semibold">UTFPR</span>
-      </div>
+<div class="min-h-screen bg-fundo pb-12">
+  <header data-testid="home-hero" class="rounded-b-[2.5rem] bg-primaria pb-44 pt-5 text-texto-inverso">
+    <div class="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-8">
+      <img
+        data-testid="brand-logo"
+        src="/assets/logo.png"
+        alt="PassAí"
+        width="187"
+        height="47"
+        class="block h-auto w-36 object-contain sm:w-40"
+      />
 
-      <div class="flex items-center gap-4">
-        <span class="text-xs sm:text-sm text-texto-suave truncate max-w-[160px] sm:max-w-none">
-          {{ currentUser()?.name }}
-        </span>
-        <button
-          type="button"
-          data-testid="logout-btn"
-          (click)="logout()"
-          class="text-xs sm:text-sm font-semibold text-perigo hover:underline py-1 px-2 rounded-lg hover:bg-perigo/5 transition cursor-pointer"
-        >
-          Sair
-        </button>
-      </div>
+      <button
+        type="button"
+        data-testid="logout-btn"
+        (click)="logout()"
+        class="rounded-xl px-5 py-2.5 font-body text-base font-semibold text-texto-inverso transition-colors hover:bg-primaria-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-texto-inverso focus-visible:ring-offset-2 focus-visible:ring-offset-primaria sm:text-lg"
+      >
+        Sair
+      </button>
+    </div>
+
+    <div class="mx-auto mt-8 max-w-2xl px-4 sm:px-6">
+      <h1 class="font-display text-2xl font-bold tracking-tight sm:text-[26px]">
+        Olá, {{ currentUser()?.name }}!
+      </h1>
     </div>
   </header>
 
-  <!-- Main Content Area -->
-  <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-    <!-- Welcome Card -->
-    <div class="bg-superficie rounded-2xl p-6 shadow-sm border border-black/5">
-      <div class="flex items-start justify-between gap-4">
-        <div>
-          <h1 class="text-2xl font-bold font-display text-texto">
-            Olá, {{ currentUser()?.name }}! 👋
-          </h1>
-          <p class="text-sm text-texto-suave mt-1">
-            Seja bem-vindo(a) à plataforma de caronas da comunidade UTFPR.
-          </p>
-          <div class="mt-3 flex flex-wrap gap-2 text-xs">
-            <span class="px-2.5 py-1 rounded-full bg-fundo text-texto border border-black/5">
-              📧 {{ currentUser()?.email }}
-            </span>
-            <span class="px-2.5 py-1 rounded-full bg-fundo text-texto border border-black/5 capitalize">
-              👤 {{ currentUser()?.gender }}
-            </span>
-          </div>
-        </div>
-      </div>
-    </div>
+  <main class="mx-auto -mt-36 max-w-2xl space-y-6 px-4 sm:px-6">
+    <section
+      data-testid="search-card"
+      aria-labelledby="search-title"
+      class="rounded-xl bg-superficie p-4 p-5 shadow-lg sm:p-7"
+    >
+      <h2 id="search-title" class="sr-only font-heading text-[15px]">Encontre sua carona</h2>
 
-    <!-- Quick Action Cards (Próximas Histórias / Features) -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-      <div class="bg-superficie p-6 rounded-2xl shadow-sm border border-black/5 flex flex-col justify-between">
-        <div>
-          <div class="w-10 h-10 rounded-xl bg-primaria/10 text-primaria flex items-center justify-center font-bold text-lg mb-3">
-            🚗
+      <form
+        data-testid="search-form"
+        [formGroup]="searchForm"
+        (ngSubmit)="onSearch()"
+        novalidate
+        class="grid grid-cols-1 gap-4 md:grid-cols-2"
+      >
+        <div class="md:col-span-2">
+          <div class="mb-1.5 flex items-center justify-between">
+            <label
+              for="origin"
+              class="block font-label text-[10px] font-bold uppercase tracking-wider text-texto-suave"
+            >
+              Origem
+            </label>
+            
           </div>
-          <h2 class="text-base font-semibold font-display text-texto">Procurar Carona</h2>
-          <p class="text-xs text-texto-suave mt-1">
-            Encontre colegas com trajetos compatíveis com o seu campus.
-          </p>
-        </div>
-        <div class="mt-4">
-          <span class="text-xs font-semibold text-desabilitado">Em breve na próxima etapa</span>
-        </div>
-      </div>
 
-      <div class="bg-superficie p-6 rounded-2xl shadow-sm border border-black/5 flex flex-col justify-between">
-        <div>
-          <div class="w-10 h-10 rounded-xl bg-primaria/10 text-primaria flex items-center justify-center font-bold text-lg mb-3">
-            📍
+          <div class="relative flex items-center">
+            <span class="pointer-events-none absolute left-3.5 text-texto-suave">
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                <circle cx="12" cy="10" r="3" />
+              </svg>
+            </span>
+            <input
+              id="origin"
+              data-testid="origin"
+              type="text"
+              formControlName="origin"
+              placeholder="Ex.: UTFPR Campus"
+              [attr.aria-invalid]="
+                searchForm.controls.origin.touched && searchForm.controls.origin.invalid ? true : null
+              "
+              [attr.aria-describedby]="
+                searchForm.controls.origin.touched && searchForm.controls.origin.invalid
+                  ? 'error-origin'
+                  : null
+              "
+              class="w-full rounded-xl bg-fundo py-3 pl-10 pr-3.5 font-body text-[13px] font-medium text-texto placeholder:text-desabilitado focus:outline-none focus:ring-2 focus:ring-primaria"
+            />
           </div>
-          <h2 class="text-base font-semibold font-display text-texto">Oferecer Carona</h2>
-          <p class="text-xs text-texto-suave mt-1">
-            Cadastre seu veículo e compartilhe vagas ociosas com a universidade.
-          </p>
+
+          @if (
+            searchForm.controls.origin.touched && searchForm.controls.origin.hasError('required')
+          ) {
+            <p
+              id="error-origin"
+              data-testid="error-origin"
+              class="mt-1.5 font-caption text-[11px] text-perigo"
+            >
+              Origem é obrigatória.
+            </p>
+          }
         </div>
-        <div class="mt-4">
-          <span class="text-xs font-semibold text-desabilitado">Em breve na próxima etapa</span>
+
+        <div class="md:col-span-2">
+          <label
+            for="destination"
+            class="mb-1.5 block font-label text-[10px] font-bold uppercase tracking-wider text-texto-suave"
+          >
+            Destino
+          </label>
+
+          <div class="relative flex items-center">
+            <span class="pointer-events-none absolute left-3.5 text-texto-suave">
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" />
+                <line x1="4" y1="22" x2="4" y2="15" />
+              </svg>
+            </span>
+            <input
+              id="destination"
+              data-testid="destination"
+              type="text"
+              formControlName="destination"
+              placeholder="Ex.: Centro"
+              [attr.aria-invalid]="
+                searchForm.controls.destination.touched && searchForm.controls.destination.invalid
+                  ? true
+                  : null
+              "
+              [attr.aria-describedby]="
+                searchForm.controls.destination.touched && searchForm.controls.destination.invalid
+                  ? 'error-destination'
+                  : null
+              "
+              class="w-full rounded-xl bg-fundo py-3 pl-10 pr-3.5 font-body text-[13px] font-medium text-texto placeholder:text-desabilitado focus:outline-none focus:ring-2 focus:ring-primaria"
+            />
+          </div>
+
+          @if (
+            searchForm.controls.destination.touched &&
+            searchForm.controls.destination.hasError('required')
+          ) {
+            <p
+              id="error-destination"
+              data-testid="error-destination"
+              class="mt-1.5 font-caption text-[11px] text-perigo"
+            >
+              Destino é obrigatório.
+            </p>
+          }
         </div>
+
+        <div>
+          <label
+            for="date"
+            class="mb-1.5 block font-label text-[10px] font-bold uppercase tracking-wider text-texto-suave"
+          >
+            Data
+          </label>
+          <input
+            id="date"
+            data-testid="date"
+            type="date"
+            formControlName="date"
+            [attr.aria-invalid]="
+              searchForm.controls.date.touched && searchForm.controls.date.invalid ? true : null
+            "
+            [attr.aria-describedby]="
+              searchForm.controls.date.touched && searchForm.controls.date.invalid
+                ? 'error-date'
+                : null
+            "
+            class="w-full rounded-xl bg-fundo px-3.5 py-3 font-body text-[13px] font-medium text-texto focus:outline-none focus:ring-2 focus:ring-primaria"
+          />
+          @if (searchForm.controls.date.touched && searchForm.controls.date.hasError('required')) {
+            <p
+              id="error-date"
+              data-testid="error-date"
+              class="mt-1.5 font-caption text-[11px] text-perigo"
+            >
+              Data é obrigatória.
+            </p>
+          }
+        </div>
+
+        <div>
+          <label
+            for="time"
+            class="mb-1.5 block font-label text-[10px] font-bold uppercase tracking-wider text-texto-suave"
+          >
+            Horário
+          </label>
+          <input
+            id="time"
+            data-testid="time"
+            type="time"
+            formControlName="time"
+            [attr.aria-invalid]="
+              searchForm.controls.time.touched && searchForm.controls.time.invalid ? true : null
+            "
+            [attr.aria-describedby]="
+              searchForm.controls.time.touched && searchForm.controls.time.invalid
+                ? 'error-time'
+                : null
+            "
+            class="w-full rounded-xl bg-fundo px-3.5 py-3 font-body text-[13px] font-medium text-texto focus:outline-none focus:ring-2 focus:ring-primaria"
+          />
+          @if (searchForm.controls.time.touched && searchForm.controls.time.hasError('required')) {
+            <p
+              id="error-time"
+              data-testid="error-time"
+              class="mt-1.5 font-caption text-[11px] text-perigo"
+            >
+              Horário é obrigatório.
+            </p>
+          }
+        </div>
+
+        @if (canSeeWomenOnlyFilter()) {
+          <label
+            for="women-only-filter"
+            class="flex cursor-pointer items-center justify-between gap-4 rounded-2xl border border-fundo bg-superficie p-3.5 transition-colors hover:bg-fundo/40 md:col-span-2"
+          >
+            <div>
+              <span class="block font-body text-[13px] font-bold text-texto">
+                Modo Elas por Elas
+              </span>
+              <span class="mt-0.5 block font-caption text-[11px] text-texto-suave">
+                Caronas exclusivas entre mulheres. Mais segurança para você!
+              </span>
+            </div>
+
+            <div class="relative inline-flex shrink-0 items-center">
+              <input
+                id="women-only-filter"
+                data-testid="women-only-filter"
+                type="checkbox"
+                formControlName="womenOnly"
+                class="peer sr-only"
+              />
+              <div
+                class="h-6 w-11 rounded-full bg-desabilitado/60 transition-colors after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:bg-superficie after:shadow-sm after:transition-all after:content-[''] peer-checked:bg-primaria peer-checked:after:translate-x-5 peer-focus-visible:ring-2 peer-focus-visible:ring-primaria peer-focus-visible:ring-offset-2"
+              ></div>
+            </div>
+          </label>
+        }
+
+        <button
+          type="submit"
+          [disabled]="searchForm.invalid"
+          class="mt-1 flex w-full items-center justify-center gap-2 rounded-xl bg-primaria px-4 py-3.5 font-button-primary text-sm font-semibold text-texto-inverso shadow-md shadow-primaria/25 transition-all hover:bg-primaria-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primaria focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none md:col-span-2"
+        >
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <span>Buscar Caronas</span>
+        </button>
+      </form>
+    </section>
+
+    @if (searchState() === 'loading') {
+      <div class="rounded-2xl bg-superficie p-6 text-center shadow-sm">
+        <p data-testid="search-loading" role="status" class="font-body text-[13px] text-texto-suave">
+          Buscando caronas...
+        </p>
       </div>
-    </div>
+    }
+
+    @if (searchState() === 'error') {
+      <div class="rounded-2xl bg-superficie p-4 shadow-sm">
+        <p data-testid="search-error" role="alert" class="font-body text-[13px] text-perigo">
+          {{ searchError() }}
+        </p>
+      </div>
+    }
+
+    @if (searchState() === 'empty') {
+      <section class="space-y-4 rounded-2xl bg-superficie p-5 shadow-sm sm:p-6">
+        <p data-testid="search-empty" role="status" class="font-body text-[13px] text-texto">
+          Nenhuma carona encontrada para esta rota/data
+        </p>
+        <button
+          type="button"
+          data-testid="saved-route-shortcut"
+          (click)="navigateToSavedRouteRegistration()"
+          class="rounded-xl bg-primaria px-4 py-2.5 font-button-primary text-sm font-semibold text-texto-inverso hover:bg-primaria-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primaria focus-visible:ring-offset-2"
+        >
+          Cadastrar trajeto em Rotas Salvas
+        </button>
+      </section>
+    }
+
+    @if (searchState() === 'results') {
+      <section aria-label="Resultados da busca" class="space-y-3.5 pt-2">
+        <div class="flex items-center justify-between px-1">
+          <h2 class="flex items-center gap-2 font-heading text-[15px] font-bold text-texto">
+            <svg class="h-4 w-4 text-primaria" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+            </svg>
+            Caronas disponíveis
+          </h2>
+          <span class="font-caption text-[11px] text-texto-suave">
+            {{ searchResults().length }} encontrada(s)
+          </span>
+        </div>
+
+        @for (ride of searchResults(); track ride.id) {
+          <article
+            data-testid="ride-result"
+            class="space-y-3 rounded-2xl bg-superficie p-4 shadow-sm transition-shadow hover:shadow-md sm:p-5"
+          >
+            <div class="flex items-center gap-3.5">
+              @if (ride.driver?.avatar_url; as avatarUrl) {
+                <img
+                  data-testid="ride-driver-photo"
+                  [src]="avatarUrl"
+                  [alt]="'Foto de ' + (ride.driver?.name ?? 'Motorista')"
+                  class="h-12 w-12 shrink-0 overflow-hidden rounded-2xl bg-fundo object-cover text-[10px] text-texto-suave"
+                />
+              } @else {
+                <div
+                  aria-hidden="true"
+                  class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-fundo font-subhead font-bold text-primaria"
+                >
+                  {{ ride.driver?.name?.slice(0, 1) ?? 'M' }}
+                </div>
+              }
+
+              <div class="min-w-0 flex-1">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                  <h3 data-testid="ride-driver-name" class="font-subhead text-[14px] font-bold text-texto">
+                    {{ ride.driver?.name ?? 'Motorista' }}
+                  </h3>
+                  <span
+                    data-testid="ride-rating"
+                    class="rounded-lg bg-fundo px-2 py-0.5 font-caption text-[11px] font-semibold text-texto"
+                  >
+                    @if (ride.driver?.average_rating !== undefined) {
+                      ★ {{ ride.driver?.average_rating }}
+                    } @else {
+                      Sem avaliações
+                    }
+                  </span>
+                </div>
+
+                <p data-testid="ride-vehicle" class="mt-0.5 font-body text-[12px] text-texto-suave">
+                  {{ ride.vehicle?.brand_model ?? 'Veículo indisponível' }}
+                  @if (ride.vehicle?.color) {
+                    · {{ ride.vehicle?.color }}
+                  }
+                </p>
+              </div>
+            </div>
+
+            <div class="space-y-1.5 rounded-xl bg-fundo px-3.5 py-2.5 font-body text-[12px]">
+              <p class="truncate text-texto">
+                <span class="text-texto-suave">Origem: </span>
+                <span class="font-medium">{{ ride.origin }}</span>
+              </p>
+              <p class="truncate text-texto">
+                <span class="text-texto-suave">Destino: </span>
+                <span class="font-medium">{{ ride.destination }}</span>
+              </p>
+              <p class="text-texto">
+                <span class="text-texto-suave">Saída: </span>
+                <time data-testid="ride-departure" class="font-semibold" [attr.datetime]="ride.departure_time">
+                  {{ ride.departure_time | date: 'HH:mm' }}
+                </time>
+              </p>
+            </div>
+
+            <div class="flex flex-wrap items-center justify-between gap-3 pt-1 font-body text-[12px]">
+              <span
+                data-testid="ride-seats"
+                class="inline-flex items-center gap-1.5 rounded-full bg-fundo px-3 py-1 font-semibold text-primaria"
+              >
+                <span class="h-1.5 w-1.5 rounded-full bg-primaria"></span>
+                {{ ride.available_seats }}
+                @if (ride.available_seats === 1) {
+                  vaga restante
+                } @else {
+                  vagas restantes
+                }
+              </span>
+
+              <button
+                type="button"
+                data-testid="request-ride-btn"
+                class="inline-flex items-center gap-1.5 rounded-xl bg-primaria px-4 py-2 font-button-primary text-[12px] font-semibold text-texto-inverso transition-colors hover:bg-primaria-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primaria focus-visible:ring-offset-2"
+              >
+                <span>Pedir Carona</span>
+                <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                  <polyline points="12 5 19 12 12 19" />
+                </svg>
+              </button>
+            </div>
+          </article>
+        }
+      </section>
+    }
   </main>
 </div>
