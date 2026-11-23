@@ -37,4 +37,9 @@
   - Teste primeiro: testar no componente a mensagem exata, o atalho para o cadastro de Rotas Salvas e os parametros de contexto contendo origem, destino, data e horario; confirmar que nenhum cadastro e criado pela navegacao.
   - Arquivos previstos: `apps/web/src/app/features/home/pages/home/home.component.ts`, `apps/web/src/app/features/home/pages/home/home.component.html`, `apps/web/src/app/features/home/pages/home/home.component.spec.ts`, `apps/web/src/app/app.routes.ts`
 
+- [x] **Tarefa 6 - Polimento visual da tela Home conforme prototipo e design tokens**
+  - Cobre: CA1, CA2, CA3 e CA5
+  - Teste primeiro: garantir nos testes unitarios do `HomeComponent` que a aplicacao do layout responsivo (mobile e desktop), design tokens de `docs/design-tokens.md` e logo oficial do PassAi preserva todos os seletores, validacoes, mensagens obrigatorias, atributos de acessibilidade e navegacao para Rotas Salvas.
+  - Arquivos previstos: `apps/web/src/app/features/home/pages/home/home.component.ts`, `apps/web/src/app/features/home/pages/home/home.component.html`, `apps/web/src/app/features/home/pages/home/home.component.spec.ts`
+
 ## Criterios sem tarefa
