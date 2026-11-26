@@ -1,6 +1,6 @@
 ---
 issue: 5
-status: rascunho   # rascunho | aprovada
+status: aprovada
 ---
 
 # US06 — Gerenciamento de Rotas Salvas com Autopreenchimento via CEP e Sugestões de Match
