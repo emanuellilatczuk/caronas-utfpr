@@ -166,5 +166,116 @@
         </button>
       </form>
     </section>
+
+    <section
+      aria-labelledby="saved-routes-list-title"
+      class="mt-6 rounded-xl bg-superficie p-4 shadow-sm sm:p-7"
+    >
+      <div class="mb-5">
+        <h2
+          id="saved-routes-list-title"
+          class="font-display text-xl font-bold text-texto"
+        >
+          Minhas Rotas
+        </h2>
+        <p class="mt-1 font-caption text-caption text-texto-suave">
+          Gerencie os trajetos que você usa com frequência.
+        </p>
+      </div>
+
+      @if (deleteError(); as message) {
+        <p role="alert" data-testid="saved-route-delete-error" class="mb-4 font-caption text-caption text-perigo">
+          {{ message }}
+        </p>
+      }
+
+      @switch (savedRoutesState()) {
+        @case ('loading') {
+          <p role="status" data-testid="saved-routes-loading" class="py-6 text-center font-body text-body text-texto-suave">
+            Carregando suas rotas...
+          </p>
+        }
+        @case ('error') {
+          <p role="alert" data-testid="saved-routes-error" class="py-6 text-center font-body text-body text-perigo">
+            {{ savedRoutesError() }}
+          </p>
+        }
+        @case ('empty') {
+          <div
+            data-testid="saved-routes-empty"
+            class="rounded-xl bg-fundo px-5 py-8 text-center"
+          >
+            <span aria-hidden="true" class="mb-3 block text-3xl text-primaria">⌖</span>
+            <h3 class="font-display text-lg font-semibold text-texto">
+              Cadastre sua primeira rota
+            </h3>
+            <p class="mt-2 font-body text-body text-texto-suave">
+              Você ainda não tem rotas salvas. Use o formulário acima para cadastrar uma.
+            </p>
+          </div>
+        }
+        @case ('loaded') {
+          <div class="space-y-4">
+            @for (route of savedRoutes(); track route.id) {
+              <article
+                data-testid="saved-route-card"
+                class="rounded-xl border border-desabilitado bg-superficie p-4 shadow-sm"
+              >
+                <div class="flex flex-wrap items-start justify-between gap-3">
+                  <div class="min-w-0">
+                    <h3 class="font-display text-lg font-semibold text-texto">
+                      {{ route.name }}
+                    </h3>
+                    <p class="mt-2 font-body text-body text-texto">
+                      <span class="font-semibold">Origem:</span> {{ route.origin }}
+                    </p>
+                    <p class="mt-1 font-body text-body text-texto">
+                      <span class="font-semibold">Destino:</span> {{ route.destination }}
+                    </p>
+                  </div>
+                  @if (route.women_only) {
+                    <span
+                      data-testid="women-only-badge"
+                      class="rounded-full bg-primaria px-3 py-1 font-caption text-caption font-semibold text-texto-inverso"
+                    >
+                      Modo Elas por Elas
+                    </span>
+                  }
+                </div>
+
+                <div class="mt-4 flex flex-wrap gap-x-5 gap-y-2 border-t border-desabilitado pt-3">
+                  <p class="font-caption text-caption text-texto-suave">
+                    <span class="font-semibold text-texto">Dias:</span>
+                    {{ formatDays(route.days_of_week) }}
+                  </p>
+                  <p class="font-caption text-caption text-texto-suave">
+                    <span class="font-semibold text-texto">Horário:</span>
+                    {{ route.preferred_time }}
+                  </p>
+                </div>
+
+                <div class="mt-4 flex justify-end gap-3">
+                  <a
+                    [routerLink]="['/profile/saved-routes', route.id, 'edit']"
+                    data-testid="edit-saved-route"
+                    class="rounded-xl border border-primaria px-4 py-2 font-button-primary text-button-primary font-semibold text-primaria focus:outline-none focus:ring-2 focus:ring-primaria"
+                  >
+                    Editar
+                  </a>
+                  <button
+                    type="button"
+                    data-testid="delete-saved-route"
+                    (click)="deleteRoute(route)"
+                    class="rounded-xl px-4 py-2 font-button-primary text-button-primary font-semibold text-perigo focus:outline-none focus:ring-2 focus:ring-perigo"
+                  >
+                    Excluir
+                  </button>
+                </div>
+              </article>
+            }
+          </div>
+        }
+      }
+    </section>
   </main>
 </div>

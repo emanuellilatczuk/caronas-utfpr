@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
+import { provideRouter, Router } from '@angular/router';
 import { signal } from '@angular/core';
 import { vi } from 'vitest';
 import { Observable, of } from 'rxjs';
@@ -24,6 +25,7 @@ describe('SavedRoutesComponent', () => {
   let currentUser: ReturnType<typeof signal<User | null>>;
   let createSavedRoute: ReturnType<typeof vi.fn>;
   let updateSavedRoute: ReturnType<typeof vi.fn>;
+  let deleteSavedRoute: ReturnType<typeof vi.fn>;
   let getSavedRoutes: ReturnType<typeof vi.fn>;
 
   const female: User = {
@@ -49,17 +51,24 @@ describe('SavedRoutesComponent', () => {
     } satisfies SavedRoute);
     updateSavedRoute = vi.fn().mockResolvedValue({} as SavedRoute);
     getSavedRoutes = vi.fn().mockResolvedValue([]);
+    deleteSavedRoute = vi.fn().mockResolvedValue(undefined);
 
     await TestBed.configureTestingModule({
       imports: [SavedRoutesComponent],
       providers: [
+        provideRouter([]),
         {
           provide: AuthService,
           useValue: { currentUser, isAuthenticated: signal(true) },
         },
         {
           provide: SavedRouteService,
-          useValue: { createSavedRoute, updateSavedRoute, getSavedRoutes },
+          useValue: {
+            createSavedRoute,
+            updateSavedRoute,
+            deleteSavedRoute,
+            getSavedRoutes,
+          },
         },
         {
           provide: ViaCepService,
@@ -349,5 +358,215 @@ describe('SavedRoutesComponent', () => {
       days_of_week: ['monday'],
       women_only: false,
     });
+  });
+
+  it('lista apenas as rotas retornadas para a sessão autenticada e renderiza os dados completos', async () => {
+    getSavedRoutes.mockResolvedValue([
+      {
+        id: 'route-owned',
+        user_id: 'user-1',
+        name: 'Casa — UTFPR',
+        origin: 'Rua das Flores',
+        destination: 'UTFPR Centro',
+        preferred_time: '07:30',
+        days_of_week: ['monday', 'wednesday'],
+        women_only: true,
+        created_at: '2026-01-01',
+      } satisfies SavedRoute,
+      {
+        id: 'route-other-user',
+        user_id: 'user-2',
+        name: 'Rota privada',
+        origin: 'Rua de outra pessoa',
+        destination: 'Outro campus',
+        preferred_time: '10:00',
+        days_of_week: ['friday'],
+        women_only: false,
+        created_at: '2026-01-01',
+      } satisfies SavedRoute,
+    ]);
+
+    await fixture.componentInstance.refreshSavedRoutes();
+    fixture.detectChanges();
+
+    expect(getSavedRoutes).toHaveBeenCalledTimes(2);
+    expect(fixture.debugElement.queryAll(By.css('[data-testid="saved-route-card"]')))
+      .toHaveLength(1);
+    const card = fixture.debugElement.query(By.css('[data-testid="saved-route-card"]'));
+    expect(card.nativeElement.textContent).toContain('Casa — UTFPR');
+    expect(card.nativeElement.textContent).toContain('Rua das Flores');
+    expect(card.nativeElement.textContent).toContain('UTFPR Centro');
+    expect(card.nativeElement.textContent).toContain('07:30');
+    expect(card.nativeElement.textContent).toContain('Segunda-feira');
+    expect(card.nativeElement.textContent).toContain('Quarta-feira');
+    expect(card.nativeElement.textContent).toContain('Modo Elas por Elas');
+    expect(card.query(By.css('[data-testid="edit-saved-route"]'))).toBeTruthy();
+    expect(card.query(By.css('[data-testid="delete-saved-route"]'))).toBeTruthy();
+  });
+
+  it('usa o token semântico desabilitado nas bordas dos cards e da lista de rotas', async () => {
+    getSavedRoutes.mockResolvedValue([{
+      id: 'route-1',
+      user_id: 'user-1',
+      name: 'Casa UTFPR',
+      origin: 'Rua A',
+      destination: 'UTFPR',
+      preferred_time: '08:00',
+      days_of_week: ['monday'],
+      women_only: false,
+      created_at: '2026-01-01',
+    } satisfies SavedRoute]);
+    await fixture.componentInstance.refreshSavedRoutes();
+    fixture.detectChanges();
+
+    const card = fixture.debugElement.query(By.css('[data-testid="saved-route-card"]'));
+    const routeDetails = card.query(By.css('.border-t')).nativeElement as HTMLElement;
+
+    expect((card.nativeElement as HTMLElement).classList.contains('border-desabilitado'))
+      .toBe(true);
+    expect(routeDetails.classList.contains('border-desabilitado')).toBe(true);
+  });
+
+  it('mostra um estado vazio que orienta cadastrar a rota no formulário acima', async () => {
+    getSavedRoutes.mockResolvedValue([]);
+    await fixture.componentInstance.refreshSavedRoutes();
+    fixture.detectChanges();
+
+    expect(fixture.debugElement.query(By.css('[data-testid="saved-routes-empty"]')))
+      .toBeTruthy();
+    expect(fixture.nativeElement.textContent).toContain('Cadastre sua primeira rota');
+    expect(fixture.nativeElement.textContent).toContain('formulário acima');
+  });
+
+  it('mantém a rota quando a confirmação de exclusão é cancelada', async () => {
+    const savedRoute = {
+      id: 'route-1',
+      user_id: 'user-1',
+      name: 'Casa UTFPR',
+      origin: 'Rua A',
+      destination: 'UTFPR',
+      preferred_time: '08:00',
+      days_of_week: ['monday'],
+      women_only: false,
+      created_at: '2026-01-01',
+    } satisfies SavedRoute;
+    getSavedRoutes.mockResolvedValue([savedRoute]);
+    const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(false);
+    await fixture.componentInstance.refreshSavedRoutes();
+    fixture.detectChanges();
+
+    fixture.debugElement.query(By.css('[data-testid="delete-saved-route"]'))
+      .nativeElement.click();
+
+    expect(confirmSpy).toHaveBeenCalled();
+    expect(deleteSavedRoute).not.toHaveBeenCalled();
+    expect(fixture.nativeElement.textContent).toContain('Casa UTFPR');
+    confirmSpy.mockRestore();
+  });
+
+  it('exclui após confirmação e atualiza a listagem', async () => {
+    const savedRoute = {
+      id: 'route-1',
+      user_id: 'user-1',
+      name: 'Casa UTFPR',
+      origin: 'Rua A',
+      destination: 'UTFPR',
+      preferred_time: '08:00',
+      days_of_week: ['monday'],
+      women_only: false,
+      created_at: '2026-01-01',
+    } satisfies SavedRoute;
+    getSavedRoutes.mockResolvedValue([savedRoute]);
+    const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true);
+    await fixture.componentInstance.refreshSavedRoutes();
+    getSavedRoutes.mockResolvedValueOnce([]);
+    fixture.detectChanges();
+
+    fixture.debugElement.query(By.css('[data-testid="delete-saved-route"]'))
+      .nativeElement.click();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(deleteSavedRoute).toHaveBeenCalledWith('route-1');
+    expect(getSavedRoutes).toHaveBeenCalledTimes(3);
+    expect(fixture.debugElement.query(By.css('[data-testid="saved-route-card"]'))).toBeNull();
+    expect(fixture.debugElement.query(By.css('[data-testid="saved-routes-empty"]')))
+      .toBeTruthy();
+    confirmSpy.mockRestore();
+  });
+
+  it('mostra feedback explícito se a exclusão falhar', async () => {
+    getSavedRoutes.mockResolvedValue([{
+      id: 'route-1',
+      user_id: 'user-1',
+      name: 'Casa UTFPR',
+      origin: 'Rua A',
+      destination: 'UTFPR',
+      preferred_time: '08:00',
+      days_of_week: ['monday'],
+      women_only: false,
+      created_at: '2026-01-01',
+    } satisfies SavedRoute]);
+    deleteSavedRoute.mockRejectedValue(new Error('Falha'));
+    const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true);
+    await fixture.componentInstance.refreshSavedRoutes();
+    fixture.detectChanges();
+
+    fixture.debugElement.query(By.css('[data-testid="delete-saved-route"]'))
+      .nativeElement.click();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent).toContain(
+      'Não foi possível excluir a rota. Tente novamente.',
+    );
+    expect(fixture.nativeElement.textContent).toContain('Casa UTFPR');
+    confirmSpy.mockRestore();
+  });
+
+  it('salva a edição, atualiza os cards e retorna à listagem', async () => {
+    const savedRoute: SavedRoute = {
+      id: 'route-edit',
+      user_id: 'user-1',
+      name: 'Casa UTFPR',
+      origin: 'Rua A',
+      destination: 'UTFPR',
+      preferred_time: '08:00',
+      days_of_week: ['monday'],
+      women_only: false,
+      created_at: '2026-01-01',
+    };
+    const updatedRoute: SavedRoute = {
+      ...savedRoute,
+      name: 'Casa — Campus',
+    };
+    getSavedRoutes.mockResolvedValue([savedRoute]);
+    fixture.componentRef.setInput('id', 'route-edit');
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    fixture.componentInstance.savedRouteForm.patchValue({
+      name: updatedRoute.name,
+      origin: updatedRoute.origin,
+      destination: updatedRoute.destination,
+      preferredTime: updatedRoute.preferred_time,
+    });
+    fixture.componentInstance.selectedDays.set(updatedRoute.days_of_week);
+    fixture.componentInstance.syncDaysToForm();
+    updateSavedRoute.mockResolvedValue(updatedRoute);
+    getSavedRoutes.mockResolvedValue([updatedRoute]);
+    const navigateSpy = vi.spyOn(TestBed.inject(Router), 'navigate')
+      .mockResolvedValue(true);
+
+    await fixture.componentInstance.onSubmit();
+    fixture.detectChanges();
+
+    expect(updateSavedRoute).toHaveBeenCalledWith(
+      'route-edit',
+      expect.objectContaining({ name: 'Casa — Campus' }),
+    );
+    expect(fixture.componentInstance.savedRoutes()[0]?.name).toBe('Casa — Campus');
+    expect(navigateSpy).toHaveBeenCalledWith(['/profile/saved-routes']);
   });
 });

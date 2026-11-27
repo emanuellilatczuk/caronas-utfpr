@@ -1,4 +1,14 @@
-import { Component, computed, effect, inject, input, output, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  effect,
+  inject,
+  input,
+  OnInit,
+  output,
+  signal,
+} from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
 import {
   AbstractControl,
   NonNullableFormBuilder,
@@ -20,15 +30,38 @@ const trimRequiredValidator: ValidatorFn = (
     ? { required: true }
     : null;
 
+const WEEKDAY_LABELS: Record<string, string> = {
+  monday: 'Segunda-feira',
+  tuesday: 'Terça-feira',
+  wednesday: 'Quarta-feira',
+  thursday: 'Quinta-feira',
+  friday: 'Sexta-feira',
+  saturday: 'Sábado',
+  sunday: 'Domingo',
+  segunda: 'Segunda-feira',
+  terca: 'Terça-feira',
+  quarta: 'Quarta-feira',
+  quinta: 'Quinta-feira',
+  sexta: 'Sexta-feira',
+  sabado: 'Sábado',
+  domingo: 'Domingo',
+};
+
 @Component({
   selector: 'app-saved-routes',
-  imports: [ReactiveFormsModule, CepSearchInputComponent, DaysSelectorComponent],
+  imports: [
+    ReactiveFormsModule,
+    RouterLink,
+    CepSearchInputComponent,
+    DaysSelectorComponent,
+  ],
   templateUrl: './saved-routes.component.html',
 })
-export class SavedRoutesComponent {
+export class SavedRoutesComponent implements OnInit {
   private readonly fb = inject(NonNullableFormBuilder);
   private readonly authService = inject(AuthService);
   private readonly savedRouteService = inject(SavedRouteService);
+  private readonly router = inject(Router);
 
   readonly id = input<string>();
   readonly origin = input<string>();
@@ -44,6 +77,19 @@ export class SavedRoutesComponent {
   readonly saving = signal(false);
   readonly loadingRoute = signal(false);
   readonly submitError = signal<string | null>(null);
+  readonly savedRoutes = signal<SavedRoute[]>([]);
+  readonly loadingSavedRoutes = signal(true);
+  readonly savedRoutesError = signal<string | null>(null);
+  readonly deleteError = signal<string | null>(null);
+  readonly savedRoutesState = computed(() => {
+    if (this.loadingSavedRoutes()) {
+      return 'loading';
+    }
+    if (this.savedRoutesError()) {
+      return 'error';
+    }
+    return this.savedRoutes().length ? 'loaded' : 'empty';
+  });
   private routeLoadVersion = 0;
 
   readonly savedRouteForm = this.fb.group({
@@ -101,6 +147,10 @@ export class SavedRoutesComponent {
     });
   }
 
+  ngOnInit(): void {
+    void this.refreshSavedRoutes();
+  }
+
   syncDaysToForm(): void {
     this.savedRouteForm.controls.days.setValue(this.selectedDays());
   }
@@ -134,10 +184,51 @@ export class SavedRoutesComponent {
         ? await this.savedRouteService.updateSavedRoute(routeId, data)
         : await this.savedRouteService.createSavedRoute(data);
       this.saved.emit(savedRoute);
+      await this.refreshSavedRoutes();
+      if (routeId) {
+        await this.router.navigate(['/profile/saved-routes']);
+      }
     } catch {
       this.submitError.set('Não foi possível salvar a rota. Tente novamente.');
     } finally {
       this.saving.set(false);
+    }
+  }
+
+  formatDays(days: string[]): string {
+    return days
+      .map((day) => WEEKDAY_LABELS[day.toLocaleLowerCase('pt-BR')] ?? day)
+      .join(', ');
+  }
+
+  async deleteRoute(route: SavedRoute): Promise<void> {
+    const confirmed = window.confirm(`Deseja excluir a rota "${route.name}"?`);
+    if (!confirmed) {
+      return;
+    }
+
+    this.deleteError.set(null);
+    try {
+      await this.savedRouteService.deleteSavedRoute(route.id);
+      await this.refreshSavedRoutes();
+    } catch {
+      this.deleteError.set('Não foi possível excluir a rota. Tente novamente.');
+    }
+  }
+
+  async refreshSavedRoutes(): Promise<void> {
+    this.loadingSavedRoutes.set(true);
+    this.savedRoutesError.set(null);
+    try {
+      const currentUserId = this.currentUser()?.id;
+      const routes = await this.savedRouteService.getSavedRoutes();
+      this.savedRoutes.set(
+        routes.filter((route) => route.user_id === currentUserId),
+      );
+    } catch {
+      this.savedRoutesError.set('Não foi possível carregar suas rotas. Tente novamente.');
+    } finally {
+      this.loadingSavedRoutes.set(false);
     }
   }
 
