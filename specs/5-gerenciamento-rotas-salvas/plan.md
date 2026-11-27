@@ -15,7 +15,7 @@
 
 ## Tarefas
 
-- [ ] **Tarefa 1 — Criar modelo `SavedRoute` e implementar `ViaCepService` com resiliência**
+- [x] **Tarefa 1 — Criar modelo `SavedRoute` e implementar `ViaCepService` com resiliência**
   - Cobre: CA1, CA2 e CA10 (ID20, ID25)
   - Teste primeiro: testar no `ViaCepService` a validação de formato de CEP (8 dígitos, limpeza de caracteres especiais), sucesso no GET retornando logradouro, bairro e localidade formatados, tratamento de CEP não encontrado (`erro: true`), tratamento de falha de rede/timeout com fallback gracioso em até 3 segundos sem travar a aplicação.
   - Arquivos previstos: `apps/web/src/app/core/models/saved-route.model.ts`, `apps/web/src/app/core/services/viacep.service.ts`, `apps/web/src/app/core/services/viacep.service.spec.ts`, `apps/api/db.json`
