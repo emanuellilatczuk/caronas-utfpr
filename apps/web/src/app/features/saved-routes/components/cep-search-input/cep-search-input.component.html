@@ -1,0 +1,40 @@
+<div class="space-y-2">
+  <p class="font-label text-label font-semibold text-texto">CEP</p>
+  <div class="flex items-center gap-2">
+    <input
+      type="text"
+      inputmode="numeric"
+      autocomplete="postal-code"
+      maxlength="9"
+      placeholder="00000-000"
+      [value]="cep()"
+      (input)="updateCep($event)"
+      class="min-w-0 flex-1 rounded-xl bg-fundo px-3 py-2 font-body text-body font-medium text-texto placeholder:text-desabilitado focus:outline-none focus:ring-2 focus:ring-primaria"
+      aria-label="CEP"
+    />
+    <button
+      type="button"
+      (click)="search()"
+      [attr.aria-busy]="loading()"
+      class="rounded-xl bg-primaria px-3 py-2 font-button-primary text-button-primary font-semibold text-texto-inverso transition hover:bg-primaria-hover focus:outline-none focus:ring-2 focus:ring-primaria focus:ring-offset-2"
+    >
+      Buscar por CEP
+    </button>
+  </div>
+
+  @if (loading()) {
+    <p
+      class="font-caption text-caption font-normal text-texto-suave"
+      role="status"
+      aria-live="polite"
+    >
+      Buscando CEP...
+    </p>
+  }
+
+  @if (errorMessage(); as message) {
+    <p class="font-caption text-caption font-normal text-perigo" role="alert">
+      {{ message }}
+    </p>
+  }
+</div>

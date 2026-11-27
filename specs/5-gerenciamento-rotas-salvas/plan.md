@@ -25,7 +25,7 @@
   - Teste primeiro: testar no `SavedRouteService` listagem de rotas por usuário, criação, atualização e exclusão; testar no método de match o cruzamento entre rotas salvas e caronas abertas (normalização de trajeto, compatibilidade de dia da semana, janela de tolerância de ±1h no horário, filtro `women_only` restrito a mulheres e exclusão de caronas lotadas/fechadas).
   - Arquivos previstos: `apps/web/src/app/core/services/saved-route.service.ts`, `apps/web/src/app/core/services/saved-route.service.spec.ts`
 
-- [ ] **Tarefa 3 — Desenvolver subcomponentes reutilizáveis do formulário com `model()` e `output()`**
+- [x] **Tarefa 3 — Desenvolver subcomponentes reutilizáveis do formulário com `model()` e `output()`**
   - Cobre: CA1, CA2 e CA10 (ID12, ID14)
   - Teste primeiro: testar o subcomponente compacto de busca de CEP (two-way binding via `model()`, chamada ao `ViaCepService`, emissão do endereço preenchido via `output()`, alertas inline não bloqueantes) e o seletor de dias da semana com `model()` para seleção múltipla de Segunda a Domingo.
   - Arquivos previstos: `apps/web/src/app/features/saved-routes/components/cep-search-input/cep-search-input.component.ts`, `cep-search-input.component.html`, `cep-search-input.component.spec.ts`, `apps/web/src/app/features/saved-routes/components/days-selector/days-selector.component.ts`, `days-selector.component.html`, `days-selector.component.spec.ts`
