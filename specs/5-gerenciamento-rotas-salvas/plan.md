@@ -20,7 +20,7 @@
   - Teste primeiro: testar no `ViaCepService` a validação de formato de CEP (8 dígitos, limpeza de caracteres especiais), sucesso no GET retornando logradouro, bairro e localidade formatados, tratamento de CEP não encontrado (`erro: true`), tratamento de falha de rede/timeout com fallback gracioso em até 3 segundos sem travar a aplicação.
   - Arquivos previstos: `apps/web/src/app/core/models/saved-route.model.ts`, `apps/web/src/app/core/services/viacep.service.ts`, `apps/web/src/app/core/services/viacep.service.spec.ts`, `apps/api/db.json`
 
-- [ ] **Tarefa 2 — Implementar CRUD e algoritmo de match no `SavedRouteService`**
+- [x] **Tarefa 2 — Implementar CRUD e algoritmo de match no `SavedRouteService`**
   - Cobre: CA3, CA4, CA5, CA6, CA7 e CA10
   - Teste primeiro: testar no `SavedRouteService` listagem de rotas por usuário, criação, atualização e exclusão; testar no método de match o cruzamento entre rotas salvas e caronas abertas (normalização de trajeto, compatibilidade de dia da semana, janela de tolerância de ±1h no horário, filtro `women_only` restrito a mulheres e exclusão de caronas lotadas/fechadas).
   - Arquivos previstos: `apps/web/src/app/core/services/saved-route.service.ts`, `apps/web/src/app/core/services/saved-route.service.spec.ts`
