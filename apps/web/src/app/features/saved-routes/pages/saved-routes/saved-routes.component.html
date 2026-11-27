@@ -1,0 +1,170 @@
+<div class="min-h-screen bg-fundo px-4 py-6 sm:px-6">
+  <main class="mx-auto max-w-2xl">
+    <section
+      data-testid="saved-route-form-card"
+      class="rounded-xl bg-superficie p-4 shadow-lg sm:p-7"
+      aria-labelledby="saved-route-title"
+    >
+      <h1 id="saved-route-title" class="mb-5 font-display text-2xl font-bold text-texto">
+        @if (id()) {
+          Editar Rota Salva
+        } @else {
+          Nova Rota Salva
+        }
+      </h1>
+
+      <form
+        [formGroup]="savedRouteForm"
+        (ngSubmit)="onSubmit()"
+        novalidate
+        class="space-y-4"
+      >
+        <div>
+          <label for="saved-route-name" class="mb-1.5 block font-label text-label font-semibold uppercase tracking-wider text-texto-suave">
+            Nome da Rota
+          </label>
+          <input
+            id="saved-route-name"
+            data-testid="name"
+            type="text"
+            formControlName="name"
+            placeholder="Ex.: Casa — UTFPR"
+            [attr.aria-invalid]="savedRouteForm.controls.name.invalid && savedRouteForm.controls.name.touched"
+            [attr.aria-describedby]="savedRouteForm.controls.name.invalid && savedRouteForm.controls.name.touched ? 'error-name' : null"
+            class="w-full rounded-xl bg-fundo px-3.5 py-3 font-body text-body font-medium text-texto placeholder:text-desabilitado focus:outline-none focus:ring-2 focus:ring-primaria"
+          />
+          @if (savedRouteForm.controls.name.touched && savedRouteForm.controls.name.hasError('required')) {
+            <p id="error-name" data-testid="error-name" class="mt-1.5 font-caption text-caption text-perigo">
+              Nome da rota é obrigatório.
+            </p>
+          }
+        </div>
+
+        <div>
+          <div class="mb-1.5 flex items-center justify-between">
+            <label for="saved-route-origin" class="block font-label text-label font-semibold uppercase tracking-wider text-texto-suave">
+              Origem
+            </label>
+          </div>
+          <div data-testid="origin-cep-search">
+            <app-cep-search-input [(cep)]="originCep" (addressFound)="applyAddress('origin', $event)" />
+          </div>
+          <input
+            id="saved-route-origin"
+            data-testid="origin"
+            type="text"
+            formControlName="origin"
+            placeholder="Ex.: Rua das Flores"
+            [attr.aria-invalid]="savedRouteForm.controls.origin.invalid && savedRouteForm.controls.origin.touched"
+            [attr.aria-describedby]="savedRouteForm.controls.origin.invalid && savedRouteForm.controls.origin.touched ? 'error-origin' : null"
+            class="mt-2 w-full rounded-xl bg-fundo px-3.5 py-3 font-body text-body font-medium text-texto placeholder:text-desabilitado focus:outline-none focus:ring-2 focus:ring-primaria"
+          />
+          @if (savedRouteForm.controls.origin.touched && savedRouteForm.controls.origin.hasError('required')) {
+            <p id="error-origin" data-testid="error-origin" class="mt-1.5 font-caption text-caption text-perigo">
+              Origem é obrigatória.
+            </p>
+          }
+        </div>
+
+        <div>
+          <label for="saved-route-destination" class="mb-1.5 block font-label text-label font-semibold uppercase tracking-wider text-texto-suave">
+            Destino
+          </label>
+          <div data-testid="destination-cep-search">
+            <app-cep-search-input [(cep)]="destinationCep" (addressFound)="applyAddress('destination', $event)" />
+          </div>
+          <input
+            id="saved-route-destination"
+            data-testid="destination"
+            type="text"
+            formControlName="destination"
+            placeholder="Ex.: UTFPR Campus"
+            [attr.aria-invalid]="savedRouteForm.controls.destination.invalid && savedRouteForm.controls.destination.touched"
+            [attr.aria-describedby]="savedRouteForm.controls.destination.invalid && savedRouteForm.controls.destination.touched ? 'error-destination' : null"
+            class="mt-2 w-full rounded-xl bg-fundo px-3.5 py-3 font-body text-body font-medium text-texto placeholder:text-desabilitado focus:outline-none focus:ring-2 focus:ring-primaria"
+          />
+          @if (savedRouteForm.controls.destination.touched && savedRouteForm.controls.destination.hasError('required')) {
+            <p id="error-destination" data-testid="error-destination" class="mt-1.5 font-caption text-caption text-perigo">
+              Destino é obrigatório.
+            </p>
+          }
+        </div>
+
+        <div>
+          <div
+            role="group"
+            aria-label="Dias da semana"
+            [attr.aria-invalid]="savedRouteForm.controls.days.invalid && savedRouteForm.controls.days.touched"
+            [attr.aria-describedby]="savedRouteForm.controls.days.invalid && savedRouteForm.controls.days.touched ? 'error-days' : null"
+          >
+            <app-days-selector [(days)]="selectedDays" />
+          </div>
+          @if (savedRouteForm.controls.days.touched && savedRouteForm.controls.days.hasError('required')) {
+            <p id="error-days" data-testid="error-days" class="mt-1.5 font-caption text-caption text-perigo">
+              Selecione ao menos um dia da semana.
+            </p>
+          }
+        </div>
+
+        <div>
+          <label for="saved-route-time" class="mb-1.5 block font-label text-label font-semibold uppercase tracking-wider text-texto-suave">
+            Horário
+          </label>
+          <input
+            id="saved-route-time"
+            data-testid="preferred-time"
+            type="time"
+            formControlName="preferredTime"
+            [attr.aria-invalid]="savedRouteForm.controls.preferredTime.invalid && savedRouteForm.controls.preferredTime.touched"
+            [attr.aria-describedby]="savedRouteForm.controls.preferredTime.invalid && savedRouteForm.controls.preferredTime.touched ? 'error-preferred-time' : null"
+            class="w-full rounded-xl bg-fundo px-3.5 py-3 font-body text-body font-medium text-texto focus:outline-none focus:ring-2 focus:ring-primaria"
+          />
+          @if (savedRouteForm.controls.preferredTime.touched && savedRouteForm.controls.preferredTime.hasError('required')) {
+            <p id="error-preferred-time" data-testid="error-preferred-time" class="mt-1.5 font-caption text-caption text-perigo">
+              Horário é obrigatório.
+            </p>
+          }
+        </div>
+
+        @if (canSeeWomenOnly()) {
+          <label
+            data-testid="women-only"
+            for="women-only"
+            class="flex cursor-pointer items-center justify-between gap-4 rounded-xl bg-fundo p-3.5"
+          >
+            <span class="font-body text-body font-medium text-texto">Modo Elas por Elas</span>
+            <input
+              id="women-only"
+              type="checkbox"
+              formControlName="womenOnly"
+              class="h-5 w-5 accent-primaria"
+            />
+          </label>
+        }
+
+        @if (submitError(); as message) {
+          <p role="alert" class="font-caption text-caption text-perigo">{{ message }}</p>
+        }
+
+        <button
+          type="submit"
+          data-testid="save-saved-route"
+          [disabled]="savedRouteForm.invalid || saving() || loadingRoute()"
+          [class.hover:bg-primaria-hover]="!savedRouteForm.invalid && !saving() && !loadingRoute()"
+          class="w-full rounded-xl bg-primaria px-5 py-3 font-button-primary text-button-primary font-semibold text-texto-inverso shadow-sm transition focus:outline-none focus:ring-2 focus:ring-primaria focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          @if (saving()) {
+            <span
+              data-testid="saving-spinner"
+              role="status"
+              aria-label="Salvando rota"
+              class="mx-auto block h-5 w-5 animate-spin rounded-full border-2 border-texto-inverso border-t-transparent"
+            ></span>
+          } @else {
+            Salvar Rota
+          }
+        </button>
+      </form>
+    </section>
+  </main>
+</div>

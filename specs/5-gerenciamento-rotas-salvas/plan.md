@@ -30,7 +30,7 @@
   - Teste primeiro: testar o subcomponente compacto de busca de CEP (two-way binding via `model()`, chamada ao `ViaCepService`, emissão do endereço preenchido via `output()`, alertas inline não bloqueantes) e o seletor de dias da semana com `model()` para seleção múltipla de Segunda a Domingo.
   - Arquivos previstos: `apps/web/src/app/features/saved-routes/components/cep-search-input/cep-search-input.component.ts`, `cep-search-input.component.html`, `cep-search-input.component.spec.ts`, `apps/web/src/app/features/saved-routes/components/days-selector/days-selector.component.ts`, `days-selector.component.html`, `days-selector.component.spec.ts`
 
-- [ ] **Tarefa 4 — Implementar formulário unificado de Rotas Salvas com validações, `effect()` e fidelidade visual**
+- [x] **Tarefa 4 — Implementar formulário unificado de Rotas Salvas com validações, `effect()` e fidelidade visual**
   - Cobre: CA1, CA2, CA3 e CA10 (ID6, ID13, ID14)
   - Teste primeiro: testar no componente a validação síncrona dos campos obrigatórios (Nome, Origem, Destino, dias da semana, horário); botão desabilitado com formulário inválido; visibilidade do toggle "Modo Elas por Elas" restrito a usuárias do gênero feminino em `AuthService`; recepção do endereço via busca por CEP; e preenchimento reativo via `effect()` para edição e queryParams. Garantir conformidade com os tokens de `docs/design-tokens.md` (paleta `#4D389B`, inputs `bg-fundo`, labels `text-texto-suave`) e 100% dos textos em português.
   - Arquivos previstos: `apps/web/src/app/features/saved-routes/pages/saved-routes/saved-routes.component.ts`, `saved-routes.component.html`, `saved-routes.component.spec.ts`
