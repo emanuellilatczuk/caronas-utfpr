@@ -34,6 +34,11 @@
   --font-nav-active: 'Poppins', sans-serif;
   --font-nav-inactive: 'Poppins', sans-serif;
 
+  --text-body: 13px;
+  --text-caption: 11px;
+  --text-label: 10px;
+  --text-button-primary: 14px;
+
   --radius-xl: 12px;
 }
 

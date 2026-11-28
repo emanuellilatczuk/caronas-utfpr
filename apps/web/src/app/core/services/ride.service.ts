@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { firstValueFrom, forkJoin } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { Gender, User } from '../models/user.model';
+import { User } from '../models/user.model';
 import {
   Ride,
   RideDriver,
@@ -18,7 +18,7 @@ export class RideService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = environment.apiUrl;
 
-  async searchRides(criteria: RideSearchCriteria): Promise<Ride[]> {
+  async getRides(): Promise<Ride[]> {
     const { rides, users, vehicles, reviews } = await firstValueFrom(
       forkJoin({
         rides: this.http.get<Ride[]>(`${this.apiUrl}/rides`),
@@ -54,42 +54,45 @@ export class RideService {
     );
     const vehicleById = new Map(vehicles.map((vehicle) => [vehicle.id, vehicle]));
 
+    return rides.map((ride) => ({
+      ...ride,
+      driver: drivers.get(ride.driver_id),
+      vehicle: vehicleById.get(ride.vehicle_id),
+    }));
+  }
+
+  async searchRides(criteria: RideSearchCriteria): Promise<Ride[]> {
+    const rides = await this.getRides();
     const origin = normalizeText(criteria.origin);
     const destination = normalizeText(criteria.destination);
 
-    return rides
-      .map((ride) => ({
-        ...ride,
-        driver: drivers.get(ride.driver_id),
-        vehicle: vehicleById.get(ride.vehicle_id),
-      }))
-      .filter((ride) => {
-        const departure = new Date(ride.departure_time);
-        const driver = ride.driver;
+    return rides.filter((ride) => {
+      const departure = new Date(ride.departure_time);
+      const driver = ride.driver;
 
-        if (
-          !origin ||
-          !destination ||
-          !Number.isFinite(departure.getTime()) ||
-          departure.getTime() <= Date.now() ||
-          getLocalDate(departure) !== criteria.date ||
-          getLocalTime(departure) < criteria.time ||
-          ride.status !== 'open' ||
-          ride.available_seats <= 0 ||
-          !normalizeText(ride.origin).includes(origin) ||
-          !normalizeText(ride.destination).includes(destination)
-        ) {
-          return false;
-        }
+      if (
+        !origin ||
+        !destination ||
+        !Number.isFinite(departure.getTime()) ||
+        departure.getTime() <= Date.now() ||
+        getLocalDate(departure) !== criteria.date ||
+        getLocalTime(departure) < criteria.time ||
+        ride.status !== 'open' ||
+        ride.available_seats <= 0 ||
+        !normalizeText(ride.origin).includes(origin) ||
+        !normalizeText(ride.destination).includes(destination)
+      ) {
+        return false;
+      }
 
-        if (criteria.womenOnly) {
-          return (
-            criteria.passengerGender === 'female' && ride.women_only && driver?.gender === 'female'
-          );
-        }
+      if (criteria.womenOnly) {
+        return (
+          criteria.passengerGender === 'female' && ride.women_only && driver?.gender === 'female'
+        );
+      }
 
-        return criteria.passengerGender === 'female' || !ride.women_only;
-      });
+      return criteria.passengerGender === 'female' || !ride.women_only;
+    });
   }
 }
 

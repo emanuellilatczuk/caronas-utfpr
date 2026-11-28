@@ -3,7 +3,6 @@ import { By } from '@angular/platform-browser';
 import { Router, provideRouter } from '@angular/router';
 import { signal } from '@angular/core';
 import { vi } from 'vitest';
-import { routes } from '../../../../app.routes';
 import { AuthService } from '../../../../core/services/auth.service';
 import { Ride } from '../../../../core/models/ride.model';
 import { User } from '../../../../core/models/user.model';
@@ -58,7 +57,7 @@ describe('HomeComponent - formulário de busca', () => {
     await TestBed.configureTestingModule({
       imports: [HomeComponent],
       providers: [
-        provideRouter(routes),
+        provideRouter([]),
         { provide: RideService, useValue: rideServiceSpy },
         {
           provide: AuthService,
@@ -440,21 +439,18 @@ describe('HomeComponent - formulário de busca', () => {
     const shortcut = fixture.debugElement.query(By.css('[data-testid="saved-route-shortcut"]'));
     const router = TestBed.inject(Router);
     const navigateSpy = vi.spyOn(router, 'navigate').mockResolvedValue(true);
-    const savedRouteRegistration = router.config.find((route) => route.path === 'saved-routes/new');
 
     expect(emptyMessage.nativeElement.textContent.trim()).toBe(
       'Nenhuma carona encontrada para esta rota/data',
     );
     expect(shortcut.nativeElement.textContent.trim()).toBe('Cadastrar trajeto em Rotas Salvas');
-    expect(savedRouteRegistration?.redirectTo).toBe('/home');
 
     shortcut.nativeElement.click();
 
-    expect(navigateSpy).toHaveBeenCalledWith(['/saved-routes/new'], {
+    expect(navigateSpy).toHaveBeenCalledWith(['/profile/saved-routes'], {
       queryParams: {
         origin: 'UTFPR Campus',
         destination: 'Centro',
-        date: '2030-05-12',
         time: '14:00',
       },
     });

@@ -12,6 +12,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth.service';
 import { Ride } from '../../../../core/models/ride.model';
 import { RideService } from '../../../../core/services/ride.service';
+import { BottomNavbarComponent } from '../../../../shared/components/bottom-navbar/bottom-navbar.component';
 
 const trimRequiredValidator: ValidatorFn = (
   control: AbstractControl<string>,
@@ -22,7 +23,7 @@ const trimRequiredValidator: ValidatorFn = (
 
 @Component({
   selector: 'app-home',
-  imports: [DatePipe, ReactiveFormsModule],
+  imports: [DatePipe, ReactiveFormsModule, BottomNavbarComponent],
   templateUrl: './home.component.html',
 })
 export class HomeComponent {
@@ -83,9 +84,9 @@ export class HomeComponent {
   }
 
   navigateToSavedRouteRegistration(): void {
-    const { origin, destination, date, time } = this.searchForm.getRawValue();
-    void this.router.navigate(['/saved-routes/new'], {
-      queryParams: { origin, destination, date, time },
+    const { origin, destination, time } = this.searchForm.getRawValue();
+    void this.router.navigate(['/profile/saved-routes'], {
+      queryParams: { origin, destination, time },
     });
   }
 
