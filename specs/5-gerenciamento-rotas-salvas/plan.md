@@ -45,7 +45,7 @@
   - Teste primeiro: testar alternância entre as abas "Minhas Rotas" e "Sugestões de Match"; renderização sob demanda via `@defer (on viewport)` validando blocos `@placeholder` e `@loading`; listagem dos cards de caronas sugeridas com dados completos e design idêntico aos cards da Home (foto, nota, veículo, horário, vagas); estado vazio na ausência de sugestões; e navegação para `/rides/:id` ao clicar em "Ver Carona". Textos 100% em português.
   - Arquivos previstos: `apps/web/src/app/features/saved-routes/pages/saved-routes/saved-routes.component.ts`, `saved-routes.component.html`, `saved-routes.component.spec.ts`, `apps/web/src/app/features/saved-routes/components/match-suggestions/match-suggestions.component.ts`, `match-suggestions.component.html`, `match-suggestions.component.spec.ts`
 
-- [ ] **Tarefa 7 — Integrar o atalho da Home (US04) com Rotas Salvas via queryParams**
+- [x] **Tarefa 7 — Integrar o atalho da Home (US04) com Rotas Salvas via queryParams**
   - Cobre: CA9 e CA10 (ID16, ID17)
   - Teste primeiro: testar no `HomeComponent` que o clique no botão "Cadastrar trajeto em Rotas Salvas" no estado vazio navega para `/profile/saved-routes` passando os queryParams `origin`, `destination` e `time`; testar no componente de Rotas Salvas a captura desses queryParams via Signal inputs e o pré-preenchimento automático dos campos no formulário do topo.
   - Arquivos previstos: `apps/web/src/app/features/home/pages/home/home.component.ts`, `apps/web/src/app/features/home/pages/home/home.component.spec.ts`, `apps/web/src/app/features/saved-routes/pages/saved-routes/saved-routes.component.ts`, `saved-routes.component.spec.ts`

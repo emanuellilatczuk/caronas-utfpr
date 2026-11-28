@@ -10,7 +10,8 @@ import {
   TestBed,
 } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
-import { provideRouter, Router } from '@angular/router';
+import { provideRouter, Router, withComponentInputBinding } from '@angular/router';
+import { RouterTestingHarness } from '@angular/router/testing';
 import { signal } from '@angular/core';
 import { vi } from 'vitest';
 import { Observable, of } from 'rxjs';
@@ -847,5 +848,47 @@ describe('SavedRoutesComponent — aba Sugestões de Match integrada à camada d
     fixture.debugElement.query(By.css('[data-testid="view-ride-btn"]')).nativeElement.click();
 
     expect(navigateSpy).toHaveBeenCalledWith(['/rides', 'ride-match-1']);
+  });
+});
+
+describe('SavedRoutesComponent - atalho da Home via query params', () => {
+  it('pré-preenche origem, destino e horário nos campos ao navegar com query params', async () => {
+    await TestBed.configureTestingModule({
+      deferBlockBehavior: DeferBlockBehavior.Manual,
+      providers: [
+        provideRouter(
+          [{ path: 'profile/saved-routes', component: SavedRoutesComponent }],
+          withComponentInputBinding(),
+        ),
+        {
+          provide: AuthService,
+          useValue: { currentUser: signal<User | null>(null), isAuthenticated: signal(true) },
+        },
+        {
+          provide: SavedRouteService,
+          useValue: {
+            createSavedRoute: vi.fn(),
+            updateSavedRoute: vi.fn(),
+            deleteSavedRoute: vi.fn(),
+            getSavedRoutes: vi.fn().mockResolvedValue([]),
+            getMatchingRides: vi.fn().mockResolvedValue([]),
+          },
+        },
+        { provide: ViaCepService, useValue: { getAddressByCep: () => of({ address: '' }) } },
+      ],
+    }).compileComponents();
+
+    const harness = await RouterTestingHarness.create();
+    await harness.navigateByUrl(
+      '/profile/saved-routes?origin=UTFPR%20Campus&destination=Centro&time=14:00',
+    );
+    harness.detectChanges();
+
+    const value = (testId: string): string =>
+      (harness.routeDebugElement!.query(By.css(`[data-testid="${testId}"]`))
+        .nativeElement as HTMLInputElement).value;
+    expect(value('origin')).toBe('UTFPR Campus');
+    expect(value('destination')).toBe('Centro');
+    expect(value('preferred-time')).toBe('14:00');
   });
 });
