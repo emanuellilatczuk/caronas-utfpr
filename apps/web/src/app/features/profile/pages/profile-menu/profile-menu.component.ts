@@ -1,10 +1,11 @@
 import { Component, computed, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth.service';
+import { BottomNavbarComponent } from '../../../../shared/components/bottom-navbar/bottom-navbar.component';
 
 @Component({
   selector: 'app-profile-menu',
-  imports: [RouterLink],
+  imports: [RouterLink, BottomNavbarComponent],
   templateUrl: './profile-menu.component.html',
 })
 export class ProfileMenuComponent {

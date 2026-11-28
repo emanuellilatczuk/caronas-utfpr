@@ -3,7 +3,7 @@
     <p
       role="status"
       data-testid="match-suggestions-loading"
-      class="py-6 text-center font-body text-body text-texto-suave"
+      class="py-6 text-center font-body text-[13px] text-texto-suave"
     >
       Buscando caronas compatíveis...
     </p>
@@ -12,7 +12,7 @@
     <p
       role="alert"
       data-testid="match-suggestions-error"
-      class="py-6 text-center font-body text-body text-perigo"
+      class="py-6 text-center font-body text-[13px] text-perigo"
     >
       {{ error() }}
     </p>
@@ -20,23 +20,27 @@
   @case ('empty') {
     <div
       data-testid="match-suggestions-empty"
-      class="rounded-xl bg-fundo px-5 py-8 text-center"
+      class="rounded-2xl bg-fundo px-5 py-8 text-center"
     >
-      <span aria-hidden="true" class="mb-3 block text-3xl text-primaria">⌖</span>
-      <h3 class="font-display text-lg font-semibold text-texto">
+      <div class="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-2xl bg-superficie text-primaria shadow-sm">
+        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+        </svg>
+      </div>
+      <h3 class="font-subhead text-[14px] font-bold text-texto">
         Nenhuma carona compatível no momento
       </h3>
-      <p class="mt-2 font-body text-body text-texto-suave">
+      <p class="mt-1 font-body text-[12px] text-texto-suave">
         Não encontramos caronas abertas compatíveis com suas rotas salvas neste momento.
       </p>
     </div>
   }
   @case ('loaded') {
-    <div class="space-y-4">
+    <div class="space-y-3.5">
       @for (ride of rides(); track ride.id) {
         <article
           data-testid="match-ride-card"
-          class="space-y-3 rounded-2xl border border-desabilitado bg-superficie p-4 shadow-sm transition-shadow hover:shadow-md sm:p-5"
+          class="space-y-3 rounded-2xl border border-fundo bg-superficie p-4 shadow-sm transition-shadow hover:shadow-md sm:p-5"
         >
           <div class="flex items-center gap-3.5">
             @if (ride.driver?.avatar_url; as avatarUrl) {
@@ -44,13 +48,13 @@
                 data-testid="ride-driver-photo"
                 [src]="avatarUrl"
                 [alt]="'Foto de ' + (ride.driver?.name ?? 'Motorista')"
-                class="h-12 w-12 shrink-0 overflow-hidden rounded-2xl bg-fundo object-cover font-label text-label text-texto-suave"
+                class="h-12 w-12 shrink-0 overflow-hidden rounded-2xl bg-fundo object-cover text-[10px] text-texto-suave"
               />
             } @else {
               <div
                 data-testid="ride-driver-initial"
                 aria-hidden="true"
-                class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-fundo font-subhead text-body font-bold text-primaria"
+                class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-fundo font-subhead font-bold text-primaria"
               >
                 {{ ride.driver?.name?.slice(0, 1) ?? 'M' }}
               </div>
@@ -60,7 +64,7 @@
               <div class="flex flex-wrap items-center justify-between gap-2">
                 <h3
                   data-testid="ride-driver-name"
-                  class="font-subhead text-body font-bold text-texto"
+                  class="font-subhead text-[14px] font-bold text-texto"
                 >
                   {{ ride.driver?.name ?? 'Motorista' }}
                 </h3>
@@ -68,14 +72,14 @@
                   @if (ride.women_only) {
                     <span
                       data-testid="ride-women-only-badge"
-                      class="rounded-full bg-primaria px-2.5 py-0.5 font-caption text-caption font-semibold text-texto-inverso"
+                      class="rounded-full bg-primaria px-2.5 py-0.5 font-caption text-[11px] font-semibold text-texto-inverso"
                     >
                       Modo Elas por Elas
                     </span>
                   }
                   <span
                     data-testid="ride-rating"
-                    class="rounded-lg bg-fundo px-2 py-0.5 font-caption text-caption font-semibold text-texto"
+                    class="rounded-lg bg-fundo px-2 py-0.5 font-caption text-[11px] font-semibold text-texto"
                   >
                     @if (ride.driver?.average_rating !== undefined) {
                       ★ {{ ride.driver?.average_rating }}
@@ -86,7 +90,7 @@
                 </div>
               </div>
 
-              <p data-testid="ride-vehicle" class="mt-0.5 font-body text-body text-texto-suave">
+              <p data-testid="ride-vehicle" class="mt-0.5 font-body text-[12px] text-texto-suave">
                 {{ ride.vehicle?.brand_model ?? 'Veículo indisponível' }}
                 @if (ride.vehicle?.color) {
                   · {{ ride.vehicle?.color }}
@@ -95,7 +99,7 @@
             </div>
           </div>
 
-          <div class="space-y-1.5 rounded-xl bg-fundo px-3.5 py-2.5 font-body text-body">
+          <div class="space-y-1.5 rounded-xl bg-fundo px-3.5 py-2.5 font-body text-[12px]">
             <p class="truncate text-texto">
               <span class="text-texto-suave">Origem: </span>
               <span class="font-medium">{{ ride.origin }}</span>
@@ -116,7 +120,7 @@
             </p>
           </div>
 
-          <div class="flex flex-wrap items-center justify-between gap-3 pt-1 font-body text-body">
+          <div class="flex flex-wrap items-center justify-between gap-3 pt-1 font-body text-[12px]">
             <span
               data-testid="ride-seats"
               class="inline-flex items-center gap-1.5 rounded-full bg-fundo px-3 py-1 font-semibold text-primaria"
@@ -134,7 +138,7 @@
               type="button"
               data-testid="view-ride-btn"
               (click)="onViewRide(ride.id)"
-              class="inline-flex items-center gap-1.5 rounded-xl bg-primaria px-4 py-2 font-button-primary text-button-primary font-semibold text-texto-inverso transition-colors hover:bg-primaria-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primaria focus-visible:ring-offset-2"
+              class="inline-flex items-center gap-1.5 rounded-xl bg-primaria px-4 py-2 font-button-primary text-[12px] font-semibold text-texto-inverso transition-colors hover:bg-primaria-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primaria focus-visible:ring-offset-2"
             >
               <span>Ver Carona</span>
               <svg

@@ -1,11 +1,37 @@
-<div class="min-h-screen bg-fundo px-4 py-6 sm:px-6">
-  <main class="mx-auto max-w-2xl">
+<div class="min-h-screen bg-fundo px-4 py-6 pb-24 sm:px-6">
+  <main class="mx-auto max-w-2xl space-y-6">
+    <div class="flex items-center gap-3.5">
+      <a
+        routerLink="/profile"
+        aria-label="Voltar para o perfil"
+        data-testid="back-to-profile"
+        class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-superficie text-texto shadow-sm transition-colors hover:bg-primaria hover:text-texto-inverso focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primaria focus-visible:ring-offset-2"
+      >
+        <svg
+          aria-hidden="true"
+          class="h-5 w-5"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.2"
+        >
+          <line x1="19" y1="12" x2="5" y2="12" />
+          <polyline points="12 19 5 12 12 5" />
+        </svg>
+      </a>
+
+      <span class="font-display text-xl font-bold tracking-tight text-texto sm:text-2xl">
+        Rotas Salvas
+      </span>
+    </div>
+
+    <!-- Card do Formulário no padrão visual da Home -->
     <section
       data-testid="saved-route-form-card"
-      class="rounded-xl bg-superficie p-4 shadow-lg sm:p-7"
+      class="rounded-3xl bg-superficie p-5 shadow-lg sm:p-7"
       aria-labelledby="saved-route-title"
     >
-      <h1 id="saved-route-title" class="mb-5 font-display text-2xl font-bold text-texto">
+      <h1 id="saved-route-title" class="mb-5 font-display text-2xl font-bold tracking-tight text-texto sm:text-[26px]">
         @if (id()) {
           Editar Rota Salva
         } @else {
@@ -19,77 +45,113 @@
         novalidate
         class="space-y-4"
       >
+        <!-- Nome da Rota -->
         <div>
-          <label for="saved-route-name" class="mb-1.5 block font-label text-label font-semibold uppercase tracking-wider text-texto-suave">
+          <label
+            for="saved-route-name"
+            class="mb-1.5 block font-label text-[10px] font-bold uppercase tracking-wider text-texto-suave"
+          >
             Nome da Rota
           </label>
-          <input
-            id="saved-route-name"
-            data-testid="name"
-            type="text"
-            formControlName="name"
-            placeholder="Ex.: Casa — UTFPR"
-            [attr.aria-invalid]="savedRouteForm.controls.name.invalid && savedRouteForm.controls.name.touched"
-            [attr.aria-describedby]="savedRouteForm.controls.name.invalid && savedRouteForm.controls.name.touched ? 'error-name' : null"
-            class="w-full rounded-xl bg-fundo px-3.5 py-3 font-body text-body font-medium text-texto placeholder:text-desabilitado focus:outline-none focus:ring-2 focus:ring-primaria"
-          />
+          <div class="relative flex items-center">
+            <span class="pointer-events-none absolute left-3.5 text-texto-suave">
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+              </svg>
+            </span>
+            <input
+              id="saved-route-name"
+              data-testid="name"
+              type="text"
+              formControlName="name"
+              placeholder="Ex.: Casa — UTFPR"
+              [attr.aria-invalid]="savedRouteForm.controls.name.invalid && savedRouteForm.controls.name.touched"
+              [attr.aria-describedby]="savedRouteForm.controls.name.invalid && savedRouteForm.controls.name.touched ? 'error-name' : null"
+              class="w-full rounded-xl bg-fundo py-3 pl-10 pr-3.5 font-body text-[13px] font-medium text-texto placeholder:text-desabilitado focus:outline-none focus:ring-2 focus:ring-primaria"
+            />
+          </div>
           @if (savedRouteForm.controls.name.touched && savedRouteForm.controls.name.hasError('required')) {
-            <p id="error-name" data-testid="error-name" class="mt-1.5 font-caption text-caption text-perigo">
+            <p id="error-name" data-testid="error-name" class="mt-1.5 font-caption text-[11px] text-perigo">
               Nome da rota é obrigatório.
             </p>
           }
         </div>
 
+        <!-- Origem + CEP -->
         <div>
           <div class="mb-1.5 flex items-center justify-between">
-            <label for="saved-route-origin" class="block font-label text-label font-semibold uppercase tracking-wider text-texto-suave">
+            <label
+              for="saved-route-origin"
+              class="block font-label text-[10px] font-bold uppercase tracking-wider text-texto-suave"
+            >
               Origem
             </label>
           </div>
           <div data-testid="origin-cep-search">
             <app-cep-search-input [(cep)]="originCep" (addressFound)="applyAddress('origin', $event)" />
           </div>
-          <input
-            id="saved-route-origin"
-            data-testid="origin"
-            type="text"
-            formControlName="origin"
-            placeholder="Ex.: Rua das Flores"
-            [attr.aria-invalid]="savedRouteForm.controls.origin.invalid && savedRouteForm.controls.origin.touched"
-            [attr.aria-describedby]="savedRouteForm.controls.origin.invalid && savedRouteForm.controls.origin.touched ? 'error-origin' : null"
-            class="mt-2 w-full rounded-xl bg-fundo px-3.5 py-3 font-body text-body font-medium text-texto placeholder:text-desabilitado focus:outline-none focus:ring-2 focus:ring-primaria"
-          />
+          <div class="relative mt-2.5 flex items-center">
+            <span class="pointer-events-none absolute left-3.5 text-texto-suave">
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                <circle cx="12" cy="10" r="3" />
+              </svg>
+            </span>
+            <input
+              id="saved-route-origin"
+              data-testid="origin"
+              type="text"
+              formControlName="origin"
+              placeholder="Ex.: Rua das Flores"
+              [attr.aria-invalid]="savedRouteForm.controls.origin.invalid && savedRouteForm.controls.origin.touched"
+              [attr.aria-describedby]="savedRouteForm.controls.origin.invalid && savedRouteForm.controls.origin.touched ? 'error-origin' : null"
+              class="w-full rounded-xl bg-fundo py-3 pl-10 pr-3.5 font-body text-[13px] font-medium text-texto placeholder:text-desabilitado focus:outline-none focus:ring-2 focus:ring-primaria"
+            />
+          </div>
           @if (savedRouteForm.controls.origin.touched && savedRouteForm.controls.origin.hasError('required')) {
-            <p id="error-origin" data-testid="error-origin" class="mt-1.5 font-caption text-caption text-perigo">
+            <p id="error-origin" data-testid="error-origin" class="mt-1.5 font-caption text-[11px] text-perigo">
               Origem é obrigatória.
             </p>
           }
         </div>
 
+        <!-- Destino + CEP -->
         <div>
-          <label for="saved-route-destination" class="mb-1.5 block font-label text-label font-semibold uppercase tracking-wider text-texto-suave">
+          <label
+            for="saved-route-destination"
+            class="mb-1.5 block font-label text-[10px] font-bold uppercase tracking-wider text-texto-suave"
+          >
             Destino
           </label>
           <div data-testid="destination-cep-search">
             <app-cep-search-input [(cep)]="destinationCep" (addressFound)="applyAddress('destination', $event)" />
           </div>
-          <input
-            id="saved-route-destination"
-            data-testid="destination"
-            type="text"
-            formControlName="destination"
-            placeholder="Ex.: UTFPR Campus"
-            [attr.aria-invalid]="savedRouteForm.controls.destination.invalid && savedRouteForm.controls.destination.touched"
-            [attr.aria-describedby]="savedRouteForm.controls.destination.invalid && savedRouteForm.controls.destination.touched ? 'error-destination' : null"
-            class="mt-2 w-full rounded-xl bg-fundo px-3.5 py-3 font-body text-body font-medium text-texto placeholder:text-desabilitado focus:outline-none focus:ring-2 focus:ring-primaria"
-          />
+          <div class="relative mt-2.5 flex items-center">
+            <span class="pointer-events-none absolute left-3.5 text-texto-suave">
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" />
+                <line x1="4" y1="22" x2="4" y2="15" />
+              </svg>
+            </span>
+            <input
+              id="saved-route-destination"
+              data-testid="destination"
+              type="text"
+              formControlName="destination"
+              placeholder="Ex.: UTFPR Campus"
+              [attr.aria-invalid]="savedRouteForm.controls.destination.invalid && savedRouteForm.controls.destination.touched"
+              [attr.aria-describedby]="savedRouteForm.controls.destination.invalid && savedRouteForm.controls.destination.touched ? 'error-destination' : null"
+              class="w-full rounded-xl bg-fundo py-3 pl-10 pr-3.5 font-body text-[13px] font-medium text-texto placeholder:text-desabilitado focus:outline-none focus:ring-2 focus:ring-primaria"
+            />
+          </div>
           @if (savedRouteForm.controls.destination.touched && savedRouteForm.controls.destination.hasError('required')) {
-            <p id="error-destination" data-testid="error-destination" class="mt-1.5 font-caption text-caption text-perigo">
+            <p id="error-destination" data-testid="error-destination" class="mt-1.5 font-caption text-[11px] text-perigo">
               Destino é obrigatório.
             </p>
           }
         </div>
 
+        <!-- Dias da Semana -->
         <div>
           <div
             role="group"
@@ -100,14 +162,18 @@
             <app-days-selector [(days)]="selectedDays" />
           </div>
           @if (savedRouteForm.controls.days.touched && savedRouteForm.controls.days.hasError('required')) {
-            <p id="error-days" data-testid="error-days" class="mt-1.5 font-caption text-caption text-perigo">
+            <p id="error-days" data-testid="error-days" class="mt-1.5 font-caption text-[11px] text-perigo">
               Selecione ao menos um dia da semana.
             </p>
           }
         </div>
 
+        <!-- Horário -->
         <div>
-          <label for="saved-route-time" class="mb-1.5 block font-label text-label font-semibold uppercase tracking-wider text-texto-suave">
+          <label
+            for="saved-route-time"
+            class="mb-1.5 block font-label text-[10px] font-bold uppercase tracking-wider text-texto-suave"
+          >
             Horário
           </label>
           <input
@@ -117,41 +183,56 @@
             formControlName="preferredTime"
             [attr.aria-invalid]="savedRouteForm.controls.preferredTime.invalid && savedRouteForm.controls.preferredTime.touched"
             [attr.aria-describedby]="savedRouteForm.controls.preferredTime.invalid && savedRouteForm.controls.preferredTime.touched ? 'error-preferred-time' : null"
-            class="w-full rounded-xl bg-fundo px-3.5 py-3 font-body text-body font-medium text-texto focus:outline-none focus:ring-2 focus:ring-primaria"
+            class="w-full rounded-xl bg-fundo px-3.5 py-3 font-body text-[13px] font-medium text-texto focus:outline-none focus:ring-2 focus:ring-primaria"
           />
           @if (savedRouteForm.controls.preferredTime.touched && savedRouteForm.controls.preferredTime.hasError('required')) {
-            <p id="error-preferred-time" data-testid="error-preferred-time" class="mt-1.5 font-caption text-caption text-perigo">
+            <p id="error-preferred-time" data-testid="error-preferred-time" class="mt-1.5 font-caption text-[11px] text-perigo">
               Horário é obrigatório.
             </p>
           }
         </div>
 
+        <!-- Modo Elas por Elas (mesmo toggle visual da Home) -->
         @if (canSeeWomenOnly()) {
           <label
             data-testid="women-only"
             for="women-only"
-            class="flex cursor-pointer items-center justify-between gap-4 rounded-xl bg-fundo p-3.5"
+            class="flex cursor-pointer items-center justify-between gap-4 rounded-2xl border border-fundo bg-superficie p-3.5 transition-colors hover:bg-fundo/40"
           >
-            <span class="font-body text-body font-medium text-texto">Modo Elas por Elas</span>
-            <input
-              id="women-only"
-              type="checkbox"
-              formControlName="womenOnly"
-              class="h-5 w-5 accent-primaria"
-            />
+            <div>
+              <span class="block font-body text-[13px] font-bold text-texto">
+                Modo Elas por Elas
+              </span>
+              <span class="mt-0.5 block font-caption text-[11px] text-texto-suave">
+                Caronas exclusivas entre mulheres. Mais segurança para você!
+              </span>
+            </div>
+
+            <div class="relative inline-flex shrink-0 items-center">
+              <input
+                id="women-only"
+                type="checkbox"
+                formControlName="womenOnly"
+                class="peer sr-only"
+              />
+              <div
+                class="h-6 w-11 rounded-full bg-desabilitado/60 transition-colors after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:bg-superficie after:shadow-sm after:transition-all after:content-[''] peer-checked:bg-primaria peer-checked:after:translate-x-5 peer-focus-visible:ring-2 peer-focus-visible:ring-primaria peer-focus-visible:ring-offset-2"
+              ></div>
+            </div>
           </label>
         }
 
         @if (submitError(); as message) {
-          <p role="alert" class="font-caption text-caption text-perigo">{{ message }}</p>
+          <p role="alert" class="font-caption text-[11px] text-perigo">{{ message }}</p>
         }
 
+        <!-- Botão Salvar Rota -->
         <button
           type="submit"
           data-testid="save-saved-route"
           [disabled]="savedRouteForm.invalid || saving() || loadingRoute()"
           [class.hover:bg-primaria-hover]="!savedRouteForm.invalid && !saving() && !loadingRoute()"
-          class="w-full rounded-xl bg-primaria px-5 py-3 font-button-primary text-button-primary font-semibold text-texto-inverso shadow-sm transition focus:outline-none focus:ring-2 focus:ring-primaria focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          class="mt-1 flex w-full items-center justify-center gap-2 rounded-xl bg-primaria px-4 py-3.5 font-button-primary text-sm font-semibold text-texto-inverso shadow-md shadow-primaria/25 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primaria focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none"
         >
           @if (saving()) {
             <span
@@ -161,15 +242,16 @@
               class="mx-auto block h-5 w-5 animate-spin rounded-full border-2 border-texto-inverso border-t-transparent"
             ></span>
           } @else {
-            Salvar Rota
+            <span>Salvar Rota</span>
           }
         </button>
       </form>
     </section>
 
+    <!-- Card de Abas: Minhas Rotas e Sugestões de Match -->
     <section
       aria-label="Rotas salvas e sugestões de carona"
-      class="mt-6 rounded-xl bg-superficie p-4 shadow-sm sm:p-7"
+      class="rounded-3xl bg-superficie p-5 shadow-lg sm:p-7"
     >
       <div
         role="tablist"
@@ -189,7 +271,7 @@
           [class.shadow-sm]="activeTab() === 'routes'"
           [class.text-texto-suave]="activeTab() !== 'routes'"
           [class.hover:text-texto]="activeTab() !== 'routes'"
-          class="rounded-xl px-3 py-2.5 font-button-primary text-button-primary font-semibold transition focus:outline-none focus:ring-2 focus:ring-primaria"
+          class="rounded-xl px-3 py-2.5 font-button-primary text-[13px] font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primaria"
         >
           Minhas Rotas
         </button>
@@ -207,7 +289,7 @@
           [class.shadow-sm]="activeTab() === 'matches'"
           [class.text-texto-suave]="activeTab() !== 'matches'"
           [class.hover:text-texto]="activeTab() !== 'matches'"
-          class="rounded-xl px-3 py-2.5 font-button-primary text-button-primary font-semibold transition focus:outline-none focus:ring-2 focus:ring-primaria"
+          class="rounded-xl px-3 py-2.5 font-button-primary text-[13px] font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primaria"
         >
           Sugestões de Match
         </button>
@@ -224,91 +306,97 @@
             <div class="mb-5">
               <h2
                 id="saved-routes-list-title"
-                class="font-display text-xl font-bold text-texto"
+                class="font-heading text-[16px] font-bold text-texto"
               >
                 Minhas Rotas
               </h2>
-              <p class="mt-1 font-caption text-caption text-texto-suave">
+              <p class="mt-0.5 font-caption text-[11px] text-texto-suave">
                 Gerencie os trajetos que você usa com frequência.
               </p>
             </div>
 
             @if (deleteError(); as message) {
-              <p role="alert" data-testid="saved-route-delete-error" class="mb-4 font-caption text-caption text-perigo">
+              <p role="alert" data-testid="saved-route-delete-error" class="mb-4 font-caption text-[11px] text-perigo">
                 {{ message }}
               </p>
             }
 
             @switch (savedRoutesState()) {
               @case ('loading') {
-                <p role="status" data-testid="saved-routes-loading" class="py-6 text-center font-body text-body text-texto-suave">
+                <p role="status" data-testid="saved-routes-loading" class="py-6 text-center font-body text-[13px] text-texto-suave">
                   Carregando suas rotas...
                 </p>
               }
               @case ('error') {
-                <p role="alert" data-testid="saved-routes-error" class="py-6 text-center font-body text-body text-perigo">
+                <p role="alert" data-testid="saved-routes-error" class="py-6 text-center font-body text-[13px] text-perigo">
                   {{ savedRoutesError() }}
                 </p>
               }
               @case ('empty') {
                 <div
                   data-testid="saved-routes-empty"
-                  class="rounded-xl bg-fundo px-5 py-8 text-center"
+                  class="rounded-2xl bg-fundo px-5 py-8 text-center"
                 >
-                  <span aria-hidden="true" class="mb-3 block text-3xl text-primaria">⌖</span>
-                  <h3 class="font-display text-lg font-semibold text-texto">
+                  <div class="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-2xl bg-superficie text-primaria shadow-sm">
+                    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+                    </svg>
+                  </div>
+                  <h3 class="font-subhead text-[14px] font-bold text-texto">
                     Cadastre sua primeira rota
                   </h3>
-                  <p class="mt-2 font-body text-body text-texto-suave">
+                  <p class="mt-1 font-body text-[12px] text-texto-suave">
                     Você ainda não tem rotas salvas. Use o formulário acima para cadastrar uma.
                   </p>
                 </div>
               }
               @case ('loaded') {
-                <div class="space-y-4">
+                <div class="space-y-3.5">
                   @for (route of savedRoutes(); track route.id) {
                     <article
                       data-testid="saved-route-card"
-                      class="rounded-xl border border-desabilitado bg-superficie p-4 shadow-sm"
+                      class="space-y-3 rounded-2xl border border-fundo bg-superficie p-4 shadow-sm transition-shadow hover:shadow-md"
                     >
-                      <div class="flex flex-wrap items-start justify-between gap-3">
-                        <div class="min-w-0">
-                          <h3 class="font-display text-lg font-semibold text-texto">
-                            {{ route.name }}
-                          </h3>
-                          <p class="mt-2 font-body text-body text-texto">
-                            <span class="font-semibold">Origem:</span> {{ route.origin }}
-                          </p>
-                          <p class="mt-1 font-body text-body text-texto">
-                            <span class="font-semibold">Destino:</span> {{ route.destination }}
-                          </p>
-                        </div>
+                      <div class="flex flex-wrap items-center justify-between gap-2">
+                        <h3 class="font-subhead text-[14px] font-bold text-texto">
+                          {{ route.name }}
+                        </h3>
                         @if (route.women_only) {
                           <span
                             data-testid="women-only-badge"
-                            class="rounded-full bg-primaria px-3 py-1 font-caption text-caption font-semibold text-texto-inverso"
+                            class="rounded-full bg-primaria px-3 py-1 font-caption text-[11px] font-semibold text-texto-inverso"
                           >
                             Modo Elas por Elas
                           </span>
                         }
                       </div>
 
-                      <div class="mt-4 flex flex-wrap gap-x-5 gap-y-2 border-t border-desabilitado pt-3">
-                        <p class="font-caption text-caption text-texto-suave">
-                          <span class="font-semibold text-texto">Dias:</span>
-                          {{ formatDays(route.days_of_week) }}
+                      <div class="space-y-1.5 rounded-xl bg-fundo px-3.5 py-2.5 font-body text-[12px]">
+                        <p class="truncate text-texto">
+                          <span class="text-texto-suave">Origem: </span>
+                          <span class="font-medium">{{ route.origin }}</span>
                         </p>
-                        <p class="font-caption text-caption text-texto-suave">
-                          <span class="font-semibold text-texto">Horário:</span>
-                          {{ route.preferred_time }}
+                        <p class="truncate text-texto">
+                          <span class="text-texto-suave">Destino: </span>
+                          <span class="font-medium">{{ route.destination }}</span>
                         </p>
+                        <div class="flex flex-wrap gap-x-5 gap-y-1 pt-0.5 text-texto">
+                          <p>
+                            <span class="text-texto-suave">Dias: </span>
+                            <span class="font-medium">{{ formatDays(route.days_of_week) }}</span>
+                          </p>
+                          <p>
+                            <span class="text-texto-suave">Horário: </span>
+                            <span class="font-semibold">{{ route.preferred_time }}</span>
+                          </p>
+                        </div>
                       </div>
 
-                      <div class="mt-4 flex justify-end gap-3">
+                      <div class="flex items-center justify-end gap-2.5 pt-0.5">
                         <a
                           [routerLink]="['/profile/saved-routes', route.id, 'edit']"
                           data-testid="edit-saved-route"
-                          class="rounded-xl border border-primaria px-4 py-2 font-button-primary text-button-primary font-semibold text-primaria focus:outline-none focus:ring-2 focus:ring-primaria"
+                          class="rounded-xl border border-primaria px-4 py-2 font-button-primary text-[12px] font-semibold text-primaria transition-colors hover:bg-primaria/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primaria"
                         >
                           Editar
                         </a>
@@ -316,7 +404,7 @@
                           type="button"
                           data-testid="delete-saved-route"
                           (click)="deleteRoute(route)"
-                          class="rounded-xl px-4 py-2 font-button-primary text-button-primary font-semibold text-perigo focus:outline-none focus:ring-2 focus:ring-perigo"
+                          class="rounded-xl px-4 py-2 font-button-primary text-[12px] font-semibold text-perigo transition-colors hover:bg-perigo/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-perigo"
                         >
                           Excluir
                         </button>
@@ -338,11 +426,11 @@
             <div class="mb-5">
               <h2
                 id="match-suggestions-list-title"
-                class="font-display text-xl font-bold text-texto"
+                class="font-heading text-[16px] font-bold text-texto"
               >
                 Sugestões de Match
               </h2>
-              <p class="mt-1 font-caption text-caption text-texto-suave">
+              <p class="mt-0.5 font-caption text-[11px] text-texto-suave">
                 Caronas abertas compatíveis com suas rotas salvas.
               </p>
             </div>
@@ -358,7 +446,7 @@
               <div
                 data-testid="match-suggestions-placeholder"
                 aria-hidden="true"
-                class="rounded-xl bg-fundo px-5 py-8 text-center font-body text-body text-texto-suave"
+                class="rounded-2xl bg-fundo px-5 py-8 text-center font-body text-[13px] text-texto-suave"
               >
                 Role até aqui para carregar as sugestões de carona.
               </div>
@@ -366,7 +454,7 @@
               <p
                 role="status"
                 data-testid="match-suggestions-defer-loading"
-                class="rounded-xl bg-fundo px-5 py-8 text-center font-body text-body text-texto-suave"
+                class="rounded-2xl bg-fundo px-5 py-8 text-center font-body text-[13px] text-texto-suave"
               >
                 Carregando sugestões de carona...
               </p>
