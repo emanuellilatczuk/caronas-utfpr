@@ -5,8 +5,9 @@ import {
 } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { environment } from '../../../environments/environment';
-import { Ride } from '../models/ride.model';
+import { Ride, RideReview, RideVehicle } from '../models/ride.model';
 import { SavedRoute } from '../models/saved-route.model';
+import { User } from '../models/user.model';
 import { AuthService } from './auth.service';
 import { SavedRouteService } from './saved-route.service';
 
@@ -14,6 +15,40 @@ describe('SavedRouteService', () => {
   let service: SavedRouteService;
   let httpTesting: HttpTestingController;
   let authService: AuthService;
+
+  const defaultDriver: User = {
+    id: 'driver-1',
+    name: 'Ana Souza',
+    email: 'ana.souza@alunos.utfpr.edu.br',
+    gender: 'female',
+    avatar_url: 'https://example.com/ana.jpg',
+    created_at: '2099-01-01T00:00:00.000Z',
+  };
+
+  const defaultVehicle: RideVehicle = {
+    id: 'vehicle-1',
+    brand_model: 'Toyota Corolla',
+    color: 'Prata',
+  };
+
+  const defaultReviews: RideReview[] = [
+    {
+      id: 'review-1',
+      ride_id: 'ride-prev-1',
+      reviewer_id: 'passenger-1',
+      reviewed_id: 'driver-1',
+      rating: 5,
+      created_at: '2099-01-01T00:00:00.000Z',
+    },
+    {
+      id: 'review-2',
+      ride_id: 'ride-prev-2',
+      reviewer_id: 'passenger-2',
+      reviewed_id: 'driver-1',
+      rating: 4,
+      created_at: '2099-01-02T00:00:00.000Z',
+    },
+  ];
 
   const savedRoute = (overrides: Partial<SavedRoute> = {}): SavedRoute => ({
     id: 'route-1',
@@ -43,6 +78,16 @@ describe('SavedRouteService', () => {
     created_at: '2099-01-01T00:00:00.000Z',
     ...overrides,
   });
+
+  function flushRideHydration(
+    users: User[] = [defaultDriver],
+    vehicles: RideVehicle[] = [defaultVehicle],
+    reviews: RideReview[] = defaultReviews,
+  ): void {
+    httpTesting.expectOne(`${environment.apiUrl}/users`).flush(users);
+    httpTesting.expectOne(`${environment.apiUrl}/vehicles`).flush(vehicles);
+    httpTesting.expectOne(`${environment.apiUrl}/reviews`).flush(reviews);
+  }
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -204,6 +249,7 @@ describe('SavedRouteService', () => {
       ride('closed', { status: 'cancelled' }),
       ride('full', { available_seats: 0 }),
     ]);
+    flushRideHydration();
 
     await expect(result).resolves.toEqual([expect.objectContaining({ id: 'at-boundary' })]);
   });
@@ -226,6 +272,7 @@ describe('SavedRouteService', () => {
         }),
         ride('same-day-00:30', { departure_time: timestamp('2099-05-10', '00:30') }),
       ]);
+    flushRideHydration();
 
     await expect(result).resolves.toEqual([
       expect.objectContaining({ id: 'within-minus-one-hour' }),
@@ -248,12 +295,79 @@ describe('SavedRouteService', () => {
       httpTesting
         .expectOne(`${environment.apiUrl}/rides`)
         .flush([ride(`women-only-${gender}`, { women_only: true })]);
+      flushRideHydration();
       return result;
     };
 
     await expect(getMatches('male')).resolves.toEqual([]);
     await expect(getMatches('other')).resolves.toEqual([]);
     await expect(getMatches('female')).resolves.toHaveLength(1);
+  });
+
+  it('hidrata motorista (nome, foto e nota média derivada de reviews) e veículo nas caronas compatíveis', async () => {
+    const result = service.getMatchingRides();
+    httpTesting
+      .expectOne(`${environment.apiUrl}/saved_routes?user_id=user-1`)
+      .flush([savedRoute()]);
+    httpTesting.expectOne(`${environment.apiUrl}/rides`).flush([
+      ride('ride-rated', { driver_id: 'driver-1', vehicle_id: 'vehicle-1' }),
+      ride('ride-unrated', { driver_id: 'driver-2', vehicle_id: 'vehicle-2' }),
+    ]);
+    flushRideHydration(
+      [
+        defaultDriver,
+        {
+          id: 'driver-2',
+          name: 'João Lima',
+          email: 'joao.lima@alunos.utfpr.edu.br',
+          gender: 'male',
+          created_at: '2099-01-01T00:00:00.000Z',
+        },
+      ],
+      [
+        defaultVehicle,
+        {
+          id: 'vehicle-2',
+          brand_model: 'Honda Civic',
+          color: 'Preto',
+        },
+      ],
+      defaultReviews,
+    );
+
+    const matches = await result;
+    expect(matches).toEqual([
+      expect.objectContaining({
+        id: 'ride-rated',
+        driver: {
+          id: 'driver-1',
+          name: 'Ana Souza',
+          gender: 'female',
+          avatar_url: 'https://example.com/ana.jpg',
+          average_rating: 4.5,
+        },
+        vehicle: {
+          id: 'vehicle-1',
+          brand_model: 'Toyota Corolla',
+          color: 'Prata',
+        },
+      }),
+      expect.objectContaining({
+        id: 'ride-unrated',
+        driver: {
+          id: 'driver-2',
+          name: 'João Lima',
+          gender: 'male',
+          avatar_url: undefined,
+        },
+        vehicle: {
+          id: 'vehicle-2',
+          brand_model: 'Honda Civic',
+          color: 'Preto',
+        },
+      }),
+    ]);
+    expect(matches[1]?.driver?.average_rating).toBeUndefined();
   });
 });
 

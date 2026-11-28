@@ -20,8 +20,10 @@ import {
 import { AuthService } from '../../../../core/services/auth.service';
 import { SavedRouteService } from '../../../../core/services/saved-route.service';
 import { SavedRoute } from '../../../../core/models/saved-route.model';
+import { Ride } from '../../../../core/models/ride.model';
 import { CepSearchInputComponent } from '../../components/cep-search-input/cep-search-input.component';
 import { DaysSelectorComponent } from '../../components/days-selector/days-selector.component';
+import { MatchSuggestionsComponent } from '../../components/match-suggestions/match-suggestions.component';
 
 const trimRequiredValidator: ValidatorFn = (
   control: AbstractControl<string>,
@@ -54,6 +56,7 @@ const WEEKDAY_LABELS: Record<string, string> = {
     RouterLink,
     CepSearchInputComponent,
     DaysSelectorComponent,
+    MatchSuggestionsComponent,
   ],
   templateUrl: './saved-routes.component.html',
 })
@@ -81,6 +84,10 @@ export class SavedRoutesComponent implements OnInit {
   readonly loadingSavedRoutes = signal(true);
   readonly savedRoutesError = signal<string | null>(null);
   readonly deleteError = signal<string | null>(null);
+  readonly activeTab = signal<'routes' | 'matches'>('routes');
+  readonly matchingRides = signal<Ride[]>([]);
+  readonly loadingMatches = signal(false);
+  readonly matchesError = signal<string | null>(null);
   readonly savedRoutesState = computed(() => {
     if (this.loadingSavedRoutes()) {
       return 'loading';
@@ -91,6 +98,7 @@ export class SavedRoutesComponent implements OnInit {
     return this.savedRoutes().length ? 'loaded' : 'empty';
   });
   private routeLoadVersion = 0;
+  private matchesLoadVersion = 0;
 
   readonly savedRouteForm = this.fb.group({
     name: ['', [Validators.required, trimRequiredValidator]],
@@ -185,6 +193,9 @@ export class SavedRoutesComponent implements OnInit {
         : await this.savedRouteService.createSavedRoute(data);
       this.saved.emit(savedRoute);
       await this.refreshSavedRoutes();
+      if (this.activeTab() === 'matches') {
+        await this.refreshMatchingRides();
+      }
       if (routeId) {
         await this.router.navigate(['/profile/saved-routes']);
       }
@@ -211,8 +222,46 @@ export class SavedRoutesComponent implements OnInit {
     try {
       await this.savedRouteService.deleteSavedRoute(route.id);
       await this.refreshSavedRoutes();
+      if (this.activeTab() === 'matches') {
+        await this.refreshMatchingRides();
+      }
     } catch {
       this.deleteError.set('Não foi possível excluir a rota. Tente novamente.');
+    }
+  }
+
+  selectTab(tab: 'routes' | 'matches'): void {
+    this.activeTab.set(tab);
+    if (tab === 'matches') {
+      void this.refreshMatchingRides();
+    }
+  }
+
+  navigateToRide(rideId: string): void {
+    void this.router.navigate(['/rides', rideId]);
+  }
+
+  async refreshMatchingRides(): Promise<void> {
+    const requestVersion = ++this.matchesLoadVersion;
+    this.loadingMatches.set(true);
+    this.matchesError.set(null);
+    try {
+      const rides = await this.savedRouteService.getMatchingRides();
+      if (requestVersion !== this.matchesLoadVersion) {
+        return;
+      }
+      this.matchingRides.set(rides);
+    } catch {
+      if (requestVersion === this.matchesLoadVersion) {
+        this.matchingRides.set([]);
+        this.matchesError.set(
+          'Não foi possível carregar as sugestões de carona. Tente novamente.',
+        );
+      }
+    } finally {
+      if (requestVersion === this.matchesLoadVersion) {
+        this.loadingMatches.set(false);
+      }
     }
   }
 

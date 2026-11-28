@@ -1,0 +1,157 @@
+@switch (state()) {
+  @case ('loading') {
+    <p
+      role="status"
+      data-testid="match-suggestions-loading"
+      class="py-6 text-center font-body text-body text-texto-suave"
+    >
+      Buscando caronas compatíveis...
+    </p>
+  }
+  @case ('error') {
+    <p
+      role="alert"
+      data-testid="match-suggestions-error"
+      class="py-6 text-center font-body text-body text-perigo"
+    >
+      {{ error() }}
+    </p>
+  }
+  @case ('empty') {
+    <div
+      data-testid="match-suggestions-empty"
+      class="rounded-xl bg-fundo px-5 py-8 text-center"
+    >
+      <span aria-hidden="true" class="mb-3 block text-3xl text-primaria">⌖</span>
+      <h3 class="font-display text-lg font-semibold text-texto">
+        Nenhuma carona compatível no momento
+      </h3>
+      <p class="mt-2 font-body text-body text-texto-suave">
+        Não encontramos caronas abertas compatíveis com suas rotas salvas neste momento.
+      </p>
+    </div>
+  }
+  @case ('loaded') {
+    <div class="space-y-4">
+      @for (ride of rides(); track ride.id) {
+        <article
+          data-testid="match-ride-card"
+          class="space-y-3 rounded-2xl border border-desabilitado bg-superficie p-4 shadow-sm transition-shadow hover:shadow-md sm:p-5"
+        >
+          <div class="flex items-center gap-3.5">
+            @if (ride.driver?.avatar_url; as avatarUrl) {
+              <img
+                data-testid="ride-driver-photo"
+                [src]="avatarUrl"
+                [alt]="'Foto de ' + (ride.driver?.name ?? 'Motorista')"
+                class="h-12 w-12 shrink-0 overflow-hidden rounded-2xl bg-fundo object-cover font-label text-label text-texto-suave"
+              />
+            } @else {
+              <div
+                data-testid="ride-driver-initial"
+                aria-hidden="true"
+                class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-fundo font-subhead text-body font-bold text-primaria"
+              >
+                {{ ride.driver?.name?.slice(0, 1) ?? 'M' }}
+              </div>
+            }
+
+            <div class="min-w-0 flex-1">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <h3
+                  data-testid="ride-driver-name"
+                  class="font-subhead text-body font-bold text-texto"
+                >
+                  {{ ride.driver?.name ?? 'Motorista' }}
+                </h3>
+                <div class="flex flex-wrap items-center gap-2">
+                  @if (ride.women_only) {
+                    <span
+                      data-testid="ride-women-only-badge"
+                      class="rounded-full bg-primaria px-2.5 py-0.5 font-caption text-caption font-semibold text-texto-inverso"
+                    >
+                      Modo Elas por Elas
+                    </span>
+                  }
+                  <span
+                    data-testid="ride-rating"
+                    class="rounded-lg bg-fundo px-2 py-0.5 font-caption text-caption font-semibold text-texto"
+                  >
+                    @if (ride.driver?.average_rating !== undefined) {
+                      ★ {{ ride.driver?.average_rating }}
+                    } @else {
+                      Sem avaliações
+                    }
+                  </span>
+                </div>
+              </div>
+
+              <p data-testid="ride-vehicle" class="mt-0.5 font-body text-body text-texto-suave">
+                {{ ride.vehicle?.brand_model ?? 'Veículo indisponível' }}
+                @if (ride.vehicle?.color) {
+                  · {{ ride.vehicle?.color }}
+                }
+              </p>
+            </div>
+          </div>
+
+          <div class="space-y-1.5 rounded-xl bg-fundo px-3.5 py-2.5 font-body text-body">
+            <p class="truncate text-texto">
+              <span class="text-texto-suave">Origem: </span>
+              <span class="font-medium">{{ ride.origin }}</span>
+            </p>
+            <p class="truncate text-texto">
+              <span class="text-texto-suave">Destino: </span>
+              <span class="font-medium">{{ ride.destination }}</span>
+            </p>
+            <p class="text-texto">
+              <span class="text-texto-suave">Saída: </span>
+              <time
+                data-testid="ride-departure"
+                class="font-semibold"
+                [attr.datetime]="ride.departure_time"
+              >
+                {{ ride.departure_time | date: 'HH:mm' }}
+              </time>
+            </p>
+          </div>
+
+          <div class="flex flex-wrap items-center justify-between gap-3 pt-1 font-body text-body">
+            <span
+              data-testid="ride-seats"
+              class="inline-flex items-center gap-1.5 rounded-full bg-fundo px-3 py-1 font-semibold text-primaria"
+            >
+              <span aria-hidden="true" class="h-1.5 w-1.5 rounded-full bg-primaria"></span>
+              {{ ride.available_seats }}
+              @if (ride.available_seats === 1) {
+                vaga restante
+              } @else {
+                vagas restantes
+              }
+            </span>
+
+            <button
+              type="button"
+              data-testid="view-ride-btn"
+              (click)="onViewRide(ride.id)"
+              class="inline-flex items-center gap-1.5 rounded-xl bg-primaria px-4 py-2 font-button-primary text-button-primary font-semibold text-texto-inverso transition-colors hover:bg-primaria-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primaria focus-visible:ring-offset-2"
+            >
+              <span>Ver Carona</span>
+              <svg
+                aria-hidden="true"
+                class="h-3.5 w-3.5"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+              >
+                <line x1="5" y1="12" x2="19" y2="12" />
+                <polyline points="12 5 19 12 12 19" />
+              </svg>
+            </button>
+          </div>
+        </article>
+      }
+    </div>
+  }
+}

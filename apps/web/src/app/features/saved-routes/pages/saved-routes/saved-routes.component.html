@@ -168,110 +168,208 @@
     </section>
 
     <section
-      aria-labelledby="saved-routes-list-title"
+      aria-label="Rotas salvas e sugestões de carona"
       class="mt-6 rounded-xl bg-superficie p-4 shadow-sm sm:p-7"
     >
-      <div class="mb-5">
-        <h2
-          id="saved-routes-list-title"
-          class="font-display text-xl font-bold text-texto"
+      <div
+        role="tablist"
+        aria-label="Seções de rotas salvas"
+        class="mb-5 grid grid-cols-2 gap-2 rounded-xl bg-fundo p-1.5"
+      >
+        <button
+          type="button"
+          role="tab"
+          id="tab-saved-routes"
+          data-testid="tab-saved-routes"
+          [attr.aria-selected]="activeTab() === 'routes'"
+          aria-controls="panel-saved-routes"
+          (click)="selectTab('routes')"
+          [class.bg-primaria]="activeTab() === 'routes'"
+          [class.text-texto-inverso]="activeTab() === 'routes'"
+          [class.shadow-sm]="activeTab() === 'routes'"
+          [class.text-texto-suave]="activeTab() !== 'routes'"
+          [class.hover:text-texto]="activeTab() !== 'routes'"
+          class="rounded-xl px-3 py-2.5 font-button-primary text-button-primary font-semibold transition focus:outline-none focus:ring-2 focus:ring-primaria"
         >
           Minhas Rotas
-        </h2>
-        <p class="mt-1 font-caption text-caption text-texto-suave">
-          Gerencie os trajetos que você usa com frequência.
-        </p>
+        </button>
+
+        <button
+          type="button"
+          role="tab"
+          id="tab-match-suggestions"
+          data-testid="tab-match-suggestions"
+          [attr.aria-selected]="activeTab() === 'matches'"
+          aria-controls="panel-match-suggestions"
+          (click)="selectTab('matches')"
+          [class.bg-primaria]="activeTab() === 'matches'"
+          [class.text-texto-inverso]="activeTab() === 'matches'"
+          [class.shadow-sm]="activeTab() === 'matches'"
+          [class.text-texto-suave]="activeTab() !== 'matches'"
+          [class.hover:text-texto]="activeTab() !== 'matches'"
+          class="rounded-xl px-3 py-2.5 font-button-primary text-button-primary font-semibold transition focus:outline-none focus:ring-2 focus:ring-primaria"
+        >
+          Sugestões de Match
+        </button>
       </div>
 
-      @if (deleteError(); as message) {
-        <p role="alert" data-testid="saved-route-delete-error" class="mb-4 font-caption text-caption text-perigo">
-          {{ message }}
-        </p>
-      }
-
-      @switch (savedRoutesState()) {
-        @case ('loading') {
-          <p role="status" data-testid="saved-routes-loading" class="py-6 text-center font-body text-body text-texto-suave">
-            Carregando suas rotas...
-          </p>
-        }
-        @case ('error') {
-          <p role="alert" data-testid="saved-routes-error" class="py-6 text-center font-body text-body text-perigo">
-            {{ savedRoutesError() }}
-          </p>
-        }
-        @case ('empty') {
+      @switch (activeTab()) {
+        @case ('routes') {
           <div
-            data-testid="saved-routes-empty"
-            class="rounded-xl bg-fundo px-5 py-8 text-center"
+            id="panel-saved-routes"
+            role="tabpanel"
+            aria-labelledby="tab-saved-routes"
+            data-testid="panel-saved-routes"
           >
-            <span aria-hidden="true" class="mb-3 block text-3xl text-primaria">⌖</span>
-            <h3 class="font-display text-lg font-semibold text-texto">
-              Cadastre sua primeira rota
-            </h3>
-            <p class="mt-2 font-body text-body text-texto-suave">
-              Você ainda não tem rotas salvas. Use o formulário acima para cadastrar uma.
-            </p>
-          </div>
-        }
-        @case ('loaded') {
-          <div class="space-y-4">
-            @for (route of savedRoutes(); track route.id) {
-              <article
-                data-testid="saved-route-card"
-                class="rounded-xl border border-desabilitado bg-superficie p-4 shadow-sm"
+            <div class="mb-5">
+              <h2
+                id="saved-routes-list-title"
+                class="font-display text-xl font-bold text-texto"
               >
-                <div class="flex flex-wrap items-start justify-between gap-3">
-                  <div class="min-w-0">
-                    <h3 class="font-display text-lg font-semibold text-texto">
-                      {{ route.name }}
-                    </h3>
-                    <p class="mt-2 font-body text-body text-texto">
-                      <span class="font-semibold">Origem:</span> {{ route.origin }}
-                    </p>
-                    <p class="mt-1 font-body text-body text-texto">
-                      <span class="font-semibold">Destino:</span> {{ route.destination }}
-                    </p>
-                  </div>
-                  @if (route.women_only) {
-                    <span
-                      data-testid="women-only-badge"
-                      class="rounded-full bg-primaria px-3 py-1 font-caption text-caption font-semibold text-texto-inverso"
+                Minhas Rotas
+              </h2>
+              <p class="mt-1 font-caption text-caption text-texto-suave">
+                Gerencie os trajetos que você usa com frequência.
+              </p>
+            </div>
+
+            @if (deleteError(); as message) {
+              <p role="alert" data-testid="saved-route-delete-error" class="mb-4 font-caption text-caption text-perigo">
+                {{ message }}
+              </p>
+            }
+
+            @switch (savedRoutesState()) {
+              @case ('loading') {
+                <p role="status" data-testid="saved-routes-loading" class="py-6 text-center font-body text-body text-texto-suave">
+                  Carregando suas rotas...
+                </p>
+              }
+              @case ('error') {
+                <p role="alert" data-testid="saved-routes-error" class="py-6 text-center font-body text-body text-perigo">
+                  {{ savedRoutesError() }}
+                </p>
+              }
+              @case ('empty') {
+                <div
+                  data-testid="saved-routes-empty"
+                  class="rounded-xl bg-fundo px-5 py-8 text-center"
+                >
+                  <span aria-hidden="true" class="mb-3 block text-3xl text-primaria">⌖</span>
+                  <h3 class="font-display text-lg font-semibold text-texto">
+                    Cadastre sua primeira rota
+                  </h3>
+                  <p class="mt-2 font-body text-body text-texto-suave">
+                    Você ainda não tem rotas salvas. Use o formulário acima para cadastrar uma.
+                  </p>
+                </div>
+              }
+              @case ('loaded') {
+                <div class="space-y-4">
+                  @for (route of savedRoutes(); track route.id) {
+                    <article
+                      data-testid="saved-route-card"
+                      class="rounded-xl border border-desabilitado bg-superficie p-4 shadow-sm"
                     >
-                      Modo Elas por Elas
-                    </span>
+                      <div class="flex flex-wrap items-start justify-between gap-3">
+                        <div class="min-w-0">
+                          <h3 class="font-display text-lg font-semibold text-texto">
+                            {{ route.name }}
+                          </h3>
+                          <p class="mt-2 font-body text-body text-texto">
+                            <span class="font-semibold">Origem:</span> {{ route.origin }}
+                          </p>
+                          <p class="mt-1 font-body text-body text-texto">
+                            <span class="font-semibold">Destino:</span> {{ route.destination }}
+                          </p>
+                        </div>
+                        @if (route.women_only) {
+                          <span
+                            data-testid="women-only-badge"
+                            class="rounded-full bg-primaria px-3 py-1 font-caption text-caption font-semibold text-texto-inverso"
+                          >
+                            Modo Elas por Elas
+                          </span>
+                        }
+                      </div>
+
+                      <div class="mt-4 flex flex-wrap gap-x-5 gap-y-2 border-t border-desabilitado pt-3">
+                        <p class="font-caption text-caption text-texto-suave">
+                          <span class="font-semibold text-texto">Dias:</span>
+                          {{ formatDays(route.days_of_week) }}
+                        </p>
+                        <p class="font-caption text-caption text-texto-suave">
+                          <span class="font-semibold text-texto">Horário:</span>
+                          {{ route.preferred_time }}
+                        </p>
+                      </div>
+
+                      <div class="mt-4 flex justify-end gap-3">
+                        <a
+                          [routerLink]="['/profile/saved-routes', route.id, 'edit']"
+                          data-testid="edit-saved-route"
+                          class="rounded-xl border border-primaria px-4 py-2 font-button-primary text-button-primary font-semibold text-primaria focus:outline-none focus:ring-2 focus:ring-primaria"
+                        >
+                          Editar
+                        </a>
+                        <button
+                          type="button"
+                          data-testid="delete-saved-route"
+                          (click)="deleteRoute(route)"
+                          class="rounded-xl px-4 py-2 font-button-primary text-button-primary font-semibold text-perigo focus:outline-none focus:ring-2 focus:ring-perigo"
+                        >
+                          Excluir
+                        </button>
+                      </div>
+                    </article>
                   }
                 </div>
+              }
+            }
+          </div>
+        }
+        @case ('matches') {
+          <div
+            id="panel-match-suggestions"
+            role="tabpanel"
+            aria-labelledby="tab-match-suggestions"
+            data-testid="panel-match-suggestions"
+          >
+            <div class="mb-5">
+              <h2
+                id="match-suggestions-list-title"
+                class="font-display text-xl font-bold text-texto"
+              >
+                Sugestões de Match
+              </h2>
+              <p class="mt-1 font-caption text-caption text-texto-suave">
+                Caronas abertas compatíveis com suas rotas salvas.
+              </p>
+            </div>
 
-                <div class="mt-4 flex flex-wrap gap-x-5 gap-y-2 border-t border-desabilitado pt-3">
-                  <p class="font-caption text-caption text-texto-suave">
-                    <span class="font-semibold text-texto">Dias:</span>
-                    {{ formatDays(route.days_of_week) }}
-                  </p>
-                  <p class="font-caption text-caption text-texto-suave">
-                    <span class="font-semibold text-texto">Horário:</span>
-                    {{ route.preferred_time }}
-                  </p>
-                </div>
-
-                <div class="mt-4 flex justify-end gap-3">
-                  <a
-                    [routerLink]="['/profile/saved-routes', route.id, 'edit']"
-                    data-testid="edit-saved-route"
-                    class="rounded-xl border border-primaria px-4 py-2 font-button-primary text-button-primary font-semibold text-primaria focus:outline-none focus:ring-2 focus:ring-primaria"
-                  >
-                    Editar
-                  </a>
-                  <button
-                    type="button"
-                    data-testid="delete-saved-route"
-                    (click)="deleteRoute(route)"
-                    class="rounded-xl px-4 py-2 font-button-primary text-button-primary font-semibold text-perigo focus:outline-none focus:ring-2 focus:ring-perigo"
-                  >
-                    Excluir
-                  </button>
-                </div>
-              </article>
+            @defer (on viewport) {
+              <app-match-suggestions
+                [rides]="matchingRides()"
+                [loading]="loadingMatches()"
+                [error]="matchesError()"
+                (viewRide)="navigateToRide($event)"
+              />
+            } @placeholder {
+              <div
+                data-testid="match-suggestions-placeholder"
+                aria-hidden="true"
+                class="rounded-xl bg-fundo px-5 py-8 text-center font-body text-body text-texto-suave"
+              >
+                Role até aqui para carregar as sugestões de carona.
+              </div>
+            } @loading {
+              <p
+                role="status"
+                data-testid="match-suggestions-defer-loading"
+                class="rounded-xl bg-fundo px-5 py-8 text-center font-body text-body text-texto-suave"
+              >
+                Carregando sugestões de carona...
+              </p>
             }
           </div>
         }

@@ -180,4 +180,64 @@ describe('RideService', () => {
       vehicle: { brand_model: 'Toyota Corolla', color: 'Prata' },
     });
   });
+
+  it('hidrata motorista com nome, foto e média de avaliações derivada de reviews e veículo em getRides', async () => {
+    const resultPromise = service.getRides();
+    httpTesting.expectOne(`${environment.apiUrl}/rides`).flush([
+      ride('rated-ride', { driver_id: 'driver-female', vehicle_id: 'vehicle-1' }),
+      ride('unrated-ride', { driver_id: 'driver-male', vehicle_id: 'vehicle-2' }),
+    ]);
+    httpTesting.expectOne(`${environment.apiUrl}/users`).flush([
+      {
+        ...driver('driver-female', 'female', 'Ana Souza'),
+        avatar_url: 'https://example.com/ana.jpg',
+      },
+      driver('driver-male', 'male', 'João Lima'),
+    ]);
+    httpTesting.expectOne(`${environment.apiUrl}/vehicles`).flush([
+      { id: 'vehicle-1', brand_model: 'Toyota Corolla', color: 'Prata' },
+      { id: 'vehicle-2', brand_model: 'Honda Civic', color: 'Preto' },
+    ]);
+    httpTesting.expectOne(`${environment.apiUrl}/reviews`).flush([
+      {
+        id: 'review-1',
+        ride_id: 'ride-reviewed-1',
+        reviewer_id: 'passenger-1',
+        reviewed_id: 'driver-female',
+        rating: 4,
+        created_at: '2099-01-01T00:00:00.000Z',
+      },
+      {
+        id: 'review-2',
+        ride_id: 'ride-reviewed-2',
+        reviewer_id: 'passenger-2',
+        reviewed_id: 'driver-female',
+        rating: 5,
+        created_at: '2099-01-02T00:00:00.000Z',
+      },
+    ]);
+
+    const results = await resultPromise;
+    expect(results[0]).toMatchObject({
+      id: 'rated-ride',
+      driver: {
+        id: 'driver-female',
+        name: 'Ana Souza',
+        gender: 'female',
+        avatar_url: 'https://example.com/ana.jpg',
+        average_rating: 4.5,
+      },
+      vehicle: { id: 'vehicle-1', brand_model: 'Toyota Corolla', color: 'Prata' },
+    });
+    expect(results[1]).toMatchObject({
+      id: 'unrated-ride',
+      driver: {
+        id: 'driver-male',
+        name: 'João Lima',
+        gender: 'male',
+      },
+      vehicle: { id: 'vehicle-2', brand_model: 'Honda Civic', color: 'Preto' },
+    });
+    expect(results[1]?.driver?.average_rating).toBeUndefined();
+  });
 });

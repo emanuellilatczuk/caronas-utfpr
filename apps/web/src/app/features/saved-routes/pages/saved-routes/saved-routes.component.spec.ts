@@ -1,16 +1,29 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
+import {
+  HttpTestingController,
+  provideHttpClientTesting,
+} from '@angular/common/http/testing';
+import {
+  ComponentFixture,
+  DeferBlockBehavior,
+  DeferBlockState,
+  TestBed,
+} from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { provideRouter, Router } from '@angular/router';
 import { signal } from '@angular/core';
 import { vi } from 'vitest';
 import { Observable, of } from 'rxjs';
+import { environment } from '../../../../../environments/environment';
 import { SavedRoutesComponent } from './saved-routes.component';
 import { CepSearchInputComponent } from '../../components/cep-search-input/cep-search-input.component';
 import { AuthService } from '../../../../core/services/auth.service';
+import { RideService } from '../../../../core/services/ride.service';
 import { SavedRouteService } from '../../../../core/services/saved-route.service';
 import { ViaCepService } from '../../../../core/services/viacep.service';
 import { User } from '../../../../core/models/user.model';
 import { SavedRoute } from '../../../../core/models/saved-route.model';
+import { Ride, RideReview, RideVehicle } from '../../../../core/models/ride.model';
 
 function deferred<T>() {
   let resolve!: (value: T) => void;
@@ -27,6 +40,7 @@ describe('SavedRoutesComponent', () => {
   let updateSavedRoute: ReturnType<typeof vi.fn>;
   let deleteSavedRoute: ReturnType<typeof vi.fn>;
   let getSavedRoutes: ReturnType<typeof vi.fn>;
+  let getMatchingRides: ReturnType<typeof vi.fn>;
 
   const female: User = {
     id: 'user-1',
@@ -52,8 +66,10 @@ describe('SavedRoutesComponent', () => {
     updateSavedRoute = vi.fn().mockResolvedValue({} as SavedRoute);
     getSavedRoutes = vi.fn().mockResolvedValue([]);
     deleteSavedRoute = vi.fn().mockResolvedValue(undefined);
+    getMatchingRides = vi.fn().mockResolvedValue([]);
 
     await TestBed.configureTestingModule({
+      deferBlockBehavior: DeferBlockBehavior.Manual,
       imports: [SavedRoutesComponent],
       providers: [
         provideRouter([]),
@@ -68,6 +84,7 @@ describe('SavedRoutesComponent', () => {
             updateSavedRoute,
             deleteSavedRoute,
             getSavedRoutes,
+            getMatchingRides,
           },
         },
         {
@@ -568,5 +585,267 @@ describe('SavedRoutesComponent', () => {
     );
     expect(fixture.componentInstance.savedRoutes()[0]?.name).toBe('Casa — Campus');
     expect(navigateSpy).toHaveBeenCalledWith(['/profile/saved-routes']);
+  });
+});
+
+describe('SavedRoutesComponent — aba Sugestões de Match integrada à camada de serviços', () => {
+  let fixture: ComponentFixture<SavedRoutesComponent>;
+  let httpTesting: HttpTestingController;
+  let currentUser: ReturnType<typeof signal<User | null>>;
+
+  const female: User = {
+    id: 'user-1',
+    name: 'Maria',
+    email: 'maria@utfpr.edu.br',
+    gender: 'female',
+    created_at: '2026-01-01T00:00:00.000Z',
+  };
+
+  const savedRouteRecord: SavedRoute = {
+    id: 'route-1',
+    user_id: 'user-1',
+    name: 'Casa — UTFPR',
+    origin: 'Rua das Flores',
+    destination: 'UTFPR Centro',
+    preferred_time: '08:00',
+    days_of_week: ['sunday'],
+    women_only: false,
+    created_at: '2026-01-01T00:00:00.000Z',
+  };
+
+  const normalizedRideRecord: Ride = {
+    id: 'ride-match-1',
+    driver_id: 'driver-1',
+    vehicle_id: 'vehicle-1',
+    origin: 'Rua das Flores, 120',
+    destination: 'UTFPR Centro',
+    departure_time: new Date(2030, 4, 12, 7, 45).toISOString(),
+    total_seats: 4,
+    available_seats: 3,
+    meeting_point: 'Portão principal',
+    women_only: false,
+    status: 'open',
+    created_at: '2030-05-01T10:00:00.000Z',
+  };
+
+  const driverUserRecord: User = {
+    id: 'driver-1',
+    name: 'Ana Souza',
+    email: 'ana.souza@alunos.utfpr.edu.br',
+    gender: 'female',
+    avatar_url: 'https://example.test/ana.jpg',
+    created_at: '2026-01-01T00:00:00.000Z',
+  };
+
+  const vehicleRecord: RideVehicle = {
+    id: 'vehicle-1',
+    brand_model: 'Toyota Corolla',
+    color: 'Prata',
+  };
+
+  const reviewRecords: RideReview[] = [
+    {
+      id: 'review-1',
+      ride_id: 'ride-prev-1',
+      reviewer_id: 'passenger-1',
+      reviewed_id: 'driver-1',
+      rating: 5,
+      created_at: '2026-02-01T00:00:00.000Z',
+    },
+    {
+      id: 'review-2',
+      ride_id: 'ride-prev-2',
+      reviewer_id: 'passenger-2',
+      reviewed_id: 'driver-1',
+      rating: 4,
+      created_at: '2026-02-02T00:00:00.000Z',
+    },
+  ];
+
+  function flushNormalizedMatchRequests(rides: Ride[] = [normalizedRideRecord]): void {
+    httpTesting
+      .expectOne(`${environment.apiUrl}/saved_routes?user_id=user-1`)
+      .flush([savedRouteRecord]);
+    httpTesting.expectOne(`${environment.apiUrl}/rides`).flush(rides);
+    httpTesting.expectOne(`${environment.apiUrl}/users`).flush([driverUserRecord]);
+    httpTesting.expectOne(`${environment.apiUrl}/vehicles`).flush([vehicleRecord]);
+    httpTesting.expectOne(`${environment.apiUrl}/reviews`).flush(reviewRecords);
+  }
+
+  beforeEach(async () => {
+    currentUser = signal<User | null>(female);
+
+    await TestBed.configureTestingModule({
+      deferBlockBehavior: DeferBlockBehavior.Manual,
+      imports: [SavedRoutesComponent],
+      providers: [
+        provideRouter([]),
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        SavedRouteService,
+        RideService,
+        {
+          provide: AuthService,
+          useValue: { currentUser, isAuthenticated: signal(true) },
+        },
+        {
+          provide: ViaCepService,
+          useValue: {
+            getAddressByCep: (): Observable<{ address: string }> =>
+              of({ address: 'Rua das Flores, Centro - Curitiba' }),
+          },
+        },
+      ],
+    }).compileComponents();
+
+    httpTesting = TestBed.inject(HttpTestingController);
+    fixture = TestBed.createComponent(SavedRoutesComponent);
+    fixture.detectChanges();
+    httpTesting
+      .expectOne(`${environment.apiUrl}/saved_routes?user_id=user-1`)
+      .flush([savedRouteRecord]);
+    await fixture.whenStable();
+    fixture.detectChanges();
+  });
+
+  afterEach(() => httpTesting.verify());
+
+  it('alterna entre as abas "Minhas Rotas" e "Sugestões de Match" com atributos ARIA', async () => {
+    const routesTab = fixture.debugElement.query(By.css('[data-testid="tab-saved-routes"]'))
+      .nativeElement as HTMLButtonElement;
+    const matchesTab = fixture.debugElement.query(By.css('[data-testid="tab-match-suggestions"]'))
+      .nativeElement as HTMLButtonElement;
+
+    expect(routesTab.textContent).toContain('Minhas Rotas');
+    expect(matchesTab.textContent).toContain('Sugestões de Match');
+    expect(routesTab.getAttribute('aria-selected')).toBe('true');
+    expect(matchesTab.getAttribute('aria-selected')).toBe('false');
+    expect(fixture.debugElement.query(By.css('[data-testid="panel-saved-routes"]'))).toBeTruthy();
+    expect(fixture.debugElement.query(By.css('[data-testid="panel-match-suggestions"]'))).toBeNull();
+    httpTesting.expectNone(`${environment.apiUrl}/rides`);
+
+    matchesTab.click();
+    flushNormalizedMatchRequests();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(routesTab.getAttribute('aria-selected')).toBe('false');
+    expect(matchesTab.getAttribute('aria-selected')).toBe('true');
+    expect(fixture.debugElement.query(By.css('[data-testid="panel-saved-routes"]'))).toBeNull();
+    expect(fixture.debugElement.query(By.css('[data-testid="panel-match-suggestions"]'))).toBeTruthy();
+
+    routesTab.click();
+    fixture.detectChanges();
+
+    expect(routesTab.getAttribute('aria-selected')).toBe('true');
+    expect(matchesTab.getAttribute('aria-selected')).toBe('false');
+    expect(fixture.debugElement.query(By.css('[data-testid="panel-saved-routes"]'))).toBeTruthy();
+    expect(fixture.debugElement.query(By.css('[data-testid="panel-match-suggestions"]'))).toBeNull();
+  });
+
+  it('carrega Sugestões de Match via @defer (on viewport) validando @placeholder, @loading e dados hidratados de motorista, nota média e veículo', async () => {
+    fixture.debugElement.query(By.css('[data-testid="tab-match-suggestions"]'))
+      .nativeElement.click();
+    flushNormalizedMatchRequests();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const [deferBlock] = await fixture.getDeferBlocks();
+    expect(deferBlock).toBeDefined();
+
+    await deferBlock.render(DeferBlockState.Placeholder);
+    expect(
+      fixture.debugElement.query(By.css('[data-testid="match-suggestions-placeholder"]')),
+    ).toBeTruthy();
+    expect(
+      fixture.debugElement.query(By.css('[data-testid="match-suggestions-defer-loading"]')),
+    ).toBeNull();
+    expect(fixture.debugElement.query(By.css('[data-testid="match-ride-card"]'))).toBeNull();
+
+    await deferBlock.render(DeferBlockState.Loading);
+    const loadingBlock = fixture.debugElement.query(
+      By.css('[data-testid="match-suggestions-defer-loading"]'),
+    );
+    expect(loadingBlock).toBeTruthy();
+    expect(loadingBlock.nativeElement.getAttribute('role')).toBe('status');
+    expect(loadingBlock.nativeElement.textContent).toContain('Carregando sugestões de carona...');
+    expect(
+      fixture.debugElement.query(By.css('[data-testid="match-suggestions-placeholder"]')),
+    ).toBeNull();
+    expect(fixture.debugElement.query(By.css('[data-testid="match-ride-card"]'))).toBeNull();
+
+    await deferBlock.render(DeferBlockState.Complete);
+    const card = fixture.debugElement.query(By.css('[data-testid="match-ride-card"]'));
+    expect(card).toBeTruthy();
+    expect(
+      card.query(By.css('[data-testid="ride-driver-photo"]')).nativeElement.getAttribute('src'),
+    ).toBe('https://example.test/ana.jpg');
+    expect(card.nativeElement.textContent).toContain('Ana Souza');
+    expect(card.nativeElement.textContent).toContain('★ 4.5');
+    expect(card.nativeElement.textContent).toContain('Toyota Corolla');
+    expect(card.nativeElement.textContent).toContain('Prata');
+    expect(card.nativeElement.textContent).toContain('07:45');
+    expect(card.nativeElement.textContent).toContain('3');
+    expect(card.nativeElement.textContent).toContain('vagas restantes');
+    expect(card.nativeElement.textContent).toContain('Ver Carona');
+    expect(card.nativeElement.textContent).not.toContain('Sem avaliações');
+    expect(card.nativeElement.textContent).not.toContain('Veículo indisponível');
+  });
+
+  it('exibe estado vazio na aba "Sugestões de Match" quando não há caronas compatíveis', async () => {
+    fixture.debugElement.query(By.css('[data-testid="tab-match-suggestions"]'))
+      .nativeElement.click();
+    flushNormalizedMatchRequests([]);
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const [deferBlock] = await fixture.getDeferBlocks();
+    await deferBlock.render(DeferBlockState.Complete);
+
+    expect(fixture.debugElement.query(By.css('[data-testid="match-suggestions-empty"]'))).toBeTruthy();
+    expect(fixture.nativeElement.textContent).toContain('Nenhuma carona compatível no momento');
+    expect(fixture.debugElement.query(By.css('[data-testid="match-ride-card"]'))).toBeNull();
+  });
+
+  it('exibe erro inline na aba "Sugestões de Match" quando a busca de sugestões falha', async () => {
+    fixture.debugElement.query(By.css('[data-testid="tab-match-suggestions"]'))
+      .nativeElement.click();
+    httpTesting
+      .expectOne(`${environment.apiUrl}/saved_routes?user_id=user-1`)
+      .flush([savedRouteRecord]);
+    httpTesting.expectOne(`${environment.apiUrl}/users`).flush([driverUserRecord]);
+    httpTesting.expectOne(`${environment.apiUrl}/vehicles`).flush([vehicleRecord]);
+    httpTesting.expectOne(`${environment.apiUrl}/reviews`).flush(reviewRecords);
+    httpTesting
+      .expectOne(`${environment.apiUrl}/rides`)
+      .flush('Falha na rede', { status: 500, statusText: 'Internal Server Error' });
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const [deferBlock] = await fixture.getDeferBlocks();
+    await deferBlock.render(DeferBlockState.Complete);
+
+    const errorEl = fixture.debugElement.query(By.css('[data-testid="match-suggestions-error"]'));
+    expect(errorEl).toBeTruthy();
+    expect(errorEl.nativeElement.textContent).toContain(
+      'Não foi possível carregar as sugestões de carona. Tente novamente.',
+    );
+  });
+
+  it('navega para /rides/:id ao clicar em "Ver Carona" na aba "Sugestões de Match"', async () => {
+    const navigateSpy = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+
+    fixture.debugElement.query(By.css('[data-testid="tab-match-suggestions"]'))
+      .nativeElement.click();
+    flushNormalizedMatchRequests();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const [deferBlock] = await fixture.getDeferBlocks();
+    await deferBlock.render(DeferBlockState.Complete);
+
+    fixture.debugElement.query(By.css('[data-testid="view-ride-btn"]')).nativeElement.click();
+
+    expect(navigateSpy).toHaveBeenCalledWith(['/rides', 'ride-match-1']);
   });
 });

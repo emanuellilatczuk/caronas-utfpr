@@ -5,6 +5,7 @@ import { environment } from '../../../environments/environment';
 import { Ride } from '../models/ride.model';
 import { SavedRoute } from '../models/saved-route.model';
 import { AuthService } from './auth.service';
+import { RideService } from './ride.service';
 
 type SavedRouteFields = Pick<
   SavedRoute,
@@ -29,6 +30,7 @@ const WEEKDAYS: Record<number, string[]> = {
 export class SavedRouteService {
   private readonly http = inject(HttpClient);
   private readonly authService = inject(AuthService);
+  private readonly rideService = inject(RideService);
   private readonly apiUrl = environment.apiUrl;
 
   getSavedRoutes(): Promise<SavedRoute[]> {
@@ -72,7 +74,7 @@ export class SavedRouteService {
     const user = this.requireCurrentUser();
     const [savedRoutes, rides] = await Promise.all([
       this.getSavedRoutes(),
-      firstValueFrom(this.http.get<Ride[]>(`${this.apiUrl}/rides`)),
+      this.rideService.getRides(),
     ]);
 
     const matches = new Map<string, Ride>();
